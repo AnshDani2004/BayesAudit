@@ -1,0 +1,9 @@
+name: oracle_budget_aware
+policy_type: oracle
+mode: shadow
+budget: 1
+evaluation_only: true
+parameters:
+  horizon: current_step
+  budget_aware: true
+enabled: true

@@ -1,0 +1,5 @@
+name: no_oversight
+policy_type: no_oversight
+mode: shadow
+budget: 0
+enabled: true

@@ -1,0 +1,8 @@
+name: oracle_myopic
+policy_type: oracle
+mode: shadow
+budget: 3
+evaluation_only: true
+parameters:
+  horizon: current_step
+enabled: true

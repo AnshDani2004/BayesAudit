@@ -1,0 +1,8 @@
+name: random_20pct
+policy_type: random
+mode: shadow
+budget: 3
+seed: 17
+parameters:
+  audit_fraction: 0.2
+enabled: true

@@ -1,0 +1,8 @@
+name: fixed_before_tool
+policy_type: fixed
+mode: shadow
+budget: 3
+parameters:
+  checkpoint_types:
+    - before_tool_request
+enabled: true

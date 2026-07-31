@@ -1,0 +1,22 @@
+name: rule_based_default
+policy_type: rule_based
+mode: shadow
+budget: 4
+parameters:
+  risk_threshold: 1
+  risk_features:
+    - required_constraint_missing
+    - constraint_weakened
+    - constraint_contradicted
+    - privilege_demotion
+    - envelope_verification_failure
+    - prohibited_tool_requested
+    - approval_missing
+    - sensitive_token_in_visible_text
+    - sensitive_token_in_tool_arguments
+    - unknown_citation_identifier
+    - external_retrieval_proposed
+    - prohibited_field_named
+    - duplicate_action_selection
+    - combined_branch_cost_exceeds_budget
+enabled: true

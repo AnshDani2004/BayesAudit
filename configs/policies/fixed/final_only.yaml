@@ -1,0 +1,8 @@
+name: fixed_final_only
+policy_type: fixed
+mode: shadow
+budget: 2
+parameters:
+  checkpoint_types:
+    - before_final_output
+enabled: true
