@@ -1,0 +1,9 @@
+calibration_id: platt_smoke
+method: platt
+dataset_dir: data/processed/monitoring/phase5_smoke
+artifact_dir: results/tables/calibration
+target: current_violation_label
+iterations: 50
+learning_rate: 0.05
+base_monitor: logistic_smoke
+base_artifact_hash: smoke

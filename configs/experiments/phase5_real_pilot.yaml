@@ -1,0 +1,19 @@
+provider:
+  provider_name: mock
+  model_identifier: null
+  allow_provider_calls: false
+  dry_run: true
+  max_cost: 0.0
+  max_tokens: 2000
+  trajectory_ceiling: 3
+  request_count: 3
+  estimated_input_tokens_per_request: 250
+  estimated_output_tokens_per_request: 100
+  estimated_cost_per_1k_tokens: 0.0
+  output_root: results/tables/provider_manifests
+pilot:
+  enabled: false
+  domains: [privacy, authorization, evidence]
+  architectures: [unstructured_delegation, structured_inheritance]
+  depths: [1, 2]
+  synthetic_validation_required: true

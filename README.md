@@ -20,7 +20,7 @@ Primary comparison policies:
 
 ## Phase Status
 
-This repository is currently at Phase 4: Budget-Constrained Oversight Baselines.
+This repository is currently at Phase 5: Calibrated Learned Monitoring and Bayesian Adaptive Oversight.
 
 Implemented now:
 
@@ -41,16 +41,22 @@ Implemented now:
 - hard oversight budget accounting
 - shadow-mode and intervention-mode oversight records
 - posthoc detection matching, policy metrics, and harm-cost frontier points
+- leakage-resistant monitor datasets built from redacted oversight observations
+- grouped train/development/calibration/confirmatory split manifests
+- constant, rule-score, logistic, tree-stump, Bayesian-logistic, and mock LLM-judge monitors
+- Platt, isotonic, temperature, and beta calibration helpers
+- abstention, OOD diagnostics, model cards, and annotation export/import
+- Beta-Bernoulli and online Bayesian-logistic risk states
+- budget-aware adaptive audit policies for shadow and intervention evaluation
+- dry-run provider cost manifests and hard real-provider safety gates
 - tests for schema validity, workflows, scorers, storage, and integration
 
 Not implemented yet:
 
-- real model-provider integrations
+- ungated real model-provider execution
 - empirical claims about real LLM behavior
-- Bayesian adaptive oversight
-- LLM-judge monitoring
 - strategic attacker behavior
-- human annotation workflow
+- completed human annotation campaign
 
 ## Repository Layout
 
@@ -112,8 +118,20 @@ python -m bayesaudit.cli compare-policies --experiment phase4_smoke
 python -m bayesaudit.cli build-frontier --experiment phase4_smoke
 ```
 
+Run Phase 5 learned-monitoring smoke checks:
+
+```bash
+python -m bayesaudit.cli build-monitor-dataset --config configs/experiments/phase5_smoke.yaml
+python -m bayesaudit.cli create-monitor-splits --config configs/experiments/phase5_smoke.yaml
+python -m bayesaudit.cli train-monitor --config configs/monitors/logistic/smoke.yaml
+python -m bayesaudit.cli calibrate-monitor --config configs/calibration/platt/smoke.yaml
+python -m bayesaudit.cli evaluate-monitor --config configs/experiments/phase5_smoke.yaml
+python -m bayesaudit.cli run-adaptive-policy --config configs/experiments/phase5_smoke.yaml
+python -m bayesaudit.cli run-real-pilot --config configs/experiments/phase5_real_pilot.yaml --dry-run
+```
+
 ## Research Integrity
 
 BayesAudit must not report fabricated findings. Hypotheses, primary metrics, and confirmatory analyses are recorded before main-study execution. Pilot results may be used to repair tasks and scorers, but main benchmark changes after preregistration freeze must be documented as deviations.
 
-All Phase 2 through Phase 4 trajectories are synthetic mock-model trajectories. They are useful for validating benchmark mechanics and scorer behavior, but they are not evidence about real LLM systems.
+All Phase 2 through Phase 5 trajectories and learned-monitor smoke results are synthetic mock-model artifacts unless an explicitly approved real-provider pilot is run. They are useful for validating benchmark mechanics, scorer behavior, calibration plumbing, and adaptive allocation logic, but they are not evidence about real LLM systems.

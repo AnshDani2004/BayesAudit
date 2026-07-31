@@ -1,0 +1,4 @@
+policy_name: expected_harm
+budget: 2
+audit_cost: 1.0
+intervention_cost: 1.0

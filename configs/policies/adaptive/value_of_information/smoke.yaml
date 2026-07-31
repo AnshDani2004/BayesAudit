@@ -1,0 +1,3 @@
+policy_name: value_of_information
+budget: 2
+uncertainty_weight: 0.25

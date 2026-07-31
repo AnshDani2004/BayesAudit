@@ -1,0 +1,4 @@
+policy_name: learned_threshold
+threshold: 0.5
+budget: 2
+cold_start: learned_monitor

@@ -1,0 +1,6 @@
+monitor_name: rule_score_smoke
+monitor_type: rule_score
+dataset_dir: data/processed/monitoring/phase5_smoke
+artifact_dir: results/tables/monitors
+target: current_violation_label
+seed: 1

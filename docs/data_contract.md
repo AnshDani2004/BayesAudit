@@ -41,3 +41,11 @@ Phase 4 adds separate oversight artifacts with schema version `bayesaudit.oversi
 Oversight artifacts include checkpoints, redacted observations, policy state records, audit decisions, audit feedback, findings, intervention decisions, intervention outcomes, budget transactions, detection matches, counterfactual outcomes, metrics, and frontier points.
 
 Normalized Phase 4 tables are prefixed with `oversight_`.
+
+## Phase 5 Monitoring Artifacts
+
+Phase 5 adds separate monitoring artifacts with schema version `bayesaudit.monitoring.v1`. Core `bayesaudit.v2` trajectories and Phase 4 oversight observations remain readable.
+
+Monitoring artifacts include monitor examples, monitor predictions, dataset manifests, grouped split manifests, monitor artifacts, calibration artifacts, OOD score records, abstention records, judge responses, provider call manifests, posterior snapshots, Bayesian update records, and adaptive policy decisions.
+
+Normalized Phase 5 dataset tables are `monitor_examples`, `monitor_labels`, and `monitor_features`.

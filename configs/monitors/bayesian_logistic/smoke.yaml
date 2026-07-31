@@ -1,0 +1,7 @@
+monitor_name: bayesian_logistic_smoke
+monitor_type: bayesian_logistic
+dataset_dir: data/processed/monitoring/phase5_smoke
+artifact_dir: results/tables/monitors
+target: current_violation_label
+learning_rate: 0.01
+iterations: 50

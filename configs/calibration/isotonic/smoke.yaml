@@ -1,0 +1,7 @@
+calibration_id: isotonic_smoke
+method: isotonic
+dataset_dir: data/processed/monitoring/phase5_smoke
+artifact_dir: results/tables/calibration
+target: current_violation_label
+base_monitor: logistic_smoke
+base_artifact_hash: smoke

@@ -1,0 +1,7 @@
+dataset_id: phase5_shadow_adaptive
+source_experiments: [phase4_shadow]
+task_root: scenarios
+data_root: data/raw
+output_root: data/processed/monitoring
+label_horizon: 2
+split_strategy: architecture_holdout

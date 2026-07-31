@@ -46,10 +46,13 @@ Current total coverage contains 131 tests. Phase 4 adds redacted observation che
 
 ## Phase 5 Tests
 
+Current total coverage contains 210 collected tests. Phase 5 adds feature leakage guards, monitoring dataset persistence, grouped splits, monitor training and prediction bounds, calibration methods, ranking and calibration metrics, abstention, OOD diagnostics, Bayesian risk-state updates, adaptive budget policies, provider safety gates, annotation export/import, model-card generation, and CLI smoke commands.
+
 - LLM judge structured output validates
 - calibration metrics match known toy examples
 - Bayesian posterior updates are deterministic under fixed seeds
 - adaptive policy accounts for remaining budget
+- real-provider calls are blocked unless explicitly enabled
 
 ## Phase 6 Tests
 

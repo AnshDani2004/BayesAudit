@@ -13,3 +13,5 @@ Phase 4 separates detection, audit feedback, and intervention.
 9. Metrics and frontier points are computed from stored decisions, feedback, matches, and budget records.
 
 Verified-inheritance repair and branch-refusal records remain architecture events. They are not rewritten as oversight interventions.
+
+Phase 5 adds a learned-monitoring stage after observation construction. Monitor examples are produced from the same redacted checkpoint observations, monitor predictions are evaluated separately from policy outcomes, and adaptive policies consume those predictions to allocate budget. Intervention execution still uses the Phase 4 budget and action semantics.

@@ -76,6 +76,8 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 8. Constraint mutation labels in Phase 2 are injected by explicit mock behavior. Semantic equivalence detection is deferred.
 9. Phase 3 architecture comparisons use controlled synthetic mutation schedules shared across architectures where possible.
 10. Phase 4 oversight baselines operate on redacted observations and match detections to violations only after scoring.
+11. Phase 5 learned monitors are trained on redacted checkpoint examples, with labels joined only after feature extraction.
+12. Phase 5 smoke evaluations remain synthetic and do not estimate real LLM violation rates.
 
 ## Unresolved Design Decisions
 
@@ -117,6 +119,7 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 - regret relative to oracle
 - false-intervention rate
 - precision, recall, F1, audit yield, budget utilization, regret proxy, and harm-cost frontier points for Phase 4 baselines
+- adaptive audit yield, recall at budget, expected-harm proxy, value-of-information allocation, and oracle-regret proxy for Phase 5 policies
 
 ### Monitor Quality
 
@@ -126,6 +129,9 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 - area under the precision-recall curve
 - Brier score
 - expected calibration error
+- calibration slope and intercept
+- selective risk under abstention
+- OOD flag rate
 - false-alert burden
 - detection lead time
 

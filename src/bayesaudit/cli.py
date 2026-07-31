@@ -7,11 +7,46 @@ import asyncio
 import json
 from pathlib import Path
 
+from bayesaudit.adaptive.bayesian import BetaBernoulliRiskState
+from bayesaudit.adaptive.policies import (
+    expected_harm_policy,
+    learned_threshold_policy,
+    online_priority_policy,
+    thompson_policy,
+    top_risk_policy,
+    value_of_information_policy,
+)
+from bayesaudit.annotations.monitoring import export_annotations, validate_annotation_import
 from bayesaudit.benchmark.io import load_tasks
 from bayesaudit.constraints.inheritance import build_registry, create_envelope, verify_envelope
+from bayesaudit.monitoring.calibration import (
+    CalibrationConfig,
+    fit_calibrator,
+    load_calibration_config,
+)
+from bayesaudit.monitoring.dataset import (
+    build_monitor_dataset,
+    ensure_source_experiments,
+    load_monitor_dataset_config,
+    load_monitor_examples,
+    summarize_monitor_dataset,
+    validate_monitor_dataset,
+)
+from bayesaudit.monitoring.evaluation import evaluate_monitor
+from bayesaudit.monitoring.model_cards import generate_model_card
+from bayesaudit.monitoring.monitors import (
+    MonitorTrainConfig,
+    load_monitor_artifact,
+    load_monitor_train_config,
+    predict_examples,
+    train_monitor,
+)
+from bayesaudit.monitoring.splits import create_split_manifest, validate_no_group_leakage
+from bayesaudit.monitoring.types import MonitorArtifact
 from bayesaudit.oversight.registry import load_policy_configs, policy_for_config
 from bayesaudit.oversight.replay import replay_policies
 from bayesaudit.oversight.types import WorkflowMode
+from bayesaudit.providers.base import ProviderConfig, estimate_provider_cost
 from bayesaudit.runner import (
     _rewrite_normalized_tables,
     load_experiment_config,
@@ -134,6 +169,62 @@ def main() -> None:
     frontier = subparsers.add_parser("build-frontier")
     frontier.add_argument("--experiment", required=True)
     frontier.add_argument("--root", type=Path, default=Path("data/raw"))
+
+    build_dataset = subparsers.add_parser("build-monitor-dataset")
+    build_dataset.add_argument("--config", type=Path, required=True)
+    build_dataset.add_argument("--dry-run", action="store_true")
+
+    validate_dataset = subparsers.add_parser("validate-monitor-dataset")
+    validate_dataset.add_argument("--dataset-dir", type=Path, required=True)
+
+    summarize_dataset = subparsers.add_parser("summarize-monitor-dataset")
+    summarize_dataset.add_argument("--dataset-dir", type=Path, required=True)
+
+    create_splits = subparsers.add_parser("create-monitor-splits")
+    create_splits.add_argument("--config", type=Path, required=True)
+    create_splits.add_argument("--strategy", default=None)
+
+    train_monitor_parser = subparsers.add_parser("train-monitor")
+    train_monitor_parser.add_argument("--config", type=Path, required=True)
+
+    calibrate = subparsers.add_parser("calibrate-monitor")
+    calibrate.add_argument("--config", type=Path, required=True)
+
+    evaluate = subparsers.add_parser("evaluate-monitor")
+    evaluate.add_argument("--config", type=Path, required=True)
+
+    inspect_prediction = subparsers.add_parser("inspect-monitor-prediction")
+    inspect_prediction.add_argument("--artifact", type=Path, required=True)
+    inspect_prediction.add_argument("--dataset-dir", type=Path, required=True)
+    inspect_prediction.add_argument("--example-id", required=True)
+
+    adaptive = subparsers.add_parser("run-adaptive-policy")
+    adaptive.add_argument("--config", type=Path, required=True)
+
+    evaluate_adaptive = subparsers.add_parser("evaluate-adaptive-policies")
+    evaluate_adaptive.add_argument("--config", type=Path, required=True)
+
+    inspect_posterior = subparsers.add_parser("inspect-posterior")
+    inspect_posterior.add_argument("--dataset-dir", type=Path, required=True)
+
+    compare_pairs = subparsers.add_parser("compare-monitor-policy-pairs")
+    compare_pairs.add_argument("--config", type=Path, required=True)
+
+    export_ann = subparsers.add_parser("export-annotations")
+    export_ann.add_argument("--dataset-dir", type=Path, required=True)
+    export_ann.add_argument("--output", type=Path, required=True)
+    export_ann.add_argument("--max-items", type=int)
+
+    import_ann = subparsers.add_parser("import-annotations")
+    import_ann.add_argument("--path", type=Path, required=True)
+
+    estimate_cost = subparsers.add_parser("estimate-provider-cost")
+    estimate_cost.add_argument("--config", type=Path, required=True)
+
+    real_pilot = subparsers.add_parser("run-real-pilot")
+    real_pilot.add_argument("--config", type=Path, required=True)
+    real_pilot.add_argument("--dry-run", action="store_true")
+    real_pilot.add_argument("--allow-provider-calls", action="store_true")
 
     args = parser.parse_args()
     if args.command == "validate-scenarios":
@@ -274,6 +365,99 @@ def main() -> None:
                 read_jsonl(args.root / args.experiment / "oversight_runs.jsonl")
             )
         }
+    elif args.command == "build-monitor-dataset":
+        dataset_config = load_monitor_dataset_config(args.config)
+        if args.dry_run:
+            payload = _monitor_dataset_plan(dataset_config)
+        else:
+            asyncio.run(ensure_source_experiments(dataset_config))
+            examples, dataset_manifest = build_monitor_dataset(dataset_config)
+            payload = {
+                "dataset_id": dataset_manifest.dataset_id,
+                "example_count": len(examples),
+                "manifest_hash": dataset_manifest.data_hash,
+                "output_dir": str(dataset_config.output_root / dataset_config.dataset_id),
+            }
+    elif args.command == "validate-monitor-dataset":
+        payload = validate_monitor_dataset(args.dataset_dir)
+    elif args.command == "summarize-monitor-dataset":
+        payload = summarize_monitor_dataset(args.dataset_dir)
+    elif args.command == "create-monitor-splits":
+        split_config = load_monitor_dataset_config(args.config)
+        dataset_dir = split_config.output_root / split_config.dataset_id
+        split_manifest = create_split_manifest(
+            dataset_dir,
+            strategy=args.strategy or split_config.split_strategy,
+        )
+        payload = {
+            "split_manifest_id": split_manifest.split_manifest_id,
+            "assignment_count": len(split_manifest.assignments),
+            "manifest_hash": split_manifest.manifest_hash,
+            "leakage_check": validate_no_group_leakage(split_manifest),
+        }
+    elif args.command == "train-monitor":
+        artifact = train_monitor(load_monitor_train_config(args.config))
+        payload = artifact.model_dump(mode="json")
+    elif args.command == "calibrate-monitor":
+        calibration_config = load_calibration_config(args.config)
+        dataset_dir = calibration_config.dataset_dir or Path(
+            "data/processed/monitoring/phase5_smoke"
+        )
+        examples = load_monitor_examples(dataset_dir)
+        artifact = _default_monitor_artifact(calibration_config)
+        predictions = predict_examples(artifact, examples)
+        payload = fit_calibrator(calibration_config, predictions, examples).model_dump(mode="json")
+    elif args.command == "evaluate-monitor":
+        eval_config = load_monitor_dataset_config(args.config)
+        dataset_dir = eval_config.output_root / eval_config.dataset_id
+        examples = load_monitor_examples(dataset_dir)
+        artifact = _default_monitor_artifact(CalibrationConfig(calibration_id="eval"))
+        predictions = predict_examples(artifact, examples)
+        metrics = evaluate_monitor(
+            dataset_id=eval_config.dataset_id,
+            split="all",
+            monitor_name=artifact.monitor_name,
+            examples=examples,
+            predictions=predictions,
+        )
+        generate_model_card(artifact, metrics)
+        payload = {
+            "metric_count": len(metrics),
+            "metrics": [metric.model_dump(mode="json") for metric in metrics],
+        }
+    elif args.command == "inspect-monitor-prediction":
+        artifact = load_monitor_artifact(args.artifact)
+        examples = load_monitor_examples(args.dataset_dir)
+        example = next(example for example in examples if example.example_id == args.example_id)
+        payload = predict_examples(artifact, [example])[0].model_dump(mode="json")
+    elif args.command == "run-adaptive-policy" or args.command == "evaluate-adaptive-policies":
+        payload = _run_adaptive_payload(load_monitor_dataset_config(args.config))
+    elif args.command == "inspect-posterior":
+        examples = load_monitor_examples(args.dataset_dir)
+        state = BetaBernoulliRiskState()
+        for example in examples[:5]:
+            state.update_from_audit(
+                example,
+                label_positive=example.current_violation_label == "positive",
+                audited=True,
+            )
+        payload = state.snapshot().model_dump(mode="json")
+    elif args.command == "compare-monitor-policy-pairs":
+        payload = _monitor_policy_pairs(load_monitor_dataset_config(args.config))
+    elif args.command == "export-annotations":
+        payload = export_annotations(args.dataset_dir, args.output, max_items=args.max_items)
+    elif args.command == "import-annotations":
+        payload = validate_annotation_import(args.path)
+    elif args.command == "estimate-provider-cost":
+        payload = estimate_provider_cost(_load_provider_config(args.config)).model_dump(mode="json")
+    elif args.command == "run-real-pilot":
+        provider = _load_provider_config(args.config)
+        provider.dry_run = bool(args.dry_run)
+        provider.allow_provider_calls = bool(args.allow_provider_calls)
+        provider_manifest = estimate_provider_cost(provider)
+        if not args.dry_run and provider_manifest.status == "blocked":
+            raise PermissionError("real pilot blocked by provider safety gates")
+        payload = provider_manifest.model_dump(mode="json")
     else:
         raise AssertionError(args.command)
     print(json.dumps(payload, indent=2, sort_keys=True, default=str))
@@ -386,6 +570,112 @@ def _frontier_rows(rows: list[dict[str, object]]) -> list[dict[str, object]]:
         if isinstance(metadata, dict) and isinstance(metadata.get("frontier_point"), dict):
             frontiers.append(metadata["frontier_point"])
     return frontiers
+
+
+def _monitor_dataset_plan(config: object) -> dict[str, object]:
+    from bayesaudit.monitoring.dataset import MonitorDatasetConfig
+
+    if not isinstance(config, MonitorDatasetConfig):
+        raise TypeError("expected monitor dataset config")
+    return {
+        "dataset_id": config.dataset_id,
+        "source_experiments": config.source_experiments,
+        "label_horizon": config.label_horizon,
+        "output_dir": str(config.output_root / config.dataset_id),
+        "allow_large_run": config.allow_large_run,
+        "provider_cost_estimate": 0.0,
+        "synthetic_only": True,
+    }
+
+
+def _default_monitor_artifact(config: CalibrationConfig) -> MonitorArtifact:
+    del config
+    artifact_dir = Path("results/tables/monitors")
+    artifact_path = artifact_dir / "constant_smoke.json"
+    if artifact_path.exists():
+        return load_monitor_artifact(artifact_path)
+    train_config = MonitorTrainConfig(
+        monitor_name="constant_smoke",
+        monitor_type="constant",
+        dataset_dir=Path("data/processed/monitoring/phase5_smoke"),
+    )
+    if train_config.dataset_dir.exists():
+        return train_monitor(train_config)
+    return MonitorArtifact(
+        monitor_name="constant_smoke",
+        monitor_version="phase5_v1",
+        monitor_type="constant",
+        target="current_violation_label",
+        feature_names=[],
+        artifact_hash="constant_untrained",
+        training_dataset_hash="",
+        split_manifest_hash="",
+        parameters={"prevalence": 0.1},
+    )
+
+
+def _run_adaptive_payload(config: object) -> dict[str, object]:
+    from bayesaudit.monitoring.dataset import MonitorDatasetConfig
+
+    if not isinstance(config, MonitorDatasetConfig):
+        raise TypeError("expected monitor dataset config")
+    dataset_dir = config.output_root / config.dataset_id
+    examples = load_monitor_examples(dataset_dir)
+    artifact = _default_monitor_artifact(CalibrationConfig(calibration_id="adaptive"))
+    predictions = predict_examples(artifact, examples)
+    policies = [
+        learned_threshold_policy(examples, predictions, threshold=0.5, budget=2),
+        top_risk_policy(examples, predictions, budget=2),
+        online_priority_policy(examples, predictions, budget=2),
+        thompson_policy(examples, budget=2, seed=1),
+        expected_harm_policy(examples, predictions, budget=2),
+        value_of_information_policy(examples, predictions, budget=2),
+    ]
+    return {
+        "policy_count": len(policies),
+        "example_count": len(examples),
+        "policies": [
+            {
+                "policy_name": policy.policy_name,
+                "decision_count": len(policy.decisions),
+                "metrics": policy.metrics,
+            }
+            for policy in policies
+        ],
+    }
+
+
+def _monitor_policy_pairs(config: object) -> dict[str, object]:
+    payload = _run_adaptive_payload(config)
+    pairs = []
+    raw_policies = payload.get("policies", [])
+    policies = raw_policies if isinstance(raw_policies, list) else []
+    for policy in policies:
+        if isinstance(policy, dict):
+            metrics = policy.get("metrics")
+            pairs.append(
+                {
+                    "monitor": "constant_smoke",
+                    "policy": str(policy.get("policy_name", "unknown")),
+                    "audit_yield": metrics.get("audit_yield", 0.0)
+                    if isinstance(metrics, dict)
+                    else 0.0,
+                }
+            )
+    return {"pair_count": len(pairs), "pairs": pairs, "synthetic_only": True}
+
+
+def _load_provider_config(path: Path) -> ProviderConfig:
+    import yaml
+
+    with path.open("r", encoding="utf-8") as handle:
+        payload = yaml.safe_load(handle)
+    if not isinstance(payload, dict):
+        raise ValueError(f"provider config must be a mapping: {path}")
+    provider_payload = payload.get("provider", payload)
+    if not isinstance(provider_payload, dict):
+        raise ValueError("provider config must contain a mapping")
+    return ProviderConfig.model_validate(provider_payload)
 
 
 if __name__ == "__main__":

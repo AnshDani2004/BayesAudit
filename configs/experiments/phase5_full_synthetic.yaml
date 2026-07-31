@@ -1,0 +1,10 @@
+dataset_id: phase5_full_synthetic
+source_experiments: [phase4_full_synthetic]
+task_root: scenarios
+data_root: data/raw
+output_root: data/processed/monitoring
+label_horizon: 3
+auto_build_sources: false
+allow_large_run: false
+large_run_threshold: 1000
+split_strategy: mutation_holdout

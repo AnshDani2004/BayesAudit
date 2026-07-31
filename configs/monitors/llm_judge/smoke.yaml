@@ -1,0 +1,12 @@
+judge_name: mock_llm_judge
+prompt_version: judge_prompt_v1
+provider:
+  provider_name: mock
+  allow_provider_calls: false
+  dry_run: true
+  max_cost: 0.0
+  max_tokens: 1000
+  request_count: 1
+max_prompt_tokens: 1000
+max_cost: 0.0
+ensemble_size: 1

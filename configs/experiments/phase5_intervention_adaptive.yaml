@@ -1,0 +1,11 @@
+dataset_id: phase5_intervention_adaptive
+source_experiments: [phase4_intervention]
+source_experiment_configs:
+  - configs/experiments/phase4_intervention.yaml
+task_root: scenarios
+data_root: data/raw
+output_root: data/processed/monitoring
+label_horizon: 1
+max_runs: 10
+auto_build_sources: false
+split_strategy: in_distribution

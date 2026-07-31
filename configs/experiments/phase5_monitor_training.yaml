@@ -1,0 +1,14 @@
+dataset_id: phase5_monitor_training
+dataset_version: v1
+source_experiments: [phase4_shadow]
+source_experiment_configs:
+  - configs/experiments/phase4_shadow.yaml
+task_root: scenarios
+data_root: data/raw
+output_root: data/processed/monitoring
+label_horizon: 2
+max_runs: 25
+auto_build_sources: true
+allow_large_run: false
+large_run_threshold: 1000
+split_strategy: in_distribution

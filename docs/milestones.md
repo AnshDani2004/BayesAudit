@@ -82,6 +82,8 @@ Acceptance criteria:
 
 ## Phase 5: Learned And Bayesian Oversight
 
+Status: complete for deterministic synthetic monitor and adaptive-policy infrastructure.
+
 Goal: implement LLM-judge monitor, calibration pipeline, Bayesian risk model, and adaptive audit policy.
 
 Acceptance criteria:
@@ -90,6 +92,9 @@ Acceptance criteria:
 - monitor metrics include calibration
 - Bayesian policy uses posterior risk and budget-aware value logic
 - adaptive policy is reproducible under fixed seeds
+- monitor datasets are built only from redacted observation fields
+- grouped split manifests prevent train/test group leakage
+- real provider pilots are dry-run by default and blocked unless explicitly allowed
 
 ## Phase 6: Strategic Attacks
 

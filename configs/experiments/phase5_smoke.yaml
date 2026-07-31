@@ -1,0 +1,14 @@
+dataset_id: phase5_smoke
+dataset_version: v1
+source_experiments: [phase4_smoke]
+source_experiment_configs:
+  - configs/experiments/phase4_smoke.yaml
+task_root: scenarios
+data_root: data/raw
+output_root: data/processed/monitoring
+label_horizon: 1
+max_runs: 5
+auto_build_sources: true
+allow_large_run: false
+large_run_threshold: 200
+split_strategy: in_distribution

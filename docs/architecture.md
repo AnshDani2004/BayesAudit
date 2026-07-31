@@ -22,6 +22,18 @@ Contains the single-agent workflow, unstructured deterministic planner-worker hi
 
 Contains Phase 4 checkpoint extraction, redacted observation construction, deterministic audit mechanisms, budget ledgers, no-oversight, random, fixed-checkpoint, rule-based, and evaluation-only oracle policies, replay logic, matching, metrics, and counterfactual helpers.
 
+`bayesaudit.monitoring`
+
+Contains Phase 5 monitor datasets, interpretable feature extraction, grouped splits, local monitor baselines, calibration, abstention, OOD diagnostics, mock LLM-judge monitoring, evaluation metrics, and model cards.
+
+`bayesaudit.adaptive`
+
+Contains Phase 5 Bayesian risk states and budget-aware adaptive allocation policies.
+
+`bayesaudit.providers`
+
+Contains provider cost manifests and hard safety gates for any future real-model pilot.
+
 `bayesaudit.scoring`
 
 Contains deterministic Phase 2 scorers for evidence, privacy, budgeting, authorization, and protected-attribute exclusion.
@@ -59,6 +71,9 @@ flowchart LR
     F --> H["Oversight replay"]
     G --> I["Long-form result tables"]
     H --> I
+    I --> M["Monitor dataset"]
+    M --> N["Monitor artifacts"]
+    N --> O["Adaptive policies"]
     I --> J["Statistical analysis"]
     I --> K["Human annotation sample"]
     J --> L["Figures and report"]
