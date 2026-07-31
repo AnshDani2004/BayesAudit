@@ -1,0 +1,23 @@
+pilot_id: phase7_connectivity
+stage: connectivity
+provider_config: configs/providers/mock/smoke.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy]
+task_ids: [task_privacy_aggregate_only]
+architectures: [single_agent]
+delegation_depths: [0]
+branching_factors: [1]
+behavior_conditions: [honest]
+attacker_conditions: [none]
+oversight_conditions: [none]
+seeds: [1]
+cost_ceiling: 0.0
+token_ceiling: 1000
+request_ceiling: 1
+trajectory_ceiling: 1
+max_runs: 1
+large_run_threshold: 5
+human_review_sample_size: 1
+notes: "Stage A mock connectivity; no real provider calls."
+

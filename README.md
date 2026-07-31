@@ -20,7 +20,7 @@ Primary comparison policies:
 
 ## Phase Status
 
-This repository is currently at Phase 6: Selective and Adaptive Strategic Attackers.
+This repository is currently at Phase 7: Real Model Pilot, Measurement Validation, and Benchmark Refinement.
 
 Implemented now:
 
@@ -54,11 +54,13 @@ Implemented now:
 - ten attacker families, including evaluation-only oracle attacker
 - attacker-defender smoke matrices and restricted empirical-game analysis
 - selection-bias, displacement, and offline red-team-loop helpers
+- Phase 7 pre-pilot checkpoint, provider configs, pilot manifests, permission records, request cache/ledger contracts, prompt rendering, structured-output parsing, workflow-quality flags, annotation sampling, transfer summaries, readiness classification, freeze proposal generation, and Phase 8 planning scaffolds
 - tests for schema validity, workflows, scorers, storage, and integration
 
 Not implemented yet:
 
 - ungated real model-provider execution
+- completed authorized real-provider pilot runs
 - empirical claims about real LLM behavior
 - completed human annotation campaign
 
@@ -145,8 +147,20 @@ python -m bayesaudit.cli build-payoff-matrix --config configs/experiments/phase6
 python -m bayesaudit.cli run-red-team-loop --config configs/experiments/phase6_red_team_loop.yaml --dry-run
 ```
 
+Run Phase 7 mock-safe pilot infrastructure checks:
+
+```bash
+python -m bayesaudit.cli validate-provider-config --config configs/providers/mock/smoke.yaml
+python -m bayesaudit.cli estimate-pilot-cost --config configs/experiments/phase7_connectivity.yaml
+python -m bayesaudit.cli run-provider-connectivity --config configs/experiments/phase7_connectivity.yaml --dry-run
+python -m bayesaudit.cli run-real-workflow-pilot --config configs/experiments/phase7_workflow.yaml --dry-run
+python -m bayesaudit.cli run-measurement-pilot --config configs/experiments/phase7_measurement.yaml --dry-run
+python -m bayesaudit.cli evaluate-monitor-transfer --config configs/experiments/phase7_monitor_transfer.yaml --dry-run
+python -m bayesaudit.cli run-real-oversight-pilot --config configs/experiments/phase7_oversight.yaml --dry-run
+```
+
 ## Research Integrity
 
 BayesAudit must not report fabricated findings. Hypotheses, primary metrics, and confirmatory analyses are recorded before main-study execution. Pilot results may be used to repair tasks and scorers, but main benchmark changes after preregistration freeze must be documented as deviations.
 
-All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and attacker-defender outputs are synthetic mock-model artifacts unless an explicitly approved real-provider pilot is run in a later phase. They are useful for validating benchmark mechanics, scorer behavior, calibration plumbing, adaptive allocation logic, and strategic-selection methodology, but they are not evidence about real LLM systems.
+All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and attacker-defender outputs are synthetic mock-model artifacts. Phase 7 introduces real-provider pilot infrastructure, but default configs and CI remain mock-safe and credential-free. Real-provider results may be created only through explicitly authorized commands with hard cost, token, request, and trajectory ceilings, and must be labeled exploratory pilot data.

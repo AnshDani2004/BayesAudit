@@ -1,0 +1,19 @@
+provider:
+  provider_class: local
+  provider_name: example_local_runtime
+  model_identifier: replace-with-exact-local-model-id
+  enabled: false
+  endpoint: http://127.0.0.1:8000/v1/chat/completions
+  timeout_seconds: 120
+  max_retries: 1
+  backoff_initial_seconds: 0.5
+  estimated_input_tokens_per_request: 800
+  estimated_output_tokens_per_request: 400
+  estimated_cost_per_1k_input_tokens: 0.0
+  estimated_cost_per_1k_output_tokens: 0.0
+  local_cost_assumption: "Local execution has hardware, energy, and operator costs; this template assumes zero marginal API billing only."
+  runtime_metadata:
+    runtime: replace-with-runtime
+  hardware_metadata:
+    accelerator: unknown
+

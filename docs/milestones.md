@@ -111,12 +111,19 @@ Acceptance criteria:
 - oracle attacker is evaluation-only
 - restricted empirical-game analysis is labeled as restricted
 
-## Phase 7: Pilot
+## Phase 7: Real Model Pilot
 
-Goal: run a small costed pilot and inspect task quality.
+Status: implemented for mock-safe infrastructure and dry-run validation.
+
+Goal: run a small costed pilot and inspect task quality after explicit authorization.
 
 Acceptance criteria:
 
+- pre-pilot checkpoint records `main` at `f5c1962`
+- provider adapters are modular and disabled for real calls by default
+- real calls require explicit config enablement, CLI permission, credentials, and hard ceilings
+- pilot manifests, prompt records, permission records, caches, ledgers, failure records, annotation samples, transfer metrics, readiness records, freeze proposals, and Phase 8 planning artifacts are versioned
+- CI remains credential-free
 - broken or trivial tasks are identified before benchmark freeze
 - preliminary monitor calibration is measured
 - cost estimate is generated before paid runs

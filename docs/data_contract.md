@@ -53,3 +53,9 @@ Normalized Phase 5 dataset tables are `monitor_examples`, `monitor_labels`, and 
 ## Phase 6 Attack Artifacts
 
 Phase 6 adds `bayesaudit.attack.v1` artifacts. They include objectives, opportunities, attacker observations, decisions, states, events, concealment events, attacker-defender outcomes, payoff matrices, displacement records, red-team iterations, and evaluation manifests. Core trajectories remain unchanged.
+
+## Phase 7 Pilot Artifacts
+
+Phase 7 adds `bayesaudit.pilot.v1` artifacts. They include pilot manifests, provider permission records, cost plans, provider request records, provider response records, provider failure records, request-cache entries, billed-request ledger rows, prompt-render records, structured-output parse records, workflow-quality records, scorer-human comparison records, annotation sample records, annotation agreement records, monitor-transfer metrics, calibration-transfer metrics, OOD metrics, oversight-feasibility records, task-readiness records, scorer-readiness records, freeze proposals, and Phase 8 planning estimates.
+
+Core `bayesaudit.v2` trajectories remain readable. Credentials are never part of any Phase 7 artifact.

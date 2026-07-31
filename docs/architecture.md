@@ -38,6 +38,10 @@ Contains provider cost manifests and hard safety gates for any future real-model
 
 Contains Phase 6 attack schemas, attacker observations, synthetic primitives, stateful attacker policies, attacker-defender lifecycle helpers, and restricted empirical-game analysis.
 
+`bayesaudit.pilot`
+
+Contains Phase 7 real-pilot schemas, provider authorization records, cost plans, prompt renderers, request caches, request ledgers, structured-output parsing, workflow-quality flags, annotation samples, monitor/calibration/OOD transfer helpers, readiness classification, freeze-proposal generation, and Phase 8 planning scaffolds. Real-provider adapters are modular but disabled by default.
+
 `bayesaudit.scoring`
 
 Contains deterministic Phase 2 scorers for evidence, privacy, budgeting, authorization, and protected-attribute exclusion.
@@ -45,10 +49,6 @@ Contains deterministic Phase 2 scorers for evidence, privacy, budgeting, authori
 `bayesaudit.constraints`
 
 Contains canonical registries, typed envelopes, deterministic mutation application, envelope comparison, verification, repair, and retention metrics.
-
-`bayesaudit.attackers`
-
-Will contain honest, opportunistic, and strategic behavior conditions. Strategic attack logic will be configurable by attack budget, target step, target constraint, concealment choice, and detection penalty.
 
 `bayesaudit.storage`
 
@@ -86,6 +86,8 @@ flowchart LR
 ## Provider Modularity
 
 Model-provider integrations must be replaceable. The same architecture and policy tests must run against mock models without API credentials. Paid model runs require explicit configuration, cost estimation, and manifest capture.
+
+Phase 7 adds a stricter authorization contract: real calls require explicit provider/model IDs, provider config enablement, CLI authorization, environment credentials where applicable, hard cost/token/request/trajectory ceilings, manifest generation, output writability, adapter dry-run validation, and non-CI execution.
 
 ## Logging Contract
 

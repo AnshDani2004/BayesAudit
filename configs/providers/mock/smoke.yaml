@@ -1,0 +1,16 @@
+provider:
+  provider_class: mock
+  provider_name: mock
+  model_identifier: mock-deterministic-phase7
+  enabled: true
+  timeout_seconds: 10
+  max_retries: 1
+  backoff_initial_seconds: 0.01
+  estimated_input_tokens_per_request: 120
+  estimated_output_tokens_per_request: 80
+  estimated_cost_per_1k_input_tokens: 0.0
+  estimated_cost_per_1k_output_tokens: 0.0
+  sampling_parameters:
+    temperature: 0
+    top_p: 1
+

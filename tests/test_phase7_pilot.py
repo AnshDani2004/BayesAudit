@@ -1,0 +1,579 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from typing import Any
+
+import pytest
+from pytest import CaptureFixture, MonkeyPatch
+
+from bayesaudit.benchmark.io import load_tasks
+from bayesaudit.cli import main
+from bayesaudit.pilot.annotation import agreement_records, build_annotation_sample
+from bayesaudit.pilot.config import (
+    load_pilot_experiment_config,
+    load_pilot_provider_config,
+    validate_provider_config,
+)
+from bayesaudit.pilot.lifecycle import (
+    build_real_annotation_sample,
+    classify_pilot_tasks,
+    estimate_pilot_cost,
+    evaluate_monitor_transfer,
+    generate_freeze_proposal,
+    plan_phase8,
+    run_measurement_pilot,
+    run_provider_connectivity,
+    run_real_oversight_pilot,
+    run_real_workflow_pilot,
+    summarize_real_pilot,
+)
+from bayesaudit.pilot.prompts import FORBIDDEN_PROMPT_TOKENS, TEMPLATE_VERSIONS, render_prompt
+from bayesaudit.pilot.providers import (
+    ProviderLedger,
+    RequestCache,
+    authorize_provider_run,
+    classify_provider_failure,
+    estimate_pilot_plan,
+    execute_mock_or_cached,
+    make_provider_request,
+)
+from bayesaudit.pilot.structured import parse_structured_output
+from bayesaudit.pilot.transfer import oversight_feasibility_records
+from bayesaudit.pilot.types import PilotExperimentConfig, PilotPlan, PilotProviderConfig
+from bayesaudit.pilot.validation import (
+    compare_scorer_to_human,
+    default_scorer_readiness,
+    default_task_readiness,
+    readiness_counts,
+)
+from bayesaudit.pilot.workflow_quality import workflow_quality_flags
+from bayesaudit.schemas import (
+    ArchitectureKind,
+    BehaviorCondition,
+    BenchmarkTask,
+    BudgetState,
+    MessageRecord,
+    ModelConfigRecord,
+    ModelResponse,
+    Trajectory,
+    TrajectoryStatus,
+    TrajectoryStep,
+    WorkflowStepKind,
+)
+
+ROOT = Path("configs/experiments")
+CONNECTIVITY = ROOT / "phase7_connectivity.yaml"
+WORKFLOW = ROOT / "phase7_workflow.yaml"
+MEASUREMENT = ROOT / "phase7_measurement.yaml"
+TRANSFER = ROOT / "phase7_monitor_transfer.yaml"
+OVERSIGHT = ROOT / "phase7_oversight.yaml"
+ANNOTATION = ROOT / "phase7_annotation_sample.yaml"
+FULL = ROOT / "phase7_full_pilot.yaml"
+MOCK_PROVIDER_CONFIG = "configs/providers/mock/smoke.yaml"
+CONNECTIVITY_CONFIG = "configs/experiments/phase7_connectivity.yaml"
+WORKFLOW_CONFIG = "configs/experiments/phase7_workflow.yaml"
+MEASUREMENT_CONFIG = "configs/experiments/phase7_measurement.yaml"
+TRANSFER_CONFIG = "configs/experiments/phase7_monitor_transfer.yaml"
+OVERSIGHT_CONFIG = "configs/experiments/phase7_oversight.yaml"
+ANNOTATION_CONFIG = "configs/experiments/phase7_annotation_sample.yaml"
+FULL_CONFIG = "configs/experiments/phase7_full_pilot.yaml"
+
+
+def _task() -> BenchmarkTask:
+    return load_tasks(Path("scenarios"))[0]
+
+
+def _provider() -> PilotProviderConfig:
+    return load_pilot_provider_config(Path("configs/providers/mock/smoke.yaml"))
+
+
+def _config(path: Path = CONNECTIVITY) -> PilotExperimentConfig:
+    return load_pilot_experiment_config(path)
+
+
+def _plan(path: Path = CONNECTIVITY) -> PilotPlan:
+    config = _config(path)
+    return estimate_pilot_plan(config, _provider(), task_count=1)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        Path("configs/providers/mock/smoke.yaml"),
+        Path("configs/providers/remote/disabled_template.yaml"),
+        Path("configs/providers/local/disabled_template.yaml"),
+    ],
+)
+def test_phase7_provider_configs_validate(path: Path) -> None:
+    payload = validate_provider_config(path)
+    assert payload["valid"] is True
+    assert payload["credential_free_config"] is True
+
+
+@pytest.mark.parametrize(
+    "path",
+    [CONNECTIVITY, WORKFLOW, MEASUREMENT, TRANSFER, OVERSIGHT, ANNOTATION, FULL],
+)
+def test_phase7_experiment_configs_have_plans(path: Path) -> None:
+    payload = estimate_pilot_cost(path)
+    assert payload["schema_version"] == "bayesaudit.pilot.v1"
+    assert payload["planned_trajectories"] >= 0
+    assert payload["estimated_cost"] == 0.0
+
+
+def test_pilot_manifest_records_base_branch_and_commit(tmp_path: Path) -> None:
+    config = _config().model_copy(update={"output_root": tmp_path})
+    provider = _provider()
+    plan = estimate_pilot_plan(config, provider, task_count=1)
+    from bayesaudit.pilot.lifecycle import write_pilot_manifest
+
+    manifest = write_pilot_manifest(config, provider, plan, status="planned")
+    assert manifest.base_branch == "main"
+    assert manifest.base_commit == "f5c1962"
+    assert manifest.phase7_branch == "codex/phase7-real-model-pilot"
+
+
+@pytest.mark.parametrize(
+    "gate_name",
+    [
+        "provider_calls_enabled_in_config",
+        "cli_allow_provider_calls",
+        "provider_named",
+        "model_identifier_named",
+        "cost_ceiling_set",
+        "token_ceiling_set",
+        "request_ceiling_set",
+        "trajectory_ceiling_set",
+        "estimated_cost_within_ceiling",
+        "estimated_tokens_within_ceiling",
+        "planned_requests_within_ceiling",
+        "planned_trajectories_within_ceiling",
+        "large_run_protection",
+        "configuration_valid",
+        "pilot_manifest_written",
+        "output_location_writable",
+        "provider_adapter_dry_run_valid",
+        "no_ci_environment",
+    ],
+)
+def test_provider_permission_record_names_required_gates(gate_name: str) -> None:
+    record = authorize_provider_run(
+        _config(),
+        _provider(),
+        _plan(),
+        allow_provider_calls=False,
+        max_cost=None,
+        max_tokens=None,
+        max_requests=None,
+        max_trajectories=None,
+    )
+    assert gate_name in {gate.gate_name for gate in record.gates}
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "failed_gate"),
+    [
+        (
+            {"max_cost": -0.1, "max_tokens": 1000, "max_requests": 1, "max_trajectories": 1},
+            "estimated_cost_within_ceiling",
+        ),
+        (
+            {"max_cost": 0.0, "max_tokens": 1, "max_requests": 1, "max_trajectories": 1},
+            "estimated_tokens_within_ceiling",
+        ),
+        (
+            {"max_cost": 0.0, "max_tokens": 1000, "max_requests": 0, "max_trajectories": 1},
+            "planned_requests_within_ceiling",
+        ),
+        (
+            {"max_cost": 0.0, "max_tokens": 1000, "max_requests": 1, "max_trajectories": 0},
+            "planned_trajectories_within_ceiling",
+        ),
+    ],
+)
+def test_provider_permission_hard_ceilings_block(kwargs: dict[str, Any], failed_gate: str) -> None:
+    record = authorize_provider_run(
+        _config(),
+        _provider(),
+        _plan(),
+        allow_provider_calls=True,
+        **kwargs,
+    )
+    failed = {gate.gate_name for gate in record.gates if gate.status == "failed"}
+    assert failed_gate in failed
+    assert record.final_authorization_decision == "block"
+
+
+def test_provider_permission_blocks_in_ci(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setenv("CI", "true")
+    record = authorize_provider_run(
+        _config(),
+        _provider(),
+        _plan(),
+        allow_provider_calls=True,
+        max_cost=0.0,
+        max_tokens=1000,
+        max_requests=1,
+        max_trajectories=1,
+        manifest_written=True,
+    )
+    assert "no_ci_environment" in {
+        gate.gate_name for gate in record.gates if gate.status == "failed"
+    }
+
+
+def test_request_hash_stable_and_cache_hit_avoids_second_call(tmp_path: Path) -> None:
+    provider = _provider()
+    prompt = render_prompt(
+        template_name="single_agent",
+        task=_task(),
+        architecture="single_agent",
+        agent_role="planner",
+        delegation_depth=0,
+    )
+    request = make_provider_request(
+        provider, prompt_hash=prompt.prompt_hash, rendered_prompt=prompt.rendered_prompt
+    )
+    second = make_provider_request(
+        provider, prompt_hash=prompt.prompt_hash, rendered_prompt=prompt.rendered_prompt
+    )
+    assert request.request_hash == second.request_hash
+    cache = RequestCache(tmp_path / "cache")
+    ledger = ProviderLedger(tmp_path / "ledger.jsonl")
+    _, cached_first = execute_mock_or_cached(
+        provider, request, rendered_prompt=prompt.rendered_prompt, cache=cache, ledger=ledger
+    )
+    _, cached_second = execute_mock_or_cached(
+        provider, request, rendered_prompt=prompt.rendered_prompt, cache=cache, ledger=ledger
+    )
+    assert cached_first is False
+    assert cached_second is True
+    assert ledger.seen_completed(request.request_hash)
+
+
+@pytest.mark.parametrize(
+    "update",
+    [
+        {"model_identifier": "other-model"},
+        {"sampling_parameters": {"temperature": 0.7}},
+    ],
+)
+def test_request_hash_changes_for_model_or_sampling(update: dict[str, Any]) -> None:
+    provider = _provider()
+    prompt_hash = "prompt"
+    first = make_provider_request(provider, prompt_hash=prompt_hash, rendered_prompt="hello")
+    changed = make_provider_request(
+        provider.model_copy(update=update), prompt_hash=prompt_hash, rendered_prompt="hello"
+    )
+    assert first.request_hash != changed.request_hash
+
+
+def test_request_hash_changes_for_prompt() -> None:
+    provider = _provider()
+    first = make_provider_request(provider, prompt_hash="a", rendered_prompt="hello")
+    changed = make_provider_request(provider, prompt_hash="b", rendered_prompt="hello")
+    assert first.request_hash != changed.request_hash
+
+
+def test_partial_cache_entry_is_rejected(tmp_path: Path) -> None:
+    cache = RequestCache(tmp_path)
+    request_hash = "abc"
+    cache.path_for(request_hash).write_text(json.dumps({"request_hash": request_hash}))
+    assert cache.get(request_hash) is None
+
+
+@pytest.mark.parametrize("template_name", sorted(TEMPLATE_VERSIONS))
+def test_prompt_templates_record_versions_and_hashes(template_name: str) -> None:
+    if template_name == "structured_output_repair":
+        pytest.skip("repair prompt has a dedicated helper")
+    record = render_prompt(
+        template_name=template_name,
+        task=_task(),
+        architecture="unstructured_delegation",
+        agent_role="worker",
+        delegation_depth=1,
+    )
+    assert record.template_version == "phase7_prompt_v1"
+    assert record.prompt_hash
+    assert "ground_truth" not in record.rendered_prompt.lower()
+
+
+@pytest.mark.parametrize("token", sorted(FORBIDDEN_PROMPT_TOKENS))
+def test_prompt_renderer_rejects_hidden_tokens(token: str) -> None:
+    with pytest.raises(ValueError):
+        render_prompt(
+            template_name="planner",
+            task=_task(),
+            architecture="unstructured_delegation",
+            agent_role="planner",
+            delegation_depth=0,
+            subtask=token,
+        )
+
+
+def test_prompt_public_context_drops_forbidden_keys() -> None:
+    record = render_prompt(
+        template_name="oversight_monitor",
+        task=_task(),
+        architecture="single_agent",
+        agent_role="monitor",
+        delegation_depth=0,
+        oversight_context={"monitor_prediction": 0.9, "budget": 1},
+    )
+    assert record.oversight_context == {"budget": 1}
+
+
+def test_structured_output_valid_parse() -> None:
+    record = parse_structured_output('{"agent_role":"worker","confidence":0.8,"final_answer":"ok"}')
+    assert record.valid is True
+    assert record.parsed_output["agent_role"] == "worker"
+
+
+@pytest.mark.parametrize("raw", ["not json", "[]", '{"agent_role":"x","confidence":2}'])
+def test_structured_output_invalid_preserves_raw_and_repair(raw: str) -> None:
+    record = parse_structured_output(raw, repair_limit=1)
+    assert record.valid is False
+    assert record.raw_output == raw
+    assert record.parse_errors
+    assert record.repair_attempts == 1
+
+
+def test_structured_output_repair_limit_zero() -> None:
+    record = parse_structured_output("not json", repair_limit=0)
+    assert record.repair_attempts == 0
+
+
+def _response(content: str) -> ModelResponse:
+    return ModelResponse(
+        message=MessageRecord(role="assistant", content=content, agent_id="agent"),
+        provider="mock",
+        model_id="mock",
+        finish_reason="stop",
+        request_id="req",
+    )
+
+
+def _trajectory(*, final_input: str = "", worker_output: str = "worker result") -> Trajectory:
+    root = TrajectoryStep(
+        step_id="s1",
+        sequence_index=1,
+        agent_id="planner",
+        role="planner",
+        depth=0,
+        kind=WorkflowStepKind.PLANNING,
+        input_messages=[MessageRecord(role="user", content="original task")],
+        model_response=_response("planner output"),
+    )
+    worker = TrajectoryStep(
+        step_id="s2",
+        sequence_index=2,
+        parent_step_id="s1",
+        agent_id="worker",
+        role="worker",
+        depth=1,
+        kind=WorkflowStepKind.DELEGATION,
+        input_messages=[MessageRecord(role="user", content="subtask")],
+        model_response=_response(worker_output),
+    )
+    final = TrajectoryStep(
+        step_id="s3",
+        sequence_index=3,
+        parent_step_id="s1",
+        agent_id="planner",
+        role="planner",
+        depth=0,
+        kind=WorkflowStepKind.FINAL_OUTPUT,
+        input_messages=[MessageRecord(role="user", content=final_input)],
+        model_response=_response("final answer"),
+    )
+    return Trajectory(
+        trajectory_id="traj",
+        task_id="task_privacy_aggregate_only",
+        task_version="v1",
+        scenario_hash="hash",
+        experiment_id="phase7",
+        run_id="run",
+        architecture=ArchitectureKind.UNSTRUCTURED_DELEGATION,
+        behavior_condition=BehaviorCondition.HONEST,
+        model_configuration=ModelConfigRecord(provider="mock", model_id="mock"),
+        oversight_policy="none",
+        oversight_budget=BudgetState(initial_budget=0.0, remaining_budget=0.0, consumed_budget=0.0),
+        seed=1,
+        status=TrajectoryStatus.COMPLETED,
+        configuration_hash="hash",
+        steps=[root, worker, final],
+    )
+
+
+def test_workflow_quality_detects_aggregator_ignores_worker() -> None:
+    record = workflow_quality_flags(_trajectory(final_input="unrelated"))
+    assert "aggregator_ignores_worker" in record.flags
+
+
+def test_workflow_quality_accepts_worker_reference() -> None:
+    record = workflow_quality_flags(_trajectory(final_input="worker result"))
+    assert "aggregator_ignores_worker" not in record.flags
+
+
+@pytest.mark.parametrize(
+    ("automated", "human", "agreement"),
+    [(True, True, True), (True, False, False), (False, True, False)],
+)
+def test_scorer_human_comparison_records_disagreement(
+    automated: bool, human: bool, agreement: bool
+) -> None:
+    record = compare_scorer_to_human(
+        trajectory_id="t", domain="privacy", automated_positive=automated, human_positive=human
+    )
+    assert record.agreement is agreement
+
+
+def test_annotation_sample_blind_export_hides_metadata() -> None:
+    sample = build_annotation_sample(
+        [
+            {
+                "trajectory_id": "t",
+                "model_configuration": {"provider": "mock"},
+                "monitor_predictions": [{"risk": 1}],
+                "steps": [],
+            }
+        ],
+        sample_size=1,
+    )
+    item = sample["items"][0]
+    assert "model_configuration" not in item["blind_payload"]
+    assert item["sampling_probability"] == 1.0
+
+
+def test_annotation_agreement_computes_kappa() -> None:
+    records = agreement_records(
+        [
+            {"annotator_a": {"violation": "yes"}, "annotator_b": {"violation": "yes"}},
+            {"annotator_a": {"violation": "no"}, "annotator_b": {"violation": "yes"}},
+        ]
+    )
+    assert records[0].item_count == 2
+    assert records[0].percent_agreement == 0.5
+
+
+def test_oversight_feasibility_records_are_sandboxed() -> None:
+    records = oversight_feasibility_records()
+    assert len(records) >= 8
+    assert all(record.inert_or_sandboxed for record in records)
+
+
+def test_readiness_count_helpers() -> None:
+    records = default_task_readiness(["task_a", "task_b"])
+    assert readiness_counts(records)["ready_after_minor_repair"] == 2
+    scorer_records = default_scorer_readiness(["privacy", "privacy"])
+    assert len(scorer_records) == 1
+
+
+def test_provider_failure_classification() -> None:
+    record = classify_provider_failure(
+        TimeoutError("timeout"), provider=_provider(), request_hash="hash"
+    )
+    assert record.failure_type == "timeout"
+    assert record.retry_decision == "bounded_retry"
+
+
+def test_run_provider_connectivity_dry_run(tmp_path: Path) -> None:
+    config = _config().model_copy(update={"output_root": tmp_path})
+    path = tmp_path / "connectivity.yaml"
+    path.write_text(config.model_dump_json(), encoding="utf-8")
+    payload = run_provider_connectivity(path, dry_run=True)
+    assert payload["dry_run"] is True
+    assert payload["provider_calls_performed"] == 0
+
+
+def test_run_provider_connectivity_mock_executes_and_caches(tmp_path: Path) -> None:
+    config = _config().model_copy(update={"output_root": tmp_path})
+    path = tmp_path / "connectivity.yaml"
+    path.write_text(config.model_dump_json(), encoding="utf-8")
+    first = run_provider_connectivity(
+        path,
+        dry_run=False,
+        allow_provider_calls=True,
+        max_cost=0.0,
+        max_tokens=1000,
+        max_requests=1,
+        max_trajectories=1,
+    )
+    second = run_provider_connectivity(
+        path,
+        dry_run=False,
+        allow_provider_calls=True,
+        max_cost=0.0,
+        max_tokens=1000,
+        max_requests=1,
+        max_trajectories=1,
+    )
+    assert first["completed_requests"] == 1
+    assert second["cached_requests"] == 1
+
+
+@pytest.mark.parametrize(
+    ("func", "path"),
+    [
+        (run_real_workflow_pilot, WORKFLOW),
+        (run_measurement_pilot, MEASUREMENT),
+        (evaluate_monitor_transfer, TRANSFER),
+        (run_real_oversight_pilot, OVERSIGHT),
+    ],
+)
+def test_phase7_lifecycle_dry_run_commands(func, path: Path) -> None:  # type: ignore[no-untyped-def]
+    payload = func(path, dry_run=True)
+    assert payload["provider_calls_performed"] == 0
+
+
+def test_annotation_sample_command_generates_items() -> None:
+    payload = build_real_annotation_sample(ANNOTATION)
+    assert payload["sample_size"] == 3
+
+
+def test_summarize_real_pilot_reports_zero_real_trajectories() -> None:
+    payload = summarize_real_pilot(CONNECTIVITY)
+    assert payload["real_model_trajectory_count"] == 0
+
+
+def test_classify_pilot_tasks_and_freeze_and_phase8() -> None:
+    classified = classify_pilot_tasks(MEASUREMENT)
+    freeze = generate_freeze_proposal(MEASUREMENT)
+    phase8 = plan_phase8(FULL)
+    assert classified["counts"]
+    assert freeze["requires_explicit_freeze_approval"] is True
+    assert phase8["phase8_not_started"] is True
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["bayesaudit", "validate-provider-config", "--config", MOCK_PROVIDER_CONFIG],
+        ["bayesaudit", "estimate-pilot-cost", "--config", CONNECTIVITY_CONFIG],
+        ["bayesaudit", "run-provider-connectivity", "--config", CONNECTIVITY_CONFIG, "--dry-run"],
+        ["bayesaudit", "run-real-workflow-pilot", "--config", WORKFLOW_CONFIG, "--dry-run"],
+        ["bayesaudit", "run-measurement-pilot", "--config", MEASUREMENT_CONFIG, "--dry-run"],
+        ["bayesaudit", "evaluate-monitor-transfer", "--config", TRANSFER_CONFIG, "--dry-run"],
+        [
+            "bayesaudit",
+            "evaluate-calibration-transfer",
+            "--config",
+            TRANSFER_CONFIG,
+            "--dry-run",
+        ],
+        ["bayesaudit", "run-real-oversight-pilot", "--config", OVERSIGHT_CONFIG, "--dry-run"],
+        ["bayesaudit", "build-real-annotation-sample", "--config", ANNOTATION_CONFIG],
+        ["bayesaudit", "summarize-real-pilot", "--config", CONNECTIVITY_CONFIG],
+        ["bayesaudit", "classify-pilot-tasks", "--config", MEASUREMENT_CONFIG],
+        ["bayesaudit", "generate-freeze-proposal", "--config", MEASUREMENT_CONFIG],
+        ["bayesaudit", "plan-phase8", "--config", FULL_CONFIG],
+    ],
+)
+def test_phase7_cli_smoke(
+    argv: list[str], capsys: CaptureFixture[str], monkeypatch: MonkeyPatch
+) -> None:
+    monkeypatch.setattr("sys.argv", argv)
+    main()
+    output = capsys.readouterr().out
+    assert "phase7" in output or "valid" in output or "bayesaudit.pilot.v1" in output

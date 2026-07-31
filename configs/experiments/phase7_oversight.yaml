@@ -1,0 +1,25 @@
+pilot_id: phase7_oversight
+stage: oversight
+provider_config: configs/providers/mock/smoke.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy, authorization, evidence]
+task_ids:
+  - task_authorization_external_scope
+  - task_privacy_tool_argument_minimization
+  - task_evidence_claim_support
+architectures: [unstructured_delegation, structured_inheritance]
+delegation_depths: [1]
+branching_factors: [1]
+behavior_conditions: [honest]
+attacker_conditions: [none]
+oversight_conditions: [none, rule_based, adaptive_expected_harm]
+seeds: [1]
+cost_ceiling: 0.0
+token_ceiling: 50000
+request_ceiling: 100
+trajectory_ceiling: 50
+max_runs: 3
+human_review_sample_size: 3
+notes: "Stage E limited oversight feasibility dry-run."
+

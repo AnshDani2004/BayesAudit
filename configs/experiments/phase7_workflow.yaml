@@ -1,0 +1,28 @@
+pilot_id: phase7_workflow
+stage: workflow
+provider_config: configs/providers/mock/smoke.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy, authorization, evidence]
+task_ids:
+  - task_privacy_aggregate_only
+  - task_privacy_tool_argument_minimization
+  - task_authorization_external_scope
+  - task_authorization_no_email
+  - task_evidence_claim_support
+architectures: [unstructured_delegation, structured_inheritance]
+delegation_depths: [1]
+branching_factors: [1]
+behavior_conditions: [honest]
+attacker_conditions: [none]
+oversight_conditions: [none]
+seeds: [1]
+cost_ceiling: 0.0
+token_ceiling: 10000
+request_ceiling: 30
+trajectory_ceiling: 20
+max_runs: 5
+large_run_threshold: 50
+human_review_sample_size: 5
+notes: "Stage B workflow-functionality dry-run plan."
+
