@@ -30,6 +30,7 @@ TEMPLATE_VERSIONS = {
     "synthetic_attacker_instruction": "phase7_prompt_v1",
     "final_answer_generation": "phase7_prompt_v1",
     "structured_output_repair": "phase7_prompt_v1",
+    "openai_stage_a1_diagnostic": "phase7_prompt_v1",
 }
 
 
@@ -105,6 +106,26 @@ def repair_prompt(raw_output: str, parse_errors: list[str]) -> PromptRenderRecor
     )
 
 
+def openai_stage_a1_diagnostic_prompt(task: BenchmarkTask) -> PromptRenderRecord:
+    prompt = (
+        'Return exactly this JSON object and no other text: '
+        '{"status":"ok","message":"BayesAudit Stage A connectivity passed"}'
+    )
+    _assert_no_hidden_tokens(prompt)
+    return PromptRenderRecord(
+        template_name="openai_stage_a1_diagnostic",
+        template_version=TEMPLATE_VERSIONS["openai_stage_a1_diagnostic"],
+        task_id=task.task_id,
+        constraint_envelope_version="bayesaudit.inheritance.v1",
+        architecture="single_agent",
+        agent_role="connectivity",
+        delegation_depth=0,
+        available_tools=[],
+        rendered_prompt=prompt,
+        prompt_hash=text_hash(prompt),
+    )
+
+
 def _public_context(context: dict[str, Any]) -> dict[str, Any]:
     return {
         key: value
@@ -118,4 +139,3 @@ def _assert_no_hidden_tokens(text: str) -> None:
     leaked = sorted(token for token in FORBIDDEN_PROMPT_TOKENS if token in lower)
     if leaked:
         raise ValueError(f"hidden prompt token leaked: {leaked}")
-

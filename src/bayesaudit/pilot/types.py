@@ -50,6 +50,16 @@ ProviderFailureType = Literal[
     "partial_output",
     "unknown_provider_error",
 ]
+OpenAIExtractionStatus = Literal[
+    "success",
+    "refusal",
+    "incomplete_max_output_tokens",
+    "incomplete_content_filter",
+    "provider_failed",
+    "completed_empty_output",
+    "unsupported_response_shape",
+    "serialization_failed",
+]
 
 
 class PilotProviderConfig(StrictModel):
@@ -130,6 +140,9 @@ class PilotExperimentConfig(StrictModel):
     )
     trajectory_ceiling: NonNegativeInt | None = Field(
         default=None, validation_alias=AliasChoices("trajectory_ceiling", "max_trajectories")
+    )
+    local_execution_ceiling: NonNegativeInt = Field(
+        default=1, validation_alias=AliasChoices("local_execution_ceiling", "max_local_executions")
     )
     provider_calls_enabled: bool = False
     cache_enabled: bool = True
@@ -312,6 +325,20 @@ class ProviderResponseRecord(StrictModel):
     estimated_cost: float = 0.0
     provider_reported_cost: float | None = None
     timestamp: datetime = Field(default_factory=utc_now)
+
+
+class OpenAIExtractionResult(StrictModel):
+    text: str
+    extraction_source: str | None = None
+    message_count: int = 0
+    output_text_item_count: int = 0
+    refusal_count: int = 0
+    reasoning_item_count: int = 0
+    unknown_item_types: list[str] = Field(default_factory=list)
+    response_status: str | None = None
+    incomplete_reason: str | None = None
+    extraction_status: OpenAIExtractionStatus
+    failure_reason: str | None = None
 
 
 class ProviderFailureRecord(StrictModel):

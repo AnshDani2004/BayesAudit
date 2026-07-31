@@ -44,6 +44,7 @@ from bayesaudit.pilot.providers import (
     estimate_pilot_plan,
     execute_mock_or_cached,
     execute_provider_or_cached,
+    extract_openai_response,
     make_provider_request,
 )
 from bayesaudit.pilot.structured import parse_structured_output
@@ -74,6 +75,7 @@ from bayesaudit.schemas import (
     TrajectoryStep,
     WorkflowStepKind,
 )
+from bayesaudit.storage.jsonl import read_jsonl
 
 ROOT = Path("configs/experiments")
 CONNECTIVITY = ROOT / "phase7_connectivity.yaml"
@@ -95,6 +97,10 @@ OPENAI_STAGE_A = ROOT / "phase7_connectivity_openai_stage_a.yaml"
 OPENAI_STAGE_A_CONFIG = "configs/experiments/phase7_connectivity_openai_stage_a.yaml"
 OPENAI_PROVIDER = Path("configs/providers/remote/openai_phase7_stage_a.yaml")
 OPENAI_PROVIDER_CONFIG = "configs/providers/remote/openai_phase7_stage_a.yaml"
+OPENAI_STAGE_A1 = ROOT / "phase7_connectivity_openai_stage_a1.yaml"
+OPENAI_STAGE_A1_CONFIG = "configs/experiments/phase7_connectivity_openai_stage_a1.yaml"
+OPENAI_PROVIDER_A1 = Path("configs/providers/remote/openai_phase7_stage_a1.yaml")
+OPENAI_PROVIDER_A1_CONFIG = "configs/providers/remote/openai_phase7_stage_a1.yaml"
 
 
 def _task() -> BenchmarkTask:
@@ -121,6 +127,7 @@ def _plan(path: Path = CONNECTIVITY) -> PilotPlan:
         Path("configs/providers/remote/disabled_template.yaml"),
         Path("configs/providers/local/disabled_template.yaml"),
         OPENAI_PROVIDER,
+        OPENAI_PROVIDER_A1,
     ],
 )
 def test_phase7_provider_configs_validate(path: Path) -> None:
@@ -131,7 +138,17 @@ def test_phase7_provider_configs_validate(path: Path) -> None:
 
 @pytest.mark.parametrize(
     "path",
-    [CONNECTIVITY, WORKFLOW, MEASUREMENT, TRANSFER, OVERSIGHT, ANNOTATION, FULL, OPENAI_STAGE_A],
+    [
+        CONNECTIVITY,
+        WORKFLOW,
+        MEASUREMENT,
+        TRANSFER,
+        OVERSIGHT,
+        ANNOTATION,
+        FULL,
+        OPENAI_STAGE_A,
+        OPENAI_STAGE_A1,
+    ],
 )
 def test_phase7_experiment_configs_have_plans(path: Path) -> None:
     payload = estimate_pilot_cost(path)
@@ -248,6 +265,26 @@ def test_openai_stage_a_config_is_exact_and_tightly_capped() -> None:
     assert config.resume_enabled is True
     assert config.external_tools_enabled is False
     assert config.behavior_conditions == ["honest"]
+    assert config.attacker_conditions == ["none"]
+    assert config.oversight_conditions == ["none"]
+    assert plan.planned_trajectories == 1
+    assert plan.planned_requests == 1
+    assert plan.estimated_total_tokens <= 3000
+    assert plan.estimated_cost <= 0.01
+
+
+def test_openai_stage_a1_config_uses_diagnostic_budget_and_reasoning() -> None:
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_A1)
+    config = load_pilot_experiment_config(OPENAI_STAGE_A1)
+    plan = estimate_pilot_plan(config, provider, task_count=1)
+    assert provider.provider_name == "openai"
+    assert provider.model_identifier == "gpt-5-nano-2025-08-07"
+    assert provider.credential_env_var == "OPENAI_API_KEY"
+    assert provider.sampling_parameters["reasoning_effort"] == "minimal"
+    assert provider.sampling_parameters["max_output_tokens"] == 1000
+    assert provider.max_retries == 0
+    assert config.request_ceiling == 1
+    assert config.local_execution_ceiling == 2
     assert config.attacker_conditions == ["none"]
     assert config.oversight_conditions == ["none"]
     assert plan.planned_trajectories == 1
@@ -441,6 +478,7 @@ def test_openai_response_metadata_and_usage_parsing(monkeypatch: MonkeyPatch) ->
         "status": "completed",
         "output": [
             {
+                "type": "message",
                 "content": [
                     {
                         "type": "output_text",
@@ -479,7 +517,7 @@ def test_openai_response_metadata_and_usage_parsing(monkeypatch: MonkeyPatch) ->
     assert response.total_tokens == 18
     assert response.provider_reported_usage["cached_input_tokens"] == 3
     assert response.provider_reported_usage["reasoning_tokens"] == 2
-    assert response.raw_provider_response["id"] == "resp_123"
+    assert response.raw_provider_response["provider_request_id"] == "resp_123"
     assert "secret-value-that-must-not-appear" not in serialized
 
 
@@ -506,9 +544,324 @@ def test_openai_empty_output_failure_is_classified(monkeypatch: MonkeyPatch) -> 
     monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
     with pytest.raises(OpenAIProviderError) as exc_info:
         ProviderAdapter(provider).complete(request, "Return JSON only.")
-    assert exc_info.value.payload["id"] == "resp_empty"
+    assert exc_info.value.payload["provider_request_id"] == "resp_empty"
     failure = classify_provider_failure(exc_info.value, provider=provider, request_hash="hash")
     assert failure.failure_type == "empty_output"
+
+
+def test_openai_extracts_completed_sdk_output_text() -> None:
+    result = extract_openai_response({"status": "completed", "output_text": "  ok  "})
+    assert result.extraction_status == "success"
+    assert result.extraction_source == "output_text"
+    assert result.text == "ok"
+
+
+def test_openai_extracts_single_nested_message_output_text() -> None:
+    result = extract_openai_response(
+        {
+            "status": "completed",
+            "output": [
+                {
+                    "type": "message",
+                    "content": [{"type": "output_text", "text": "hello"}],
+                }
+            ],
+        }
+    )
+    assert result.extraction_status == "success"
+    assert result.extraction_source == "output.message.content.output_text"
+    assert result.message_count == 1
+    assert result.output_text_item_count == 1
+    assert result.text == "hello"
+
+
+def test_openai_extracts_multiple_nested_output_text_items() -> None:
+    result = extract_openai_response(
+        {
+            "status": "completed",
+            "output": [
+                {
+                    "type": "message",
+                    "content": [
+                        {"type": "output_text", "text": "hello"},
+                        {"type": "output_text", "text": "world"},
+                    ],
+                }
+            ],
+        }
+    )
+    assert result.extraction_status == "success"
+    assert result.output_text_item_count == 2
+    assert result.text == "hello\nworld"
+
+
+def test_openai_ignores_reasoning_items_before_message_output() -> None:
+    result = extract_openai_response(
+        {
+            "status": "completed",
+            "output": [
+                {"type": "reasoning", "summary": []},
+                {
+                    "type": "message",
+                    "content": [{"type": "output_text", "text": "visible"}],
+                },
+            ],
+        }
+    )
+    assert result.extraction_status == "success"
+    assert result.reasoning_item_count == 1
+    assert result.text == "visible"
+
+
+def test_openai_reasoning_only_is_completed_empty_output() -> None:
+    result = extract_openai_response(
+        {"status": "completed", "output": [{"type": "reasoning", "summary": []}]}
+    )
+    assert result.extraction_status == "completed_empty_output"
+    assert result.reasoning_item_count == 1
+
+
+def test_openai_completed_empty_output_status() -> None:
+    result = extract_openai_response({"status": "completed", "output": []})
+    assert result.extraction_status == "completed_empty_output"
+
+
+def test_openai_incomplete_max_output_tokens_status() -> None:
+    result = extract_openai_response(
+        {
+            "status": "incomplete",
+            "incomplete_details": {"reason": "max_output_tokens"},
+            "output": [{"type": "reasoning", "summary": []}],
+        }
+    )
+    assert result.extraction_status == "incomplete_max_output_tokens"
+    assert result.incomplete_reason == "max_output_tokens"
+
+
+def test_openai_incomplete_content_filter_status() -> None:
+    result = extract_openai_response(
+        {
+            "status": "incomplete",
+            "incomplete_details": {"reason": "content_filter"},
+            "output": [],
+        }
+    )
+    assert result.extraction_status == "incomplete_content_filter"
+
+
+def test_openai_failed_response_status() -> None:
+    result = extract_openai_response(
+        {"status": "failed", "error": {"code": "server_error"}, "output": []}
+    )
+    assert result.extraction_status == "provider_failed"
+
+
+def test_openai_refusal_status() -> None:
+    result = extract_openai_response(
+        {
+            "status": "completed",
+            "output": [
+                {
+                    "type": "message",
+                    "content": [{"type": "refusal", "refusal": "no"}],
+                }
+            ],
+        }
+    )
+    assert result.extraction_status == "refusal"
+    assert result.refusal_count == 1
+
+
+def test_openai_unknown_output_item_type_is_preserved() -> None:
+    result = extract_openai_response(
+        {"status": "completed", "output": [{"type": "file_search_call"}]}
+    )
+    assert result.extraction_status == "completed_empty_output"
+    assert "file_search_call" in result.unknown_item_types
+
+
+def test_openai_unknown_content_item_type_is_preserved() -> None:
+    result = extract_openai_response(
+        {
+            "status": "completed",
+            "output": [
+                {"type": "message", "content": [{"type": "image", "url": "ignored"}]}
+            ],
+        }
+    )
+    assert result.extraction_status == "completed_empty_output"
+    assert "image" in result.unknown_item_types
+
+
+def test_openai_missing_usage_object_defaults_to_zero(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_A1)
+    request = make_provider_request(provider, prompt_hash="prompt", rendered_prompt="Return JSON.")
+
+    def fake_post(
+        self: ProviderAdapter, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        return {
+            "id": "resp_no_usage",
+            "status": "completed",
+            "output_text": '{"status":"ok","message":"BayesAudit Stage A connectivity passed"}',
+        }
+
+    monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
+    response = ProviderAdapter(provider).complete(request, "Return JSON.")
+    assert response.input_tokens == 0
+    assert response.output_tokens == 0
+    assert response.total_tokens == 0
+
+
+def test_openai_stage_a1_request_body_sets_reasoning_and_output_budget(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_A1)
+    request = make_provider_request(provider, prompt_hash="prompt", rendered_prompt="Return JSON.")
+
+    def fake_post(
+        self: ProviderAdapter, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        assert body["reasoning"] == {"effort": "minimal"}
+        assert body["max_output_tokens"] == 1000
+        assert body["tools"] == []
+        assert body["parallel_tool_calls"] is False
+        return {
+            "id": "resp_budget",
+            "status": "completed",
+            "output_text": '{"status":"ok","message":"BayesAudit Stage A connectivity passed"}',
+            "usage": {
+                "input_tokens": 10,
+                "input_tokens_details": {"cached_tokens": 4},
+                "output_tokens": 6,
+                "output_tokens_details": {"reasoning_tokens": 2},
+                "total_tokens": 16,
+            },
+        }
+
+    monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
+    response = ProviderAdapter(provider).complete(request, "Return JSON.")
+    assert response.provider_reported_usage["cached_input_tokens"] == 4
+    assert response.provider_reported_usage["reasoning_tokens"] == 2
+
+
+def test_openai_raw_persistence_hook_runs_before_extraction_failure(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_A1)
+    request = make_provider_request(provider, prompt_hash="prompt", rendered_prompt="Return JSON.")
+    artifacts: list[dict[str, Any]] = []
+
+    def fake_post(
+        self: ProviderAdapter, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        return {
+            "id": "resp_incomplete",
+            "status": "incomplete",
+            "incomplete_details": {"reason": "max_output_tokens"},
+            "output": [{"type": "reasoning", "summary": []}],
+            "usage": {"input_tokens": 10, "output_tokens": 1000, "total_tokens": 1010},
+        }
+
+    monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
+    with pytest.raises(OpenAIProviderError) as exc_info:
+        ProviderAdapter(provider).complete(
+            request, "Return JSON.", raw_response_hook=artifacts.append
+        )
+    assert artifacts
+    assert artifacts[0]["provider_request_id"] == "resp_incomplete"
+    assert artifacts[0]["incomplete_details"] == {"reason": "max_output_tokens"}
+    assert exc_info.value.extraction is not None
+    assert exc_info.value.extraction.extraction_status == "incomplete_max_output_tokens"
+
+
+def test_openai_serialization_failure_fallback() -> None:
+    class BadResponse:
+        def model_dump(self, mode: str) -> dict[str, Any]:
+            raise RuntimeError("boom")
+
+    result = extract_openai_response(BadResponse())
+    assert result.extraction_status == "serialization_failed"
+    assert "model_dump failed" in str(result.failure_reason)
+
+
+def test_provider_cache_entry_only_after_successful_stage_a1_validation(
+    tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_A1)
+    request = make_provider_request(provider, prompt_hash="prompt", rendered_prompt="Return JSON.")
+    cache = RequestCache(tmp_path / "cache")
+    ledger = ProviderLedger(tmp_path / "ledger.jsonl")
+
+    def fake_post(
+        self: ProviderAdapter, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        return {
+            "id": "resp_valid",
+            "status": "completed",
+            "output_text": '{"status":"ok","message":"BayesAudit Stage A connectivity passed"}',
+            "usage": {"input_tokens": 10, "output_tokens": 6, "total_tokens": 16},
+        }
+
+    monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
+    response, cached = execute_provider_or_cached(
+        provider,
+        request,
+        rendered_prompt="Return JSON.",
+        cache=cache,
+        ledger=ledger,
+        cache_validator=lambda response: json.loads(response.raw_output)["status"] == "ok",
+    )
+    assert cached is False
+    assert response.response_hash
+    assert cache.get(request.request_hash) is not None
+    assert read_jsonl(tmp_path / "ledger.jsonl")[0]["status"] == "completed"
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"id": "resp_incomplete", "status": "incomplete", "output": []},
+        {"id": "resp_failed", "status": "failed", "error": {"code": "x"}, "output": []},
+        {
+            "id": "resp_refusal",
+            "status": "completed",
+            "output": [
+                {"type": "message", "content": [{"type": "refusal", "refusal": "no"}]}
+            ],
+        },
+        {"id": "resp_empty", "status": "completed", "output": []},
+    ],
+)
+def test_no_cache_entry_after_non_success_openai_response(
+    payload: dict[str, Any], tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_A1)
+    request = make_provider_request(provider, prompt_hash="prompt", rendered_prompt="Return JSON.")
+    cache = RequestCache(tmp_path / "cache")
+    ledger = ProviderLedger(tmp_path / "ledger.jsonl")
+
+    def fake_post(
+        self: ProviderAdapter, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        return payload
+
+    monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
+    with pytest.raises(OpenAIProviderError):
+        execute_provider_or_cached(
+            provider,
+            request,
+            rendered_prompt="Return JSON.",
+            cache=cache,
+            ledger=ledger,
+        )
+    assert cache.get(request.request_hash) is None
+    assert not (tmp_path / "ledger.jsonl").exists()
 
 
 @pytest.mark.parametrize(

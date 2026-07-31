@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -15,7 +16,7 @@ from bayesaudit.pilot.config import (
     load_pilot_experiment_config,
     load_pilot_provider_config,
 )
-from bayesaudit.pilot.prompts import render_prompt
+from bayesaudit.pilot.prompts import openai_stage_a1_diagnostic_prompt, render_prompt
 from bayesaudit.pilot.providers import (
     ProviderLedger,
     RequestCache,
@@ -131,13 +132,16 @@ def run_provider_connectivity(
     if provider.provider_class != "mock" and not permission_payload["allowed"]:
         raise PermissionError("provider run blocked by Phase 7 safety gates")
     task = _selected_tasks(config)[0]
-    prompt = render_prompt(
-        template_name="single_agent",
-        task=task,
-        architecture=ArchitectureKind.SINGLE_AGENT.value,
-        agent_role="connectivity",
-        delegation_depth=0,
-    )
+    if config.pilot_id == "phase7_connectivity_openai_stage_a1":
+        prompt = openai_stage_a1_diagnostic_prompt(task)
+    else:
+        prompt = render_prompt(
+            template_name="single_agent",
+            task=task,
+            architecture=ArchitectureKind.SINGLE_AGENT.value,
+            agent_role="connectivity",
+            delegation_depth=0,
+        )
     request = make_provider_request(
         provider,
         prompt_hash=prompt.prompt_hash,
@@ -154,6 +158,14 @@ def run_provider_connectivity(
             rendered_prompt=prompt.rendered_prompt,
             cache=cache,
             ledger=ledger,
+            raw_response_hook=lambda artifact: write_json_atomic(
+                output_dir / "provider_raw_response.json", artifact
+            ),
+            cache_validator=(
+                _valid_stage_a1_diagnostic_response
+                if config.pilot_id == "phase7_connectivity_openai_stage_a1"
+                else None
+            ),
         )
     except Exception as exc:
         failure = classify_provider_failure(
@@ -181,12 +193,13 @@ def run_provider_connectivity(
             "failure_message": failure.message,
             "output_dir": str(output_dir),
         }
-    parsed = parse_structured_output(response.raw_output)
-    write_json_atomic(output_dir / "connectivity_response.json", response.model_dump(mode="json"))
-    write_json_atomic(
-        output_dir / "connectivity_structured_output.json",
-        parsed.model_dump(mode="json"),
+    parsed = (
+        _parse_stage_a1_diagnostic_response(response.raw_output)
+        if config.pilot_id == "phase7_connectivity_openai_stage_a1"
+        else parse_structured_output(response.raw_output).model_dump(mode="json")
     )
+    write_json_atomic(output_dir / "connectivity_response.json", response.model_dump(mode="json"))
+    write_json_atomic(output_dir / "connectivity_structured_output.json", parsed)
     manifest_status: PilotStatus = "completed"
     final_manifest = write_pilot_manifest(config, provider, plan, status=manifest_status)
     final_manifest.completed_requests = 0 if cached else 1
@@ -210,7 +223,7 @@ def run_provider_connectivity(
         "total_tokens": response.total_tokens,
         "actual_cost": response.estimated_cost,
         "finish_reason": response.finish_reason,
-        "structured_output_valid": parsed.valid,
+        "structured_output_valid": bool(parsed.get("valid")),
         "output_dir": str(output_dir),
     }
 
@@ -480,6 +493,35 @@ def write_pilot_manifest(
     )
     write_json_atomic(_output_dir(config) / "pilot_manifest.json", manifest.model_dump(mode="json"))
     return manifest
+
+
+def _valid_stage_a1_diagnostic_response(response: Any) -> bool:
+    return bool(_parse_stage_a1_diagnostic_response(str(response.raw_output)).get("valid"))
+
+
+def _parse_stage_a1_diagnostic_response(raw_output: str) -> dict[str, Any]:
+    expected = {
+        "status": "ok",
+        "message": "BayesAudit Stage A connectivity passed",
+    }
+    try:
+        payload = json.loads(raw_output)
+    except json.JSONDecodeError as exc:
+        return {
+            "schema_version": PILOT_SCHEMA_VERSION,
+            "valid": False,
+            "parse_errors": [str(exc)],
+            "parsed_output": {},
+            "expected_output": expected,
+        }
+    valid = payload == expected
+    return {
+        "schema_version": PILOT_SCHEMA_VERSION,
+        "valid": valid,
+        "parse_errors": [] if valid else ["diagnostic JSON did not match expected value"],
+        "parsed_output": payload if isinstance(payload, dict) else {},
+        "expected_output": expected,
+    }
 
 
 def _config_provider_plan(

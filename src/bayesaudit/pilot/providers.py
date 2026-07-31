@@ -7,11 +7,13 @@ import os
 import time
 import urllib.error
 import urllib.request
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
 from bayesaudit.hash_utils import canonical_json_hash, text_hash
 from bayesaudit.pilot.types import (
+    OpenAIExtractionResult,
     PermissionGateRecord,
     PilotExperimentConfig,
     PilotPlan,
@@ -25,9 +27,16 @@ from bayesaudit.storage.jsonl import append_jsonl, read_json, read_jsonl, write_
 
 
 class OpenAIProviderError(RuntimeError):
-    def __init__(self, message: str, *, payload: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self,
+        message: str,
+        *,
+        payload: dict[str, Any] | None = None,
+        extraction: OpenAIExtractionResult | None = None,
+    ) -> None:
         super().__init__(message)
         self.payload = payload or {}
+        self.extraction = extraction
 
 
 class ProviderAdapter:
@@ -80,18 +89,28 @@ class ProviderAdapter:
             estimated_cost=request.estimated_cost,
         )
 
-    def complete(self, request: ProviderRequestRecord, prompt: str) -> ProviderResponseRecord:
+    def complete(
+        self,
+        request: ProviderRequestRecord,
+        prompt: str,
+        *,
+        raw_response_hook: Callable[[dict[str, Any]], None] | None = None,
+    ) -> ProviderResponseRecord:
         if self.config.provider_class == "mock":
             return self.complete_mock(request, prompt)
         if (
             self.config.provider_class == "remote_api"
             and (self.config.provider_name or "").lower() == "openai"
         ):
-            return self._complete_openai(request, prompt)
+            return self._complete_openai(request, prompt, raw_response_hook=raw_response_hook)
         raise ValueError(f"unsupported provider adapter: {self.config.provider_class}")
 
     def _complete_openai(
-        self, request: ProviderRequestRecord, prompt: str
+        self,
+        request: ProviderRequestRecord,
+        prompt: str,
+        *,
+        raw_response_hook: Callable[[dict[str, Any]], None] | None = None,
     ) -> ProviderResponseRecord:
         credential_name = self.config.credential_env_var
         api_key = os.environ.get(credential_name or "")
@@ -106,24 +125,42 @@ class ProviderAdapter:
         )
         body: dict[str, Any] = {
             "model": self.model_identifier,
-            "input": prompt,
+            "input": [{"role": "user", "content": prompt}],
             "max_output_tokens": max_output_tokens,
+            "tools": [],
+            "parallel_tool_calls": False,
+            "store": False,
         }
+        reasoning_effort = self.config.sampling_parameters.get("reasoning_effort")
+        if reasoning_effort:
+            body["reasoning"] = {"effort": reasoning_effort}
         if "temperature" in self.config.sampling_parameters:
             body["temperature"] = self.config.sampling_parameters["temperature"]
         if "top_p" in self.config.sampling_parameters:
             body["top_p"] = self.config.sampling_parameters["top_p"]
         payload = self._post_openai_json(endpoint, body, api_key)
-        raw_output = _extract_openai_text(payload)
+        raw_artifact = build_openai_raw_response_artifact(
+            provider=self.config,
+            request=request,
+            request_body=body,
+            response_payload=payload,
+        )
+        if raw_response_hook is not None:
+            raw_response_hook(raw_artifact)
+        extraction = extract_openai_response(payload)
+        if extraction.extraction_status != "success":
+            raise OpenAIProviderError(
+                f"openai_extraction_status={extraction.extraction_status}: "
+                f"{extraction.failure_reason or 'no visible output text'}",
+                payload=raw_artifact,
+                extraction=extraction,
+            )
+        raw_output = extraction.text
         usage = _extract_openai_usage(payload)
         input_tokens = int(usage.get("input_tokens", 0) or 0)
         output_tokens = int(usage.get("output_tokens", 0) or 0)
         total_tokens = int(usage.get("total_tokens", input_tokens + output_tokens) or 0)
         estimated_cost = _estimated_response_cost(self.config, input_tokens, output_tokens)
-        if not raw_output:
-            raise OpenAIProviderError(
-                "OpenAI response did not contain output text", payload=payload
-            )
         return ProviderResponseRecord(
             response_id="resp_" + text_hash(json.dumps(payload, sort_keys=True, default=str))[:20],
             request_hash=request.request_hash,
@@ -131,7 +168,7 @@ class ProviderAdapter:
             provider_request_id=str(payload.get("id") or ""),
             finish_reason=_extract_openai_finish_reason(payload),
             raw_output=raw_output,
-            raw_provider_response=payload,
+            raw_provider_response=raw_artifact,
             parsed_output={},
             provider_reported_usage=usage,
             input_tokens=input_tokens,
@@ -462,6 +499,8 @@ def execute_provider_or_cached(
     rendered_prompt: str,
     cache: RequestCache,
     ledger: ProviderLedger,
+    raw_response_hook: Callable[[dict[str, Any]], None] | None = None,
+    cache_validator: Callable[[ProviderResponseRecord], bool] | None = None,
 ) -> tuple[ProviderResponseRecord, bool]:
     cached = cache.get(request.request_hash)
     if cached is not None:
@@ -471,7 +510,10 @@ def execute_provider_or_cached(
     response = adapter_for(provider).complete(
         request.model_copy(update={"status": "completed", "attempt_count": 1}),
         rendered_prompt,
+        raw_response_hook=raw_response_hook,
     )
+    if cache_validator is not None and not cache_validator(response):
+        raise ValueError("provider response failed cache validation")
     cache.put(response)
     ledger.append_request(request.model_copy(update={"status": "completed", "attempt_count": 1}))
     return response, False
@@ -511,14 +553,20 @@ def classify_provider_failure(
     elif "server" in message:
         failure_type = "provider_server_error"
         retry = "bounded_retry"
-    elif "did not contain output text" in message or "empty" in message:
+    elif "incomplete_max_output_tokens" in message:
+        failure_type = "partial_output"
+    elif (
+        "incomplete_content_filter" in message
+        or "content_filter" in message
+        or "refusal" in message
+    ):
+        failure_type = "content_filter"
+    elif "completed_empty_output" in message or "empty" in message:
         failure_type = "empty_output"
     elif "invalid" in message:
         failure_type = "invalid_request"
     elif "context" in message:
         failure_type = "context_length_failure"
-    elif "content" in message and "filter" in message:
-        failure_type = "content_filter"
     return ProviderFailureRecord(
         failure_id="fail_"
         + canonical_json_hash({"request": request_hash, "message": str(exc)})[:20],
@@ -574,26 +622,157 @@ def _ci_environment() -> bool:
     )
 
 
-def _extract_openai_text(payload: dict[str, Any]) -> str:
+def build_openai_raw_response_artifact(
+    *,
+    provider: PilotProviderConfig,
+    request: ProviderRequestRecord,
+    request_body: dict[str, Any],
+    response_payload: Any,
+) -> dict[str, Any]:
+    payload, serialization_error = _serialize_openai_payload(response_payload)
+    usage = _extract_openai_usage(payload)
+    output_items = payload.get("output")
+    output_item_types = _output_item_types(output_items)
+    content_item_types = _message_content_item_types(output_items)
+    return {
+        "schema_version": "bayesaudit.pilot.openai_raw_response.v1",
+        "provider": provider.provider_name or provider.provider_class,
+        "model_identifier": provider.model_identifier,
+        "request_id": request.request_id,
+        "request_hash": request.request_hash,
+        "provider_request_id": payload.get("id"),
+        "response_id": payload.get("id"),
+        "object": payload.get("object"),
+        "status": payload.get("status"),
+        "error": payload.get("error"),
+        "incomplete_details": payload.get("incomplete_details"),
+        "max_output_tokens": request_body.get("max_output_tokens"),
+        "reasoning": request_body.get("reasoning"),
+        "streaming_enabled": False,
+        "structured_output_requested": bool(request_body.get("text")),
+        "output_item_types": output_item_types,
+        "message_content_item_types": content_item_types,
+        "refusals": _refusal_values(output_items),
+        "usage": usage,
+        "input_tokens": usage.get("input_tokens", 0),
+        "cached_input_tokens": usage.get("cached_input_tokens", 0),
+        "output_tokens": usage.get("output_tokens", 0),
+        "reasoning_tokens": usage.get("reasoning_tokens", 0),
+        "total_tokens": usage.get("total_tokens", 0),
+        "finish_reason": _extract_openai_finish_reason(payload),
+        "timestamp": payload.get("created_at") or payload.get("created"),
+        "serialization_failed": serialization_error is not None,
+        "serialization_error": serialization_error,
+        "response_payload": payload,
+    }
+
+
+def extract_openai_response(response_payload: Any) -> OpenAIExtractionResult:
+    payload, serialization_error = _serialize_openai_payload(response_payload)
+    if serialization_error is not None:
+        return OpenAIExtractionResult(
+            text="",
+            extraction_status="serialization_failed",
+            failure_reason=serialization_error,
+        )
+    status = str(payload.get("status") or "")
+    incomplete_reason = _incomplete_reason(payload)
+    message_count = 0
+    output_text_count = 0
+    refusal_count = 0
+    reasoning_count = 0
+    unknown_types: list[str] = []
     direct = payload.get("output_text")
     if isinstance(direct, str) and direct.strip():
-        return direct
-    parts: list[str] = []
+        return OpenAIExtractionResult(
+            text=direct.strip(),
+            extraction_source="output_text",
+            response_status=status or None,
+            incomplete_reason=incomplete_reason,
+            extraction_status="success",
+            output_text_item_count=1,
+        )
     output = payload.get("output")
+    parts: list[str] = []
     if isinstance(output, list):
         for item in output:
             if not isinstance(item, dict):
+                unknown_types.append(type(item).__name__)
                 continue
+            item_type = str(item.get("type") or "unknown")
+            if item_type == "reasoning":
+                reasoning_count += 1
+                continue
+            if item_type != "message":
+                unknown_types.append(item_type)
+                continue
+            message_count += 1
             content = item.get("content")
             if not isinstance(content, list):
+                unknown_types.append("message.content." + type(content).__name__)
                 continue
             for content_item in content:
                 if not isinstance(content_item, dict):
+                    unknown_types.append("content." + type(content_item).__name__)
                     continue
-                text = content_item.get("text")
-                if isinstance(text, str):
-                    parts.append(text)
-    return "\n".join(part for part in parts if part.strip())
+                content_type = str(content_item.get("type") or "unknown")
+                if content_type == "output_text":
+                    text = content_item.get("text")
+                    if isinstance(text, str) and text.strip():
+                        parts.append(text.strip())
+                        output_text_count += 1
+                elif content_type == "refusal":
+                    refusal_count += 1
+                else:
+                    unknown_types.append(content_type)
+    elif output is not None:
+        unknown_types.append("output." + type(output).__name__)
+    text = "\n".join(parts).strip()
+    if text:
+        return OpenAIExtractionResult(
+            text=text,
+            extraction_source="output.message.content.output_text",
+            message_count=message_count,
+            output_text_item_count=output_text_count,
+            refusal_count=refusal_count,
+            reasoning_item_count=reasoning_count,
+            unknown_item_types=sorted(set(unknown_types)),
+            response_status=status or None,
+            incomplete_reason=incomplete_reason,
+            extraction_status="success",
+        )
+    extraction_status = "completed_empty_output"
+    failure_reason = "completed response did not include visible output_text"
+    if refusal_count:
+        extraction_status = "refusal"
+        failure_reason = "response contained refusal content"
+    elif status == "failed" or payload.get("error"):
+        extraction_status = "provider_failed"
+        failure_reason = "response status or error indicates provider failure"
+    elif status == "incomplete" and incomplete_reason == "max_output_tokens":
+        extraction_status = "incomplete_max_output_tokens"
+        failure_reason = "response exhausted max_output_tokens before visible output"
+    elif status == "incomplete" and incomplete_reason == "content_filter":
+        extraction_status = "incomplete_content_filter"
+        failure_reason = "response was stopped by content filtering"
+    elif status and status not in {"completed", "incomplete", "failed"}:
+        extraction_status = "unsupported_response_shape"
+        failure_reason = f"unsupported response status: {status}"
+    elif not isinstance(output, list):
+        extraction_status = "unsupported_response_shape"
+        failure_reason = "response output was not an array"
+    return OpenAIExtractionResult(
+        text="",
+        message_count=message_count,
+        output_text_item_count=output_text_count,
+        refusal_count=refusal_count,
+        reasoning_item_count=reasoning_count,
+        unknown_item_types=sorted(set(unknown_types)),
+        response_status=status or None,
+        incomplete_reason=incomplete_reason,
+        extraction_status=extraction_status,
+        failure_reason=failure_reason,
+    )
 
 
 def _extract_openai_usage(payload: dict[str, Any]) -> dict[str, Any]:
@@ -608,6 +787,88 @@ def _extract_openai_usage(payload: dict[str, Any]) -> dict[str, Any]:
     if isinstance(output_details, dict):
         normalized["reasoning_tokens"] = int(output_details.get("reasoning_tokens", 0) or 0)
     return normalized
+
+
+def _serialize_openai_payload(response_payload: Any) -> tuple[dict[str, Any], str | None]:
+    if isinstance(response_payload, dict):
+        return response_payload, None
+    model_dump = getattr(response_payload, "model_dump", None)
+    if callable(model_dump):
+        try:
+            payload = model_dump(mode="json")
+            if isinstance(payload, dict):
+                return payload, None
+        except Exception as exc:
+            return {
+                "response_class": response_payload.__class__.__name__,
+            }, f"model_dump failed: {type(exc).__name__}: {exc}"
+    to_dict = getattr(response_payload, "to_dict", None)
+    if callable(to_dict):
+        try:
+            payload = to_dict()
+            if isinstance(payload, dict):
+                return payload, None
+        except Exception as exc:
+            return {
+                "response_class": response_payload.__class__.__name__,
+            }, f"to_dict failed: {type(exc).__name__}: {exc}"
+    return {
+        "response_class": response_payload.__class__.__name__,
+    }, "unsupported response serialization"
+
+
+def _output_item_types(output: Any) -> list[str]:
+    if not isinstance(output, list):
+        return []
+    types: list[str] = []
+    for item in output:
+        if isinstance(item, dict):
+            types.append(str(item.get("type") or "unknown"))
+        else:
+            types.append(type(item).__name__)
+    return types
+
+
+def _message_content_item_types(output: Any) -> list[str]:
+    if not isinstance(output, list):
+        return []
+    types: list[str] = []
+    for item in output:
+        if not isinstance(item, dict) or item.get("type") != "message":
+            continue
+        content = item.get("content")
+        if not isinstance(content, list):
+            types.append(type(content).__name__)
+            continue
+        for content_item in content:
+            if isinstance(content_item, dict):
+                types.append(str(content_item.get("type") or "unknown"))
+            else:
+                types.append(type(content_item).__name__)
+    return types
+
+
+def _refusal_values(output: Any) -> list[Any]:
+    if not isinstance(output, list):
+        return []
+    refusals: list[Any] = []
+    for item in output:
+        if not isinstance(item, dict) or item.get("type") != "message":
+            continue
+        content = item.get("content")
+        if not isinstance(content, list):
+            continue
+        for content_item in content:
+            if isinstance(content_item, dict) and content_item.get("type") == "refusal":
+                refusals.append(content_item.get("refusal") or content_item.get("text"))
+    return refusals
+
+
+def _incomplete_reason(payload: dict[str, Any]) -> str | None:
+    incomplete = payload.get("incomplete_details")
+    if isinstance(incomplete, dict) and incomplete.get("reason"):
+        return str(incomplete["reason"])
+    return None
 
 
 def _extract_openai_finish_reason(payload: dict[str, Any]) -> str:
