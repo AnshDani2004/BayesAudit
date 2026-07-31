@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "BayesAudit: Adaptive, Budget-Constrained Oversight for Hierarchical LLM Agents"
+message: "If you use BayesAudit, please cite this repository and any associated paper."
+type: software
+authors:
+  - family-names: "BayesAudit contributors"
+    given-names: ""
+repository-code: "https://github.com/example/bayesaudit"
+license: MIT
+version: 0.1.0
+date-released: 2026-07-31
+

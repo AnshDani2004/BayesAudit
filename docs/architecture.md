@@ -1,0 +1,89 @@
+# Proposed Architecture
+
+## Package Boundaries
+
+`bayesaudit.schemas`
+
+Defines Pydantic records for tasks, constraints, trajectory steps, audit decisions, violations, scores, and monitor estimates. These schemas are the stable contract between generation, execution, scoring, storage, and analysis.
+
+`bayesaudit.interfaces`
+
+Defines Protocol interfaces for model clients, workflow architectures, oversight policies, scorers, and monitors.
+
+`bayesaudit.benchmark`
+
+Loads and validates benchmark tasks. Scenario hashes are computed from canonical fixture content during loading. Controlled parameterized generation remains deferred.
+
+`bayesaudit.architectures`
+
+Contains the single-agent workflow, unstructured deterministic planner-worker hierarchy, structured inheritance workflow, and verified inheritance workflow.
+
+`bayesaudit.oversight`
+
+Contains Phase 4 checkpoint extraction, redacted observation construction, deterministic audit mechanisms, budget ledgers, no-oversight, random, fixed-checkpoint, rule-based, and evaluation-only oracle policies, replay logic, matching, metrics, and counterfactual helpers.
+
+`bayesaudit.scoring`
+
+Contains deterministic Phase 2 scorers for evidence, privacy, budgeting, authorization, and protected-attribute exclusion.
+
+`bayesaudit.constraints`
+
+Contains canonical registries, typed envelopes, deterministic mutation application, envelope comparison, verification, repair, and retention metrics.
+
+`bayesaudit.attackers`
+
+Will contain honest, opportunistic, and strategic behavior conditions. Strategic attack logic will be configurable by attack budget, target step, target constraint, concealment choice, and detection penalty.
+
+`bayesaudit.storage`
+
+Persists append-only raw JSONL trajectories/scores and normalized Parquet tables, including Phase 3 inheritance artifact tables. DuckDB can consume the Parquet outputs but is not required for tests.
+
+`bayesaudit.statistics`
+
+Will fit confirmatory and exploratory models, including hierarchical logistic regression, bootstrap intervals, calibration metrics, and sensitivity analyses.
+
+`bayesaudit.visualization`
+
+Will produce safety-reward-cost frontiers, calibration plots, and benchmark summary figures.
+
+## Data Flow
+
+```mermaid
+flowchart LR
+    A["YAML task fixtures"] --> B["Benchmark loader"]
+    B --> C["Workflow architecture"]
+    D["Model client"] --> C
+    E["Oversight policy"] --> C
+    C --> F["Raw trajectory log"]
+    F --> G["Deterministic scorers"]
+    F --> H["Oversight replay"]
+    G --> I["Long-form result tables"]
+    H --> I
+    I --> J["Statistical analysis"]
+    I --> K["Human annotation sample"]
+    J --> L["Figures and report"]
+```
+
+## Provider Modularity
+
+Model-provider integrations must be replaceable. The same architecture and policy tests must run against mock models without API credentials. Paid model runs require explicit configuration, cost estimation, and manifest capture.
+
+## Logging Contract
+
+Every completed or failed trajectory must record:
+
+- task ID and task version
+- configuration and code commit
+- model provider and model version
+- seed
+- prompts and messages
+- delegated subtasks
+- visible constraints
+- tool calls and authorization status
+- audit decisions
+- audit feedback
+- detection matches
+- interventions and escalations
+- budget transactions
+- scorer outputs
+- cost, latency, and token usage where available
