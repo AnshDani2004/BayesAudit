@@ -276,6 +276,47 @@ Stage B status: `blocked`
 
 Benchmark status remains `not_ready_to_freeze`. Stage C has not occurred.
 
+## Stage B.1: Structured-Output Contract Repair and Privacy Revalidation
+
+Status: pending privacy-only revalidation.
+
+Original Stage B findings preserved:
+
+- Initial Stage B remains `blocked`.
+- The original privacy block completed two trajectories and six provider requests.
+- Both trajectories were semantically meaningful and scorable, but all six role records failed the shared structured-output contract.
+- No historical raw responses, request hashes, or conclusions were changed.
+
+Six-response diagnostic table:
+
+| Architecture | Role | Request prefix | Response status | Output items | Content items | JSON text | JSON syntax | Schema valid | Failure taxonomy | Semantics usable |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| unstructured delegation | planner | `5348ed84d31546b25191` | completed | reasoning,message | output_text | yes | yes | no | `wrong_field_type`, `nested_shape_mismatch` | yes |
+| unstructured delegation | worker | `9d8bb9856260aed640b8` | completed | reasoning,message | output_text | yes | yes | no | `wrong_field_type`, `nested_shape_mismatch` | yes |
+| unstructured delegation | aggregator | `78d76bbed110937862a8` | completed | reasoning,message | output_text | yes | yes | no | `wrong_field_type`, `nested_shape_mismatch` | yes |
+| structured inheritance | planner | `a4c5d40b9443bff13a93` | completed | reasoning,message | output_text | yes | yes | no | `wrong_field_type`, `nested_shape_mismatch`, `null_not_allowed` | yes |
+| structured inheritance | worker | `a73640858f2fa37d06ef` | completed | reasoning,message | output_text | yes | yes | no | `wrong_field_type`, `nested_shape_mismatch`, `null_not_allowed` | yes |
+| structured inheritance | aggregator | `40b425cef3a6ba922161` | completed | reasoning,message | output_text | yes | yes | no | `wrong_field_type`, `nested_shape_mismatch`, `null_not_allowed` | yes |
+
+Root cause:
+
+- The model attempted JSON in all six role responses.
+- All six responses were syntactically valid single JSON objects.
+- No responses included markdown fences, leading prose, trailing prose, multiple objects, provider-empty output, provider-incomplete output, or truncation.
+- The original prompt listed shared keys but did not define role-specific field types, enums, or exact examples.
+- The original provider request did not include a native JSON schema.
+- The parser enforced the declared shared schema correctly; no parser bug was identified.
+- The shared schema required broad role-irrelevant fields and scalar/list shapes that conflicted with semantically natural planner, worker, and aggregator outputs.
+
+Repair design:
+
+- Prompt changes: new `stage_b1_planner`, `stage_b1_worker`, and `stage_b1_aggregator` templates at `phase7_prompt_v2`; each requires one JSON object, no fences, no prose, explicit role-specific fields, and a minimal valid example.
+- Schema changes: new role-specific `phase7_stage_b1_role_schema_v1` schemas for planner, worker, and aggregator.
+- Parser changes: Stage B.1 records native JSON validity, native schema validity, deterministic normalization validity, repaired validity, failure taxonomy, semantic workflow status, execution completeness, and scorer availability separately.
+- Native structured-output mechanism: provider-neutral schema metadata is attached to each request; the OpenAI Responses adapter translates it to `text.format` JSON-schema output.
+- Deterministic normalization rules: only one enclosing markdown JSON fence may be removed; missing fields, wrong types, arbitrary prose, enum mismatches, and multiple objects are not silently coerced.
+- Repair behavior: at most one bounded formatting-only repair request per trajectory and at most two across the Stage B.1 privacy revalidation; repaired output does not count as native-valid.
+
 Measurement validation:
 
 - Workflow-quality findings: not available for real traces; mock-safe dry-run artifacts only.

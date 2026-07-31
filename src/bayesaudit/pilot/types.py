@@ -68,6 +68,18 @@ CostReconciliationStatus = Literal[
     "estimated_only",
     "unreconciled",
 ]
+StructuredOutputStatus = Literal[
+    "native_valid",
+    "normalized_valid",
+    "repaired_valid",
+    "recoverable_nonconforming",
+    "invalid_json",
+    "schema_invalid",
+    "incomplete",
+    "refusal",
+    "empty",
+    "unknown",
+]
 
 
 class PricingRecord(StrictModel):
@@ -383,6 +395,7 @@ class ProviderRequestRecord(StrictModel):
     estimated_input_tokens: int = 0
     estimated_output_tokens: int = 0
     estimated_cost: float = 0.0
+    response_schema: dict[str, Any] = Field(default_factory=dict)
     timestamp: datetime = Field(default_factory=utc_now)
 
 
@@ -453,6 +466,19 @@ class StructuredOutputRecord(StrictModel):
     repair_prompt_hashes: list[str] = Field(default_factory=list)
     repair_cost: float = 0.0
     valid: bool
+    agent_role: str | None = None
+    schema_name: str | None = None
+    role_schema_version: str | None = None
+    schema_hash: str | None = None
+    native_json_valid: bool = False
+    native_schema_valid: bool = False
+    normalized_schema_valid: bool = False
+    structured_output_status: StructuredOutputStatus = "unknown"
+    normalization_applied: list[str] = Field(default_factory=list)
+    failure_taxonomy: list[str] = Field(default_factory=list)
+    native_json_payload: dict[str, Any] = Field(default_factory=dict)
+    repaired_output: str | None = None
+    repaired_valid: bool = False
 
 
 class WorkflowQualityRecord(StrictModel):

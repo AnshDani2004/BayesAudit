@@ -40,12 +40,14 @@ from bayesaudit.pilot.prompts import (
     render_prompt,
     render_stage_b_prompt,
     repair_prompt,
+    stage_b1_repair_prompt,
 )
 from bayesaudit.pilot.providers import (
     OpenAIProviderError,
     ProviderAdapter,
     ProviderLedger,
     RequestCache,
+    _openai_text_format,
     authorize_provider_run,
     classify_provider_failure,
     estimate_pilot_plan,
@@ -62,7 +64,14 @@ from bayesaudit.pilot.stage_b import (
     stage_b_status,
     validate_stage_b_config,
 )
-from bayesaudit.pilot.structured import parse_structured_output
+from bayesaudit.pilot.structured import (
+    STAGE_B1_SCHEMA_VERSION,
+    parse_stage_b1_role_output,
+    parse_structured_output,
+    stage_b1_json_schema,
+    stage_b1_response_schema_metadata,
+    stage_b1_schema_hash,
+)
 from bayesaudit.pilot.transfer import oversight_feasibility_records
 from bayesaudit.pilot.types import (
     CostAccountingRecord,
@@ -123,6 +132,9 @@ OPENAI_PROVIDER_A1_CONFIG = "configs/providers/remote/openai_phase7_stage_a1.yam
 OPENAI_STAGE_B = ROOT / "phase7_workflow_openai_stage_b.yaml"
 OPENAI_STAGE_B_CONFIG = "configs/experiments/phase7_workflow_openai_stage_b.yaml"
 OPENAI_PROVIDER_B = Path("configs/providers/remote/openai_phase7_stage_b.yaml")
+OPENAI_STAGE_B1 = ROOT / "phase7_workflow_openai_stage_b1_privacy.yaml"
+OPENAI_STAGE_B1_CONFIG = "configs/experiments/phase7_workflow_openai_stage_b1_privacy.yaml"
+OPENAI_PROVIDER_B1 = Path("configs/providers/remote/openai_phase7_stage_b1.yaml")
 
 
 def _task() -> BenchmarkTask:
@@ -151,6 +163,7 @@ def _plan(path: Path = CONNECTIVITY) -> PilotPlan:
         OPENAI_PROVIDER,
         OPENAI_PROVIDER_A1,
         OPENAI_PROVIDER_B,
+        OPENAI_PROVIDER_B1,
     ],
 )
 def test_phase7_provider_configs_validate(path: Path) -> None:
@@ -172,6 +185,7 @@ def test_phase7_provider_configs_validate(path: Path) -> None:
         OPENAI_STAGE_A,
         OPENAI_STAGE_A1,
         OPENAI_STAGE_B,
+        OPENAI_STAGE_B1,
     ],
 )
 def test_phase7_experiment_configs_have_plans(path: Path) -> None:
@@ -1593,7 +1607,7 @@ def test_prompt_templates_record_versions_and_hashes(template_name: str) -> None
         agent_role="worker",
         delegation_depth=1,
     )
-    assert record.template_version == "phase7_prompt_v1"
+    assert record.template_version == TEMPLATE_VERSIONS[template_name]
     assert record.prompt_hash
     assert "ground_truth" not in record.rendered_prompt.lower()
 
@@ -1648,6 +1662,304 @@ def test_structured_output_invalid_preserves_raw_and_repair(raw: str) -> None:
 def test_structured_output_repair_limit_zero() -> None:
     record = parse_structured_output("not json", repair_limit=0)
     assert record.repair_attempts == 0
+
+
+PLANNER_B1 = (
+    '{"role":"planner","subtask":"Compute aggregate region averages only.",'
+    '"objective":"Delegate privacy-safe aggregate calculation.",'
+    '"relevant_constraints":["privacy_01","privacy_02"],'
+    '"worker_instructions":"Use only region and balance fields.",'
+    '"expected_output":"Region-level average balances as text.",'
+    '"tool_requests":[],"confidence":0.8,"uncertainty":null,'
+    '"escalation_request":null}'
+)
+WORKER_B1 = (
+    '{"role":"worker","subtask_understood":"Compute aggregate region averages only.",'
+    '"constraint_acknowledgments":["privacy_01","privacy_02"],'
+    '"result":"North average balance is 150; South average balance is 100.",'
+    '"supporting_details":["Used region and balance fields only."],'
+    '"tool_requests":[],"confidence":0.8,"uncertainty":null,'
+    '"escalation_request":null}'
+)
+AGGREGATOR_B1 = (
+    '{"role":"aggregator","child_result_used":true,'
+    '"constraint_acknowledgments":["privacy_01","privacy_02"],'
+    '"final_answer":"North average balance is 150; South average balance is 100.",'
+    '"evidence_references":["worker aggregate result"],"confidence":0.8,'
+    '"uncertainty":null,"escalation_request":null}'
+)
+
+
+@pytest.mark.parametrize(
+    ("role", "raw"),
+    [("planner", PLANNER_B1), ("worker", WORKER_B1), ("aggregator", AGGREGATOR_B1)],
+)
+def test_stage_b1_role_native_valid_output(role: str, raw: str) -> None:
+    record = parse_stage_b1_role_output(raw, role=role)  # type: ignore[arg-type]
+    assert record.valid is True
+    assert record.native_schema_valid is True
+    assert record.structured_output_status == "native_valid"
+
+
+def test_stage_b1_markdown_fenced_json_normalizes() -> None:
+    record = parse_stage_b1_role_output(f"```json\n{PLANNER_B1}\n```", role="planner")
+    assert record.valid is True
+    assert record.native_schema_valid is False
+    assert record.normalized_schema_valid is True
+    assert record.normalization_applied == ["removed_single_markdown_json_fence"]
+
+
+@pytest.mark.parametrize(
+    ("raw", "taxonomy"),
+    [
+        ("Here is the JSON:\n" + PLANNER_B1, "prose_before_json"),
+        (PLANNER_B1 + "\nDone.", "prose_after_json"),
+        (PLANNER_B1 + "\n" + PLANNER_B1, "multiple_json_objects"),
+        ('{"role":"planner"', "truncated_json"),
+        ("", "provider_output_empty"),
+    ],
+)
+def test_stage_b1_invalid_json_taxonomy(raw: str, taxonomy: str) -> None:
+    record = parse_stage_b1_role_output(raw, role="planner")
+    assert record.valid is False
+    assert taxonomy in record.failure_taxonomy
+
+
+@pytest.mark.parametrize(
+    ("raw", "taxonomy"),
+    [
+        ('{"role":"planner"}', "missing_required_field"),
+        (
+            PLANNER_B1.replace(
+                '"subtask":"Compute aggregate region averages only."', '"subtask":{}'
+            ),
+            "wrong_field_type",
+        ),
+        (PLANNER_B1.replace('"role":"planner"', '"role":"worker"'), "role_schema_mismatch"),
+        (PLANNER_B1[:-1] + ',"extra":"no"}', "unexpected_field"),
+        (PLANNER_B1.replace('"uncertainty":null', '"subtask":null'), "null_not_allowed"),
+    ],
+)
+def test_stage_b1_schema_failure_taxonomy(raw: str, taxonomy: str) -> None:
+    record = parse_stage_b1_role_output(raw, role="planner")
+    assert record.valid is False
+    assert taxonomy in record.failure_taxonomy
+
+
+def test_stage_b1_refusal_and_incomplete_status() -> None:
+    refusal = parse_stage_b1_role_output(PLANNER_B1, role="planner", refusal_count=1)
+    incomplete = parse_stage_b1_role_output(
+        PLANNER_B1, role="planner", incomplete_reason="max_output_tokens"
+    )
+    assert refusal.structured_output_status == "refusal"
+    assert incomplete.structured_output_status == "incomplete"
+
+
+def test_stage_b1_schema_hash_stable() -> None:
+    assert stage_b1_schema_hash("planner") == stage_b1_schema_hash("planner")
+    assert stage_b1_schema_hash("planner") != stage_b1_schema_hash("worker")
+
+
+def test_stage_b1_native_provider_schema_request_generation() -> None:
+    metadata = stage_b1_response_schema_metadata("aggregator")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_B1)
+    request = make_provider_request(
+        provider,
+        prompt_hash="prompt",
+        rendered_prompt="Return JSON",
+        response_schema=metadata,
+    )
+    text = _openai_text_format(request.response_schema)
+    assert text["format"]["type"] == "json_schema"
+    assert text["format"]["name"] == "bayesaudit_stage_b1_aggregator"
+    assert text["format"]["strict"] is True
+
+
+def test_stage_b1_prompt_template_versioning_and_example() -> None:
+    prompt = render_stage_b_prompt(
+        task=_task(),
+        architecture="unstructured_delegation",
+        agent_role="planner",
+        delegation_depth=0,
+        contract_version="stage_b1",
+    )
+    assert prompt.template_name == "stage_b1_planner"
+    assert prompt.template_version == "phase7_prompt_v2"
+    assert "Minimal valid example" in prompt.rendered_prompt
+    assert "markdown code fences" in prompt.rendered_prompt
+
+
+def test_stage_b1_repair_prompt_version_and_schema() -> None:
+    prompt = stage_b1_repair_prompt(
+        role="planner",
+        raw_output='{"role":"planner"}',
+        schema_name="bayesaudit_stage_b1_planner",
+        schema_version=STAGE_B1_SCHEMA_VERSION,
+        schema=stage_b1_json_schema("planner"),
+    )
+    assert prompt.template_version == "phase7_prompt_v2"
+    assert "Do not add new substantive claims" in prompt.rendered_prompt
+
+
+def test_stage_b1_request_hash_includes_schema() -> None:
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_B1)
+    prompt_hash = "prompt"
+    planner = make_provider_request(
+        provider,
+        prompt_hash=prompt_hash,
+        rendered_prompt="hello",
+        response_schema=stage_b1_response_schema_metadata("planner"),
+    )
+    worker = make_provider_request(
+        provider,
+        prompt_hash=prompt_hash,
+        rendered_prompt="hello",
+        response_schema=stage_b1_response_schema_metadata("worker"),
+    )
+    assert planner.request_hash != worker.request_hash
+
+
+def test_stage_b1_config_privacy_only_request_plan() -> None:
+    config = load_pilot_experiment_config(OPENAI_STAGE_B1)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_B1)
+    plan = estimate_pilot_plan(config, provider, task_count=1)
+    request_plan = stage_b_request_plan(config, provider, plan)
+    assert validate_stage_b_config(config)["valid"] is True
+    assert request_plan["planned_trajectories"] == 2
+    assert request_plan["expected_total_requests"] == 6
+    assert request_plan["maximum_repair_requests"] == 2
+    assert request_plan["maximum_possible_requests"] == 8
+    assert request_plan["domains"] == ["privacy"]
+
+
+def test_stage_b1_dry_run_zero_provider_calls() -> None:
+    payload = run_real_workflow_pilot(
+        OPENAI_STAGE_B1,
+        dry_run=True,
+        max_cost=0.03,
+        max_tokens=15000,
+        max_requests=8,
+        max_trajectories=2,
+    )
+    assert payload["provider_calls_performed"] == 0
+    assert payload["maximum_possible_requests"] == 8
+
+
+def test_stage_b1_status_pass_and_failure() -> None:
+    base = {
+        "trajectory_execution_status": "complete",
+        "workflow_semantic_status": "semantically_valid",
+        "worker_subtask_narrower": True,
+        "final_output_scorable": True,
+        "native_valid_role_responses": 3,
+        "structured_output_repair_count": 0,
+        "aggregator_structured_output_status": "native_valid",
+        "classification": "valid",
+    }
+    assert stage_b_status([base, base], 0, planned_trajectories=2, stage_b1=True) == "passed"
+    bad = {**base, "workflow_semantic_status": "semantically_invalid"}
+    assert stage_b_status([base, bad], 0, planned_trajectories=2, stage_b1=True) == "failed"
+
+
+def test_stage_b1_semantic_valid_serialization_invalid_classification() -> None:
+    trajectory = _stage_b_trajectory_for_classification()
+    invalid = parse_stage_b1_role_output('{"role":"planner"}', role="planner")
+    classification = classify_stage_b_trajectory(
+        trajectory=trajectory,
+        score=_score_for_stage_b(trajectory),
+        parsed_records=[invalid, invalid, invalid],
+        quality_flags=[],
+        architecture=ArchitectureKind.UNSTRUCTURED_DELEGATION,
+    )
+    assert classification["workflow_semantic_status"] == "semantically_valid"
+    assert classification["classification"] == "invalid_model_workflow"
+    assert classification["invalid_role_responses"] == 3
+
+
+@pytest.mark.parametrize("role", ["planner", "worker", "aggregator"])
+def test_stage_b1_schema_rejects_unknown_extra_field(role: str) -> None:
+    raw = {
+        "planner": PLANNER_B1,
+        "worker": WORKER_B1,
+        "aggregator": AGGREGATOR_B1,
+    }[role]
+    record = parse_stage_b1_role_output(raw[:-1] + ',"unexpected":"x"}', role=role)  # type: ignore[arg-type]
+    assert record.valid is False
+    assert "unexpected_field" in record.failure_taxonomy
+
+
+@pytest.mark.parametrize(
+    ("role", "field"),
+    [("planner", "subtask"), ("worker", "result"), ("aggregator", "final_answer")],
+)
+def test_stage_b1_required_fields_are_not_invented(role: str, field: str) -> None:
+    raw = {
+        "planner": PLANNER_B1,
+        "worker": WORKER_B1,
+        "aggregator": AGGREGATOR_B1,
+    }[role]
+    payload = json.loads(raw)
+    payload.pop(field)
+    record = parse_stage_b1_role_output(json.dumps(payload), role=role)  # type: ignore[arg-type]
+    assert record.valid is False
+    assert "missing_required_field" in record.failure_taxonomy
+    assert record.parsed_output == {}
+
+
+def test_stage_b1_arbitrary_prose_is_not_coerced() -> None:
+    record = parse_stage_b1_role_output("I computed the answer: North 150.", role="worker")
+    assert record.valid is False
+    assert record.parsed_output == {}
+
+
+def test_stage_b1_historical_artifact_remains_readable() -> None:
+    output_dir = Path("results/tables/phase7/phase7_workflow_openai_stage_b")
+    artifact = output_dir / "structured_records" / "req_5348ed84d31546b25191_planner.json"
+    payload = json.loads(artifact.read_text())
+    assert payload["valid"] is False
+    assert "raw_output" in payload
+
+
+def test_stage_b1_repair_status_does_not_count_as_native() -> None:
+    native = parse_stage_b1_role_output(PLANNER_B1, role="planner")
+    repaired = native.model_copy(
+        update={
+            "native_schema_valid": False,
+            "repaired_valid": True,
+            "structured_output_status": "repaired_valid",
+        }
+    )
+    assert repaired.valid is True
+    assert repaired.native_schema_valid is False
+    assert repaired.structured_output_status == "repaired_valid"
+
+
+def test_stage_b1_status_blocks_before_two_trajectories() -> None:
+    row = {
+        "trajectory_execution_status": "complete",
+        "workflow_semantic_status": "semantically_valid",
+        "worker_subtask_narrower": True,
+        "final_output_scorable": True,
+        "native_valid_role_responses": 3,
+        "structured_output_repair_count": 0,
+        "aggregator_structured_output_status": "native_valid",
+        "classification": "valid",
+    }
+    assert stage_b_status([row], 0, planned_trajectories=2, stage_b1=True) == "blocked"
+
+
+def test_stage_b1_status_fails_when_repair_ceiling_exceeded() -> None:
+    row = {
+        "trajectory_execution_status": "complete",
+        "workflow_semantic_status": "semantically_valid",
+        "worker_subtask_narrower": True,
+        "final_output_scorable": True,
+        "native_valid_role_responses": 3,
+        "structured_output_repair_count": 2,
+        "aggregator_structured_output_status": "repaired_valid",
+        "classification": "valid",
+    }
+    assert stage_b_status([row, row], 0, planned_trajectories=2, stage_b1=True) == "failed"
 
 
 def _response(content: str) -> ModelResponse:

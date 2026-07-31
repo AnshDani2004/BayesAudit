@@ -293,7 +293,10 @@ def run_real_workflow_pilot(
     manifest = write_pilot_manifest(
         config, provider, plan, status="dry_run" if dry_run else "planned"
     )
-    if config.pilot_id == "phase7_workflow_openai_stage_b":
+    if config.pilot_id in {
+        "phase7_workflow_openai_stage_b",
+        "phase7_workflow_openai_stage_b1_privacy",
+    }:
         validation = validate_stage_b_config(config)
         request_plan = stage_b_request_plan(config, provider, plan)
         if not validation["valid"]:
@@ -302,9 +305,15 @@ def run_real_workflow_pilot(
             max_requests or config.request_ceiling or 0
         ):
             raise PermissionError("Stage B maximum possible requests exceed ceiling")
-        if plan.estimated_total_tokens > int(max_tokens or config.token_ceiling or 0):
+        planned_tokens = int(
+            request_plan.get("maximum_possible_total_tokens", plan.estimated_total_tokens)
+        )
+        planned_cost = float(
+            request_plan.get("maximum_possible_token_derived_cost_usd", plan.maximum_possible_cost)
+        )
+        if planned_tokens > int(max_tokens or config.token_ceiling or 0):
             raise PermissionError("Stage B estimated tokens exceed ceiling")
-        if plan.maximum_possible_cost > float(max_cost or config.cost_ceiling or 0.0):
+        if planned_cost > float(max_cost or config.cost_ceiling or 0.0):
             raise PermissionError("Stage B estimated cost exceeds ceiling")
         if dry_run:
             return {

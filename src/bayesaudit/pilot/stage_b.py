@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from bayesaudit.architectures.common import add_usage
 from bayesaudit.constraints.inheritance import (
@@ -21,7 +21,7 @@ from bayesaudit.pilot.costs import (
     load_pricing_record,
     response_attempt_from_usage,
 )
-from bayesaudit.pilot.prompts import render_stage_b_prompt
+from bayesaudit.pilot.prompts import render_stage_b_prompt, stage_b1_repair_prompt
 from bayesaudit.pilot.providers import (
     ProviderLedger,
     RequestCache,
@@ -29,7 +29,13 @@ from bayesaudit.pilot.providers import (
     execute_provider_or_cached,
     make_provider_request,
 )
-from bayesaudit.pilot.structured import parse_structured_output
+from bayesaudit.pilot.structured import (
+    STAGE_B1_SCHEMA_VERSION,
+    StageBRole,
+    parse_stage_b1_role_output,
+    parse_structured_output,
+    stage_b1_response_schema_metadata,
+)
 from bayesaudit.pilot.types import (
     CostAccountingRecord,
     PilotExperimentConfig,
@@ -74,6 +80,8 @@ STAGE_B_ARCHITECTURES = [
 STAGE_B_DOMAIN_ORDER = ["privacy", "authorization", "evidence"]
 STAGE_B_REQUESTS_PER_TRAJECTORY = 3
 STAGE_B_REVIEW_ROOT = Path("data/derived/phase7_stage_b/review_packets")
+STAGE_B1_PILOT_ID = "phase7_workflow_openai_stage_b1_privacy"
+STAGE_B1_MAX_REPAIR_REQUESTS = 2
 
 
 @dataclass(frozen=True)
@@ -108,8 +116,23 @@ def stage_b_request_plan(
     plan: PilotPlan,
 ) -> dict[str, Any]:
     trajectories = _trajectory_specs(config)
+    max_repair_requests = STAGE_B1_MAX_REPAIR_REQUESTS if _is_stage_b1(config) else 0
     maximum_possible_requests = (
         len(trajectories) * STAGE_B_REQUESTS_PER_TRAJECTORY * (1 + int(provider.max_retries))
+        + max_repair_requests
+    )
+    normal_requests = len(trajectories) * STAGE_B_REQUESTS_PER_TRAJECTORY
+    maximum_possible_input_tokens = (
+        maximum_possible_requests * provider.estimated_input_tokens_per_request
+    )
+    maximum_possible_output_tokens = (
+        maximum_possible_requests * provider.estimated_output_tokens_per_request
+    )
+    maximum_possible_cost = (
+        maximum_possible_input_tokens / 1000.0 * provider.estimated_cost_per_1k_input_tokens
+        + maximum_possible_output_tokens
+        / 1000.0
+        * provider.estimated_cost_per_1k_output_tokens
     )
     return {
         "pilot_id": config.pilot_id,
@@ -125,8 +148,9 @@ def stage_b_request_plan(
         "aggregator_requests_per_trajectory": 1,
         "verification_requests_per_trajectory": 0,
         "structured_output_repair_requests_per_trajectory": 0,
+        "maximum_repair_requests": max_repair_requests,
         "expected_requests_per_trajectory": STAGE_B_REQUESTS_PER_TRAJECTORY,
-        "expected_total_requests": len(trajectories) * STAGE_B_REQUESTS_PER_TRAJECTORY,
+        "expected_total_requests": normal_requests,
         "maximum_possible_requests": maximum_possible_requests,
         "max_retries": int(provider.max_retries),
         "estimated_input_tokens": plan.estimated_input_tokens,
@@ -134,6 +158,13 @@ def stage_b_request_plan(
         "estimated_total_tokens": plan.estimated_total_tokens,
         "estimated_token_derived_cost_usd": str(Decimal(str(plan.estimated_cost))),
         "conservative_upper_bound_usd": str(Decimal(str(plan.maximum_possible_cost))),
+        "maximum_possible_input_tokens": maximum_possible_input_tokens,
+        "maximum_possible_output_tokens": maximum_possible_output_tokens,
+        "maximum_possible_total_tokens": maximum_possible_input_tokens
+        + maximum_possible_output_tokens,
+        "maximum_possible_token_derived_cost_usd": str(Decimal(str(maximum_possible_cost))),
+        "prompt_template_versions": _stage_b_prompt_versions(config),
+        "schema_versions": _stage_b_schema_versions(config),
         "storage_estimate_mb": plan.storage_estimate_mb,
         "request_rows": [
             {
@@ -145,13 +176,46 @@ def stage_b_request_plan(
                 "worker_requests": 1,
                 "aggregator_requests": 1,
                 "verification_requests": 0,
-                "structured_output_repair_requests": 0,
+                "structured_output_repair_requests": int(
+                    max_repair_requests / max(len(trajectories), 1)
+                )
+                if _is_stage_b1(config)
+                else 0,
                 "expected_request_count": STAGE_B_REQUESTS_PER_TRAJECTORY,
                 "maximum_possible_request_count": STAGE_B_REQUESTS_PER_TRAJECTORY
-                * (1 + int(provider.max_retries)),
+                * (1 + int(provider.max_retries))
+                + (1 if _is_stage_b1(config) else 0),
             }
             for spec in trajectories
         ],
+    }
+
+
+def _is_stage_b1(config: PilotExperimentConfig) -> bool:
+    return config.pilot_id == STAGE_B1_PILOT_ID
+
+
+def _stage_b_prompt_versions(config: PilotExperimentConfig) -> dict[str, str]:
+    if not _is_stage_b1(config):
+        return {
+            "planner": "phase7_prompt_v1",
+            "worker": "phase7_prompt_v1",
+            "aggregator": "phase7_prompt_v1",
+        }
+    return {
+        "planner": "phase7_prompt_v2",
+        "worker": "phase7_prompt_v2",
+        "aggregator": "phase7_prompt_v2",
+    }
+
+
+def _stage_b_schema_versions(config: PilotExperimentConfig) -> dict[str, str]:
+    if not _is_stage_b1(config):
+        return {"shared": "PilotStructuredResponse"}
+    return {
+        "planner": STAGE_B1_SCHEMA_VERSION,
+        "worker": STAGE_B1_SCHEMA_VERSION,
+        "aggregator": STAGE_B1_SCHEMA_VERSION,
     }
 
 
@@ -160,9 +224,18 @@ def validate_stage_b_config(config: PilotExperimentConfig) -> dict[str, Any]:
     domains = sorted({str(spec["domain"]) for spec in trajectories})
     architectures = sorted({str(spec["architecture"]) for spec in trajectories})
     errors = []
-    if len(trajectories) != 6:
+    if _is_stage_b1(config):
+        if len(trajectories) != 2:
+            errors.append("Stage B.1 must contain exactly two privacy trajectories")
+        if domains != ["privacy"]:
+            errors.append("Stage B.1 must contain privacy only")
+        if config.task_ids != ["task_privacy_aggregate_only"]:
+            errors.append("Stage B.1 must use task_privacy_aggregate_only only")
+        if architectures != sorted(arch.value for arch in STAGE_B_ARCHITECTURES):
+            errors.append("Stage B.1 must contain unstructured and structured architectures")
+    elif len(trajectories) != 6:
         errors.append("Stage B must contain exactly six trajectories")
-    if set(domains) != set(STAGE_B_DOMAIN_ORDER):
+    if not _is_stage_b1(config) and set(domains) != set(STAGE_B_DOMAIN_ORDER):
         errors.append("Stage B must contain privacy, authorization, and evidence domains")
     if architectures != sorted(arch.value for arch in STAGE_B_ARCHITECTURES):
         errors.append("Stage B must contain unstructured and structured architectures only")
@@ -273,7 +346,12 @@ def summarize_stage_b(
     classifications = [str(row.get("classification")) for row in classification_rows]
     valid_count = classifications.count("valid")
     minor_count = classifications.count("valid_with_minor_issue")
-    status = stage_b_status(classification_rows, len(failure_rows))
+    status = stage_b_status(
+        classification_rows,
+        len(failure_rows),
+        planned_trajectories=plan.planned_trajectories,
+        stage_b1=_is_stage_b1(config),
+    )
     return {
         "pilot_id": config.pilot_id,
         "stage_b_status": status,
@@ -330,19 +408,82 @@ def summarize_stage_b(
         "constraint_state_issues": sum(
             bool(row.get("constraint_state_issue")) for row in classification_rows
         ),
+        "semantically_valid_trajectories": sum(
+            row.get("workflow_semantic_status")
+            in {"semantically_valid", "semantically_valid_with_minor_issue"}
+            for row in classification_rows
+        ),
+        "native_valid_role_responses": sum(
+            int(row.get("native_valid_role_responses", 0) or 0) for row in classification_rows
+        ),
+        "normalized_valid_role_responses": sum(
+            int(row.get("normalized_valid_role_responses", 0) or 0)
+            for row in classification_rows
+        ),
+        "repaired_valid_role_responses": sum(
+            int(row.get("repaired_valid_role_responses", 0) or 0) for row in classification_rows
+        ),
+        "invalid_role_responses": sum(
+            int(row.get("invalid_role_responses", 0) or 0) for row in classification_rows
+        ),
         "workflow_classifications": classification_rows,
         "quality_flags": quality_rows,
     }
 
 
-def stage_b_status(classification_rows: list[dict[str, Any]], provider_failures: int) -> str:
+def stage_b_status(
+    classification_rows: list[dict[str, Any]],
+    provider_failures: int,
+    *,
+    planned_trajectories: int = 6,
+    stage_b1: bool = False,
+) -> str:
     classifications = [str(row.get("classification")) for row in classification_rows]
     documented_failures = classifications.count("excluded_provider_failure")
     undocumented_failures = max(provider_failures - documented_failures, 0)
-    if len(classification_rows) + undocumented_failures < 6:
+    if len(classification_rows) + undocumented_failures < planned_trajectories:
         return "blocked"
     if "invalid_infrastructure" in classifications:
         return "failed"
+    if stage_b1:
+        if provider_failures:
+            return "failed"
+        if len(classification_rows) != 2:
+            return "blocked"
+        if not all(
+            row.get("trajectory_execution_status") == "complete"
+            for row in classification_rows
+        ):
+            return "failed"
+        if not all(
+            row.get("workflow_semantic_status")
+            in {"semantically_valid", "semantically_valid_with_minor_issue"}
+            for row in classification_rows
+        ):
+            return "failed"
+        if not all(row.get("worker_subtask_narrower") for row in classification_rows):
+            return "failed"
+        if not all(row.get("final_output_scorable") for row in classification_rows):
+            return "failed"
+        native_valid_total = sum(
+            int(row.get("native_valid_role_responses", 0) or 0)
+            for row in classification_rows
+        )
+        if native_valid_total < 4:
+            return "failed"
+        repair_total = sum(
+            int(row.get("structured_output_repair_count", 0) or 0)
+            for row in classification_rows
+        )
+        if repair_total > STAGE_B1_MAX_REPAIR_REQUESTS:
+            return "failed"
+        if not all(
+            row.get("aggregator_structured_output_status")
+            in {"native_valid", "normalized_valid", "repaired_valid"}
+            for row in classification_rows
+        ):
+            return "failed"
+        return "passed"
     validish = classifications.count("valid") + classifications.count("valid_with_minor_issue")
     architectures = {str(row.get("architecture")) for row in classification_rows}
     architecture_valid = {
@@ -397,6 +538,7 @@ def _run_one_trajectory(
         provider=provider,
         task=task,
         architecture=architecture,
+        trajectory_id=trajectory_id,
         role="planner",
         depth=0,
         branch=None,
@@ -416,6 +558,7 @@ def _run_one_trajectory(
         provider=provider,
         task=task,
         architecture=architecture,
+        trajectory_id=trajectory_id,
         role="worker",
         depth=1,
         branch="0",
@@ -432,6 +575,7 @@ def _run_one_trajectory(
         provider=provider,
         task=task,
         architecture=architecture,
+        trajectory_id=trajectory_id,
         role="aggregator",
         depth=0,
         branch=None,
@@ -494,6 +638,7 @@ def _call_stage_b_step(
     provider: PilotProviderConfig,
     task: BenchmarkTask,
     architecture: ArchitectureKind,
+    trajectory_id: str,
     role: str,
     depth: int,
     branch: str | None,
@@ -506,6 +651,10 @@ def _call_stage_b_step(
     constraint_context: str | None = None,
 ) -> StageBStepResult:
     _assert_request_ceiling(output_dir, max_requests)
+    is_stage_b1 = _is_stage_b1(config)
+    role_schema = (
+        stage_b1_response_schema_metadata(cast(StageBRole, role)) if is_stage_b1 else {}
+    )
     prompt = render_stage_b_prompt(
         task=task,
         architecture=architecture.value,
@@ -515,11 +664,13 @@ def _call_stage_b_step(
         subtask=subtask,
         worker_output=worker_output,
         constraint_context=constraint_context,
+        contract_version="stage_b1" if is_stage_b1 else "stage_b",
     )
     request = make_provider_request(
         provider,
         prompt_hash=prompt.prompt_hash,
         rendered_prompt=prompt.rendered_prompt,
+        response_schema=role_schema,
     )
     write_json_atomic(
         output_dir / "prompt_records" / f"{request.request_id}_{role}.json",
@@ -559,12 +710,28 @@ def _call_stage_b_step(
             request_hash=request.request_hash,
             failure_record=failure_record,
         ) from exc
-    parsed = parse_structured_output(response.raw_output, repair_limit=0)
+    parsed = (
+        parse_stage_b1_role_output(
+            response.raw_output,
+            role=cast(StageBRole, role),
+            response_status=str(response.raw_provider_response.get("status") or ""),
+            refusal_count=len(response.raw_provider_response.get("refusals", []) or []),
+            incomplete_reason=str(response.raw_provider_response.get("incomplete_details") or ""),
+        )
+        if is_stage_b1
+        else parse_structured_output(response.raw_output, repair_limit=0)
+    )
     row = response.model_dump(mode="json")
     row["task_id"] = task.task_id
     row["domain"] = str(task.domain)
     row["architecture"] = architecture.value
     row["agent_role"] = role
+    row["trajectory_id"] = trajectory_id
+    row["native_structured_output_valid"] = parsed.native_schema_valid
+    row["structured_output_status"] = parsed.structured_output_status
+    row["schema_name"] = parsed.schema_name
+    row["role_schema_version"] = parsed.role_schema_version
+    row["schema_hash"] = parsed.schema_hash
     append_jsonl(output_dir / "provider_responses.jsonl", row)
     write_json_atomic(
         output_dir / "provider_response_records" / f"{response.response_id}.json",
@@ -574,6 +741,25 @@ def _call_stage_b_step(
         output_dir / "structured_records" / f"{request.request_id}_{role}.json",
         parsed.model_dump(mode="json"),
     )
+    if is_stage_b1 and not parsed.valid:
+        parsed = _maybe_repair_stage_b1_output(
+            config=config,
+            provider=provider,
+            task=task,
+            architecture=architecture,
+            trajectory_id=trajectory_id,
+            role=cast(StageBRole, role),
+            output_dir=output_dir,
+            cache=cache,
+            ledger=ledger,
+            max_requests=max_requests,
+            original=parsed,
+            response_schema=role_schema,
+        )
+        write_json_atomic(
+            output_dir / "structured_records" / f"{request.request_id}_{role}.json",
+            parsed.model_dump(mode="json"),
+        )
     return StageBStepResult(
         prompt=prompt,
         request_hash=request.request_hash,
@@ -583,6 +769,162 @@ def _call_stage_b_step(
         raw_output_text=response.raw_output,
         parsed_payload=parsed.parsed_output,
     )
+
+
+def _maybe_repair_stage_b1_output(
+    *,
+    config: PilotExperimentConfig,
+    provider: PilotProviderConfig,
+    task: BenchmarkTask,
+    architecture: ArchitectureKind,
+    trajectory_id: str,
+    role: StageBRole,
+    output_dir: Path,
+    cache: RequestCache,
+    ledger: ProviderLedger,
+    max_requests: int,
+    original: Any,
+    response_schema: dict[str, Any],
+) -> Any:
+    del config
+    if original.structured_output_status not in {
+        "schema_invalid",
+        "recoverable_nonconforming",
+        "invalid_json",
+    }:
+        return original
+    if _stage_b1_repair_count(output_dir, trajectory_id=trajectory_id) >= 1:
+        return original
+    if _stage_b1_repair_count(output_dir) >= STAGE_B1_MAX_REPAIR_REQUESTS:
+        return original
+    _assert_request_ceiling(output_dir, max_requests)
+    prompt = stage_b1_repair_prompt(
+        role=role,
+        raw_output=original.raw_output,
+        schema_name=str(original.schema_name or response_schema.get("name") or ""),
+        schema_version=str(original.role_schema_version or response_schema.get("version") or ""),
+        schema=_schema_payload(response_schema),
+    )
+    request = make_provider_request(
+        provider,
+        prompt_hash=prompt.prompt_hash,
+        rendered_prompt=prompt.rendered_prompt,
+        response_schema=response_schema,
+    )
+    write_json_atomic(
+        output_dir / "prompt_records" / f"{request.request_id}_{role}_repair.json",
+        prompt.model_dump(mode="json"),
+    )
+    write_json_atomic(
+        output_dir / "provider_request_records" / f"{request.request_id}.json",
+        request.model_dump(mode="json"),
+    )
+    try:
+        response, cached = execute_provider_or_cached(
+            provider,
+            request,
+            rendered_prompt=prompt.rendered_prompt,
+            cache=cache,
+            ledger=ledger,
+            raw_response_hook=lambda artifact: write_json_atomic(
+                output_dir / "provider_raw_responses" / f"{request.request_hash}.json",
+                artifact,
+            ),
+        )
+    except Exception as exc:
+        failure = classify_provider_failure(
+            exc, provider=provider, request_hash=request.request_hash
+        )
+        failure_record = failure.model_dump(mode="json")
+        append_jsonl(output_dir / "provider_failures.jsonl", failure_record)
+        raw_failure_payload = getattr(exc, "payload", None)
+        if isinstance(raw_failure_payload, dict) and raw_failure_payload:
+            write_json_atomic(
+                output_dir / "provider_failure_raw_responses" / f"{request.request_hash}.json",
+                raw_failure_payload,
+            )
+        raise StageBProviderStepFailure(
+            str(exc),
+            role=f"{role}_repair",
+            request_hash=request.request_hash,
+            failure_record=failure_record,
+        ) from exc
+    repaired = parse_stage_b1_role_output(
+        response.raw_output,
+        role=role,
+        response_status=str(response.raw_provider_response.get("status") or ""),
+        refusal_count=len(response.raw_provider_response.get("refusals", []) or []),
+        incomplete_reason=str(response.raw_provider_response.get("incomplete_details") or ""),
+    )
+    row = response.model_dump(mode="json")
+    row["task_id"] = task.task_id
+    row["domain"] = str(task.domain)
+    row["architecture"] = architecture.value
+    row["agent_role"] = f"{role}_repair"
+    row["trajectory_id"] = trajectory_id
+    row["native_structured_output_valid"] = repaired.native_schema_valid
+    row["structured_output_status"] = repaired.structured_output_status
+    row["schema_name"] = repaired.schema_name
+    row["role_schema_version"] = repaired.role_schema_version
+    row["schema_hash"] = repaired.schema_hash
+    append_jsonl(output_dir / "provider_responses.jsonl", row)
+    write_json_atomic(
+        output_dir / "provider_response_records" / f"{response.response_id}.json",
+        row,
+    )
+    repair_record = {
+        "trajectory_id": trajectory_id,
+        "role": role,
+        "request_hash": request.request_hash,
+        "prompt_hash": prompt.prompt_hash,
+        "cached": cached,
+        "original_output_id": original.output_id,
+        "repaired_output_id": repaired.output_id,
+        "repaired_valid": repaired.valid,
+        "schema_name": repaired.schema_name,
+        "role_schema_version": repaired.role_schema_version,
+        "schema_hash": repaired.schema_hash,
+    }
+    append_jsonl(output_dir / "structured_repair_records.jsonl", repair_record)
+    write_json_atomic(
+        output_dir / "structured_repair_records" / f"{request.request_id}_{role}.json",
+        {
+            "repair": repair_record,
+            "structured_output": repaired.model_dump(mode="json"),
+        },
+    )
+    if not repaired.valid:
+        return original.model_copy(
+            update={
+                "repair_attempts": 1,
+                "repair_prompt_hashes": [prompt.prompt_hash],
+                "repaired_output": response.raw_output,
+                "repaired_valid": False,
+            }
+        )
+    return original.model_copy(
+        update={
+            "parsed_output": repaired.parsed_output,
+            "repair_attempts": 1,
+            "repair_prompt_hashes": [prompt.prompt_hash],
+            "repaired_output": response.raw_output,
+            "repaired_valid": True,
+            "valid": True,
+            "structured_output_status": "repaired_valid",
+        }
+    )
+
+
+def _stage_b1_repair_count(output_dir: Path, *, trajectory_id: str | None = None) -> int:
+    rows = read_jsonl(output_dir / "structured_repair_records.jsonl")
+    if trajectory_id is None:
+        return len(rows)
+    return sum(row.get("trajectory_id") == trajectory_id for row in rows)
+
+
+def _schema_payload(response_schema: dict[str, Any]) -> dict[str, Any]:
+    schema = response_schema.get("schema")
+    return schema if isinstance(schema, dict) else {}
 
 
 def _trajectory_from_steps(
@@ -765,6 +1107,39 @@ def classify_stage_b_trajectory(
         and not trajectory.metadata.get("inheritance", {}).get("envelopes")
     )
     final_scorable = bool(final_output.strip()) and score.scoring_status != "error"
+    semantic_valid = (
+        meaningful_planner
+        and meaningful_worker
+        and aggregator_used
+        and final_scorable
+    )
+    native_valid_count = sum(
+        bool(getattr(record, "native_schema_valid", False)) for record in parsed_records
+    )
+    normalized_valid_count = sum(
+        bool(getattr(record, "normalized_schema_valid", False)) for record in parsed_records
+    )
+    repaired_valid_count = sum(
+        bool(getattr(record, "repaired_valid", False)) for record in parsed_records
+    )
+    invalid_role_count = len(parsed_records) - sum(bool(record.valid) for record in parsed_records)
+    structured_statuses = [
+        str(getattr(record, "structured_output_status", "unknown")) for record in parsed_records
+    ]
+    workflow_semantic_status = (
+        "semantically_valid_with_minor_issue"
+        if semantic_valid and quality_flags
+        else "semantically_valid"
+        if semantic_valid
+        else "semantically_invalid"
+    )
+    trajectory_execution_status = (
+        "infrastructure_failed"
+        if constraint_state_issue
+        else "incomplete"
+        if any(step.model_response is None for step in trajectory.steps)
+        else "complete"
+    )
     classification: StageBClassification = "valid"
     reasons: list[str] = []
     if (
@@ -776,10 +1151,8 @@ def classify_stage_b_trajectory(
         reasons.append("missing required infrastructure artifact")
     elif not parsed_valid:
         classification = "invalid_model_workflow"
-        reasons.append("model did not return valid structured JSON")
-    elif (
-        not meaningful_planner or not meaningful_worker or not aggregator_used or not final_scorable
-    ):
+        reasons.append("structured output contract not satisfied")
+    elif not semantic_valid:
         classification = "invalid_model_workflow"
         reasons.append("workflow semantics failed")
     elif quality_flags:
@@ -808,6 +1181,32 @@ def classify_stage_b_trajectory(
         "refusal_count": 0,
         "constraint_state_issue": constraint_state_issue,
         "workflow_flags": quality_flags,
+        "workflow_semantic_status": workflow_semantic_status,
+        "structured_output_statuses": structured_statuses,
+        "structured_output_status": "native_valid"
+        if native_valid_count == len(parsed_records)
+        else "repaired_valid"
+        if parsed_valid and repaired_valid_count
+        else "normalized_valid"
+        if parsed_valid and normalized_valid_count
+        else "schema_invalid"
+        if not parsed_valid
+        else "unknown",
+        "trajectory_execution_status": trajectory_execution_status,
+        "scorer_available": score.scoring_status != "error",
+        "native_valid_role_responses": native_valid_count,
+        "normalized_valid_role_responses": normalized_valid_count,
+        "repaired_valid_role_responses": repaired_valid_count,
+        "invalid_role_responses": invalid_role_count,
+        "planner_structured_output_status": structured_statuses[0]
+        if len(structured_statuses) > 0
+        else "unknown",
+        "worker_structured_output_status": structured_statuses[1]
+        if len(structured_statuses) > 1
+        else "unknown",
+        "aggregator_structured_output_status": structured_statuses[2]
+        if len(structured_statuses) > 2
+        else "unknown",
     }
 
 
@@ -1206,16 +1605,20 @@ def _trajectory_id(config: PilotExperimentConfig, task_id: str, architecture: st
 
 
 def _proposed_subtask(payload: dict[str, Any], task: BenchmarkTask) -> str:
-    proposed = payload.get("proposed_subtask")
+    proposed = payload.get("proposed_subtask") or payload.get("subtask")
     if isinstance(proposed, str) and proposed.strip():
         return proposed.strip()
+    objective = payload.get("objective")
+    if isinstance(objective, str) and objective.strip():
+        return objective.strip()
     return f"Perform the domain-specific evidence/calculation work needed for {task.task_id}."
 
 
 def _answer_text(payload: dict[str, Any], fallback: str) -> str:
-    final_answer = payload.get("final_answer")
-    if isinstance(final_answer, str) and final_answer.strip():
-        return final_answer.strip()
+    for key in ("final_answer", "result", "expected_output", "worker_instructions"):
+        value = payload.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
     return fallback.strip()
 
 

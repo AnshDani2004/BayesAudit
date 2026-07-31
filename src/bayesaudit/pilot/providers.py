@@ -138,6 +138,8 @@ class ProviderAdapter:
             "parallel_tool_calls": False,
             "store": False,
         }
+        if request.response_schema:
+            body["text"] = _openai_text_format(request.response_schema)
         reasoning_effort = self.config.sampling_parameters.get("reasoning_effort")
         if reasoning_effort:
             body["reasoning"] = {"effort": reasoning_effort}
@@ -403,6 +405,9 @@ def authorize_provider_run(
         ),
     ]
     allowed = all(gate.status == "passed" for gate in gates)
+    maximum_possible_requests = plan.planned_requests * (1 + int(provider.max_retries))
+    if config.pilot_id == "phase7_workflow_openai_stage_b1_privacy":
+        maximum_possible_requests += 2
     record = ProviderPermissionRecord(
         permission_id="perm_" + canonical_json_hash([gate.model_dump() for gate in gates])[:20],
         provider=provider.provider_name or provider.provider_class,
@@ -428,7 +433,7 @@ def authorize_provider_run(
         pricing_table_version=_pricing_table_version(provider),
         tasks=list(config.task_ids),
         architectures=[str(architecture) for architecture in config.architectures],
-        maximum_possible_requests=plan.planned_requests * (1 + int(provider.max_retries)),
+        maximum_possible_requests=maximum_possible_requests,
         environment_classification="ci" if _ci_environment() else "local",
         gates=gates,
         final_authorization_decision="allow" if allowed else "block",
@@ -448,14 +453,17 @@ def make_provider_request(
     prompt_hash: str,
     rendered_prompt: str,
     sampling_parameters: dict[str, Any] | None = None,
+    response_schema: dict[str, Any] | None = None,
 ) -> ProviderRequestRecord:
     sampling = sampling_parameters or provider.sampling_parameters
+    schema_payload = response_schema or {}
     request_hash = canonical_json_hash(
         {
             "provider": provider.provider_name or provider.provider_class,
             "model": provider.model_identifier or "mock-deterministic-v1",
             "prompt_hash": prompt_hash,
             "sampling": sampling,
+            "response_schema": schema_payload,
         }
     )
     estimated_input = max(
@@ -477,6 +485,7 @@ def make_provider_request(
         estimated_input_tokens=estimated_input,
         estimated_output_tokens=estimated_output,
         estimated_cost=estimated_cost,
+        response_schema=schema_payload,
     )
 
 
@@ -684,6 +693,11 @@ def build_openai_raw_response_artifact(
         "reasoning": request_body.get("reasoning"),
         "streaming_enabled": False,
         "structured_output_requested": bool(request_body.get("text")),
+        "structured_output_schema_name": request_body.get("text", {})
+        .get("format", {})
+        .get("name"),
+        "structured_output_schema_version": request.response_schema.get("version"),
+        "structured_output_schema_hash": request.response_schema.get("schema_hash"),
         "output_item_types": output_item_types,
         "message_content_item_types": content_item_types,
         "refusals": _refusal_values(output_items),
@@ -698,6 +712,21 @@ def build_openai_raw_response_artifact(
         "serialization_failed": serialization_error is not None,
         "serialization_error": serialization_error,
         "response_payload": payload,
+    }
+
+
+def _openai_text_format(response_schema: dict[str, Any]) -> dict[str, Any]:
+    schema = response_schema.get("schema")
+    name = response_schema.get("name")
+    if not isinstance(schema, dict) or not name:
+        return {}
+    return {
+        "format": {
+            "type": "json_schema",
+            "name": str(name),
+            "schema": schema,
+            "strict": bool(response_schema.get("strict", True)),
+        }
     }
 
 
