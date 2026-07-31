@@ -31,4 +31,5 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Rerun requirement: required after prompt/schema repair; only privacy revalidation is authorized in Stage B.1.
 - Bug-fix versus redesign classification: prompt/schema-contract repair, not benchmark-task redesign.
 - Reviewer: Codex
-- Current commit: pending Stage B.1 repair commit after validation.
+- Revalidation result: Stage B.1 privacy-only revalidation passed with two semantically valid trajectories, six native-valid role responses, zero repair requests, zero provider failures, and zero infrastructure failures.
+- Current repair commit: `85ddd26`

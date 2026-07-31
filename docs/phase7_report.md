@@ -39,14 +39,14 @@ Current empirical status:
 - Requests completed against real providers: `1`.
 - Requests cached from real providers: `1`.
 - Requests failed against real providers: `1`.
-- Cost status: Stage A unreconciled; Stage A.1 token-derived local cost is `$0.00001475`; Stage B privacy block token-derived local cost is `$0.00108935`.
+- Cost status: Stage A unreconciled; Stage A.1 token-derived local cost is `$0.00001475`; original Stage B privacy block token-derived local cost is `$0.00108935`; Stage B.1 privacy revalidation token-derived local cost is `$0.0005964`.
 - Actual token usage: Stage A unreconciled; Stage A.1 used `64` total tokens.
-- Real-model trajectory count: `4` attempted across Stage A, Stage A.1, and Stage B privacy block.
+- Real-model trajectory count: `6` attempted across Stage A, Stage A.1, original Stage B privacy block, and Stage B.1 privacy revalidation.
 - Valid real-model trajectory count: `1`.
 - Excluded real-model trajectory count: `1`.
 - Pilot observations: Stage A failed before cache verification; Stage A.1 passed and cache verification passed.
 - Synthetic comparisons: previous phases only.
-- Test status after Stage B workflow-pilot coverage: `523 passed`.
+- Test status after Stage B.1 structured-output repair coverage: `564 passed`.
 
 ## Stage A: Real-Provider Connectivity
 
@@ -278,7 +278,7 @@ Benchmark status remains `not_ready_to_freeze`. Stage C has not occurred.
 
 ## Stage B.1: Structured-Output Contract Repair and Privacy Revalidation
 
-Status: pending privacy-only revalidation.
+Status: `passed`
 
 Original Stage B findings preserved:
 
@@ -316,6 +316,46 @@ Repair design:
 - Native structured-output mechanism: provider-neutral schema metadata is attached to each request; the OpenAI Responses adapter translates it to `text.format` JSON-schema output.
 - Deterministic normalization rules: only one enclosing markdown JSON fence may be removed; missing fields, wrong types, arbitrary prose, enum mismatches, and multiple objects are not silently coerced.
 - Repair behavior: at most one bounded formatting-only repair request per trajectory and at most two across the Stage B.1 privacy revalidation; repaired output does not count as native-valid.
+
+Privacy-only revalidation results:
+
+- Planned trajectories: `2`
+- Attempted trajectories: `2`
+- Completed trajectories: `2`
+- Valid semantic workflows: `2`
+- Workflow classifications: two `valid_with_minor_issue` trajectories, both with diagnostic `aggregator_ignores_worker` flags while `aggregator_used_worker` remained true.
+- Structured-output classifications: both trajectories `native_valid` for all three role responses.
+- Native-valid role responses: `6`
+- Deterministically normalized role responses: `0`
+- Repaired-valid role responses: `0`
+- Invalid role responses: `0`
+- Planned normal provider requests: `6`
+- Maximum authorized provider requests: `8`
+- Actual provider requests: `6`
+- Repair requests: `0`
+- Cached executions: `0`
+- Failed requests: `0`
+- Input tokens: `4496`
+- Cached input tokens: `0`
+- Output tokens: `929`
+- Reasoning tokens: `0`
+- Total tokens: `5425`
+- Estimated normal-request cost: `$0.0012900000000000001`
+- Maximum possible token-derived cost estimate including repairs: `$0.00172`
+- Actual token-derived cost: `$0.0005964`
+- Cost reconciliation status: `token_derived`
+- Meaningful planner count: `2`
+- Meaningful worker count: `2`
+- Narrower-subtask count: `2`
+- Aggregator-used-worker count: `2`
+- Scorable-output count: `2`
+- Provider failures: `0`
+- Infrastructure failures: `0`
+- External-action result: passed; no real external tools were executed.
+- Raw-first persistence: passed; six raw provider responses were preserved before parsing.
+- Stage B.1 status: `passed`
+
+Stage B remains incomplete outside privacy. Authorization and evidence blocks were not run.
 
 Measurement validation:
 
