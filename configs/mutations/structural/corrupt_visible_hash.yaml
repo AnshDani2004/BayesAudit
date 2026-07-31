@@ -1,0 +1,6 @@
+name: corrupt_visible_hash
+mutation_type: corrupt_visible_hash
+scheduled_step: delegation
+expected_retention_classification: corrupted
+metadata: {control_type: positive}
+

@@ -1,0 +1,6 @@
+name: no_mutation_metadata
+mutation_type: noncritical_metadata_change
+scheduled_step: delegation
+expected_retention_classification: preserved_exact
+metadata: {control_type: negative}
+

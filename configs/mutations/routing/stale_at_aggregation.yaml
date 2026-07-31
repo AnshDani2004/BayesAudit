@@ -1,0 +1,6 @@
+name: stale_at_aggregation
+mutation_type: use_stale_constraint_version
+scheduled_step: aggregation
+expected_retention_classification: stale
+metadata: {control_type: routing}
+

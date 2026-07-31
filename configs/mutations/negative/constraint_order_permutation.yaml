@@ -1,0 +1,6 @@
+name: constraint_order_permutation
+mutation_type: constraint_order_permutation
+scheduled_step: delegation
+expected_retention_classification: preserved_exact
+metadata: {control_type: negative}
+

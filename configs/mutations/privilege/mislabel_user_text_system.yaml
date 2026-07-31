@@ -1,0 +1,6 @@
+name: mislabel_user_text_system
+mutation_type: mislabel_user_text_system
+scheduled_step: delegation
+expected_retention_classification: privilege_demoted
+metadata: {control_type: positive}
+

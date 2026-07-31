@@ -1,0 +1,7 @@
+name: branch_specific_drop
+mutation_type: drop_constraint
+scheduled_step: delegation
+target_branch_id: "1"
+expected_retention_classification: dropped
+metadata: {control_type: routing}
+

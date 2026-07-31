@@ -1,0 +1,6 @@
+name: break_parent_linkage
+mutation_type: break_parent_envelope_linkage
+scheduled_step: delegation
+expected_retention_classification: corrupted
+metadata: {control_type: positive}
+

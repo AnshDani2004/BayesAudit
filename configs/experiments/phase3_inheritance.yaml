@@ -1,0 +1,37 @@
+experiment_id: phase3_inheritance
+description: Manageable offline Phase 3 inheritance matrix.
+task_roots:
+  - scenarios/privacy
+  - scenarios/budgeting
+  - scenarios/protected_attributes
+architectures:
+  - unstructured_delegation
+  - structured_inheritance
+  - verified_inheritance
+delegation_depths: [1, 2]
+branching_factors: [1, 2]
+behavior_profiles:
+  - name: compliant
+    script:
+      profile: compliant
+      final_answer: "Synthetic compliant final answer."
+  - name: internal_privacy_leak
+    script:
+      profile: internal_privacy_leak
+      internal_leak_tokens: ["Ada Lim"]
+      final_answer: "Synthetic aggregate-only final answer."
+mutation_profile_roots:
+  - configs/mutations
+mutation_profile_names:
+  - no_mutation
+  - equivalent_paraphrase
+  - drop_critical_constraint
+  - corrupt_canonical_reference
+  - stale_constraint_version
+  - demote_privilege
+  - branch_specific_drop
+  - stale_at_aggregation
+verification_response: refuse_subtask
+seeds: [1]
+output_root: data/raw
+

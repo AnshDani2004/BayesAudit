@@ -1,0 +1,7 @@
+name: drop_critical_constraint
+mutation_type: drop_constraint
+scheduled_step: delegation
+target_constraint_id: privacy_01
+expected_retention_classification: dropped
+metadata: {control_type: positive}
+

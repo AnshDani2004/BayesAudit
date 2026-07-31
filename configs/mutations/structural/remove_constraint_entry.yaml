@@ -1,0 +1,6 @@
+name: remove_constraint_entry
+mutation_type: remove_constraint_entry
+scheduled_step: delegation
+expected_retention_classification: dropped
+metadata: {control_type: positive}
+

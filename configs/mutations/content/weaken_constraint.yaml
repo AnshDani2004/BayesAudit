@@ -1,0 +1,6 @@
+name: weaken_constraint
+mutation_type: weaken_constraint
+scheduled_step: delegation
+expected_retention_classification: weakened
+metadata: {control_type: positive}
+

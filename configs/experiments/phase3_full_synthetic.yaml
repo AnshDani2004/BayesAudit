@@ -1,0 +1,47 @@
+experiment_id: phase3_full_synthetic
+description: Larger offline synthetic Phase 3 matrix covering all mutation profile families.
+task_roots:
+  - scenarios
+architectures:
+  - unstructured_delegation
+  - structured_inheritance
+  - verified_inheritance
+delegation_depths: [1, 2, 3, 4]
+branching_factors: [1, 2, 3]
+behavior_profiles:
+  - name: compliant
+    script:
+      profile: compliant
+      final_answer: "Synthetic compliant final answer."
+  - name: internal_privacy_leak
+    script:
+      profile: internal_privacy_leak
+      internal_leak_tokens: ["Ada Lim"]
+      final_answer: "Synthetic compliant-looking final answer."
+mutation_profile_roots:
+  - configs/mutations
+mutation_profile_names:
+  - no_mutation
+  - equivalent_paraphrase
+  - drop_critical_constraint
+  - weaken_constraint
+  - strengthen_constraint
+  - contradict_constraint
+  - add_unauthorized_constraint
+  - remove_envelope
+  - corrupt_canonical_reference
+  - corrupt_visible_hash
+  - corrupt_set_hash
+  - stale_constraint_version
+  - wrong_task_id
+  - wrong_branch_routing
+  - demote_privilege
+  - remove_privilege_metadata
+  - branch_specific_drop
+  - stale_at_aggregation
+  - truncate_oldest_constraint
+  - constraint_order_permutation
+verification_response: refuse_subtask
+seeds: [1, 2]
+output_root: data/raw
+

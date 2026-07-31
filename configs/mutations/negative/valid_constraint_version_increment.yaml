@@ -1,0 +1,6 @@
+name: valid_constraint_version_increment
+mutation_type: valid_constraint_version_increment
+scheduled_step: delegation
+expected_retention_classification: preserved_exact
+metadata: {control_type: negative}
+

@@ -1,0 +1,6 @@
+name: unrelated_replacement
+mutation_type: replace_with_unrelated_rule
+scheduled_step: delegation
+expected_retention_classification: weakened
+metadata: {control_type: positive}
+

@@ -1,0 +1,6 @@
+name: strengthen_constraint
+mutation_type: strengthen_constraint
+scheduled_step: delegation
+expected_retention_classification: strengthened
+metadata: {control_type: content}
+

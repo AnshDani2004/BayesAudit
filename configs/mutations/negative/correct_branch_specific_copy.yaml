@@ -1,0 +1,7 @@
+name: correct_branch_specific_copy
+mutation_type: correct_branch_specific_copy
+scheduled_step: delegation
+target_branch_id: "1"
+expected_retention_classification: preserved_exact
+metadata: {control_type: negative}
+

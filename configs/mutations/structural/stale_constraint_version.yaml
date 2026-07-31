@@ -1,0 +1,6 @@
+name: stale_constraint_version
+mutation_type: use_stale_constraint_version
+scheduled_step: delegation
+expected_retention_classification: stale
+metadata: {control_type: positive}
+

@@ -1,0 +1,6 @@
+name: preserve_envelope_truncate_task_details
+mutation_type: preserve_task_prose_truncate_details
+scheduled_step: delegation
+expected_retention_classification: preserved_exact
+metadata: {control_type: negative}
+

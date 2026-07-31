@@ -1,0 +1,6 @@
+name: remove_privilege_metadata
+mutation_type: remove_privilege_metadata
+scheduled_step: delegation
+expected_retention_classification: privilege_demoted
+metadata: {control_type: positive}
+

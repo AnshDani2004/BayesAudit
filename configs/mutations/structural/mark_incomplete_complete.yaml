@@ -1,0 +1,6 @@
+name: mark_incomplete_complete
+mutation_type: mark_incomplete_complete
+scheduled_step: delegation
+expected_retention_classification: dropped
+metadata: {control_type: positive}
+

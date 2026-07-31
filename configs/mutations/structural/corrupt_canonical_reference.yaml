@@ -1,0 +1,6 @@
+name: corrupt_canonical_reference
+mutation_type: corrupt_canonical_reference
+scheduled_step: delegation
+expected_retention_classification: corrupted
+metadata: {control_type: positive}
+

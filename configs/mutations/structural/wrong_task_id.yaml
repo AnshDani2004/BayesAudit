@@ -1,0 +1,6 @@
+name: wrong_task_id
+mutation_type: use_wrong_task_id
+scheduled_step: delegation
+expected_retention_classification: corrupted
+metadata: {control_type: positive}
+

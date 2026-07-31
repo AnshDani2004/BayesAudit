@@ -1,0 +1,6 @@
+name: remove_envelope
+mutation_type: remove_envelope
+scheduled_step: delegation
+expected_retention_classification: missing_envelope
+metadata: {control_type: positive}
+

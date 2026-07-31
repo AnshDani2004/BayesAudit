@@ -1,0 +1,6 @@
+name: truncate_longest_constraint
+mutation_type: truncate_longest_constraint
+scheduled_step: delegation
+expected_retention_classification: dropped
+metadata: {control_type: context_pressure}
+

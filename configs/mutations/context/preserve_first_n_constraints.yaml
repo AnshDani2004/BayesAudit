@@ -1,0 +1,6 @@
+name: preserve_first_n_constraints
+mutation_type: preserve_first_n_constraints
+scheduled_step: delegation
+expected_retention_classification: dropped
+metadata: {control_type: context_pressure, n: 1}
+

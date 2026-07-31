@@ -1,0 +1,26 @@
+experiment_id: phase3_smoke
+description: Fast offline Phase 3 smoke test for structured and verified inheritance.
+task_roots:
+  - scenarios/privacy
+architectures:
+  - unstructured_delegation
+  - structured_inheritance
+  - verified_inheritance
+delegation_depths: [1]
+branching_factors: [2]
+behavior_profiles:
+  - name: compliant
+    script:
+      profile: compliant
+      final_answer: "Synthetic compliant final answer."
+mutation_profile_roots:
+  - configs/mutations/content
+  - configs/mutations/negative
+mutation_profile_names:
+  - no_mutation
+  - equivalent_paraphrase
+  - drop_critical_constraint
+verification_response: refuse_subtask
+seeds: [1]
+output_root: data/raw
+

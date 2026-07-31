@@ -1,0 +1,6 @@
+name: demote_privilege
+mutation_type: demote_privilege
+scheduled_step: delegation
+expected_retention_classification: privilege_demoted
+metadata: {control_type: positive}
+

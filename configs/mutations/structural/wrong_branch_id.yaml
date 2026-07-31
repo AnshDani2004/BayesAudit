@@ -1,0 +1,7 @@
+name: wrong_branch_id
+mutation_type: use_wrong_branch_id
+scheduled_step: delegation
+target_branch_id: "1"
+expected_retention_classification: corrupted
+metadata: {control_type: positive}
+

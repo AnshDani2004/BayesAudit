@@ -1,0 +1,6 @@
+name: equivalent_paraphrase
+mutation_type: paraphrase_equivalent
+scheduled_step: delegation
+expected_retention_classification: preserved_equivalent
+metadata: {control_type: negative}
+

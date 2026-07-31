@@ -1,0 +1,6 @@
+name: additional_irrelevant_metadata
+mutation_type: additional_irrelevant_metadata
+scheduled_step: delegation
+expected_retention_classification: preserved_exact
+metadata: {control_type: negative}
+
