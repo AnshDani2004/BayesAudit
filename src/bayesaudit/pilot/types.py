@@ -285,6 +285,10 @@ class ProviderPermissionRecord(StrictModel):
     max_tokens: int | None = None
     max_requests: int | None = None
     max_trajectories: int | None = None
+    pricing_table_version: str | None = None
+    tasks: list[str] = Field(default_factory=list)
+    architectures: list[str] = Field(default_factory=list)
+    maximum_possible_requests: int = 0
     environment_classification: str
     gates: list[PermissionGateRecord]
     final_authorization_decision: Literal["allow", "block"] = "block"

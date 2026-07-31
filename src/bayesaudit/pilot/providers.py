@@ -425,6 +425,10 @@ def authorize_provider_run(
         max_tokens=max_tokens,
         max_requests=max_requests,
         max_trajectories=max_trajectories,
+        pricing_table_version=_pricing_table_version(provider),
+        tasks=list(config.task_ids),
+        architectures=[str(architecture) for architecture in config.architectures],
+        maximum_possible_requests=plan.planned_requests * (1 + int(provider.max_retries)),
         environment_classification="ci" if _ci_environment() else "local",
         gates=gates,
         final_authorization_decision="allow" if allowed else "block",
@@ -634,6 +638,16 @@ def _credential_gate(provider: PilotProviderConfig) -> PermissionGateRecord:
         bool(key and os.environ.get(key)),
         "credential environment variable is present",
     )
+
+
+def _pricing_table_version(provider: PilotProviderConfig) -> str | None:
+    try:
+        return load_pricing_record(
+            provider.provider_name or provider.provider_class,
+            provider.model_identifier or "mock-deterministic-v1",
+        ).pricing_table_version
+    except KeyError:
+        return None
 
 
 def _ci_environment() -> bool:

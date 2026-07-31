@@ -306,6 +306,8 @@ def main() -> None:
     workflow_pilot = subparsers.add_parser("run-real-workflow-pilot")
     workflow_pilot.add_argument("--config", type=Path, required=True)
     workflow_pilot.add_argument("--dry-run", action="store_true")
+    workflow_pilot.add_argument("--domain-block", choices=["privacy", "authorization", "evidence"])
+    _add_provider_ceiling_args(workflow_pilot)
 
     measurement_pilot = subparsers.add_parser("run-measurement-pilot")
     measurement_pilot.add_argument("--config", type=Path, required=True)
@@ -673,7 +675,17 @@ def main() -> None:
             allow_large_run=args.allow_large_run,
         )
     elif args.command == "run-real-workflow-pilot":
-        payload = run_real_workflow_pilot(args.config, dry_run=args.dry_run)
+        payload = run_real_workflow_pilot(
+            args.config,
+            dry_run=args.dry_run,
+            allow_provider_calls=args.allow_provider_calls,
+            max_cost=args.max_cost,
+            max_tokens=args.max_tokens,
+            max_requests=args.max_requests,
+            max_trajectories=args.max_trajectories,
+            allow_large_run=args.allow_large_run,
+            domain_block=args.domain_block,
+        )
     elif args.command == "run-measurement-pilot" or args.command == "evaluate-real-scorers":
         payload = run_measurement_pilot(args.config, dry_run=getattr(args, "dry_run", True))
     elif args.command == "build-real-annotation-sample":
@@ -779,18 +791,11 @@ def _compare_policies_payload(rows: list[dict[str, object]]) -> dict[str, object
         for metric in _dict_rows(metrics):
             metric_name = str(metric.get("metric_name"))
             metric_value = metric.get("value", 0.0)
-            value = (
-                float(metric_value)
-                if isinstance(metric_value, int | float | str)
-                else 0.0
-            )
+            value = float(metric_value) if isinstance(metric_value, int | float | str) else 0.0
             target[metric_name] = target.get(metric_name, 0.0) + value
     return {
         "policies": {
-            name: {
-                metric: value / counts[name]
-                for metric, value in sorted(metrics.items())
-            }
+            name: {metric: value / counts[name] for metric, value in sorted(metrics.items())}
             for name, metrics in sorted(grouped.items())
         },
         "policy_run_counts": counts,

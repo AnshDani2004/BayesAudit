@@ -6,7 +6,7 @@ import json
 import subprocess
 from decimal import Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from bayesaudit.benchmark.io import load_tasks
 from bayesaudit.monitoring.monitors import load_monitor_artifact, predict_examples
@@ -33,6 +33,12 @@ from bayesaudit.pilot.providers import (
     make_provider_request,
     write_permission_record,
 )
+from bayesaudit.pilot.stage_b import (
+    run_stage_b_domain_block,
+    stage_b_request_plan,
+    summarize_stage_b,
+    validate_stage_b_config,
+)
 from bayesaudit.pilot.structured import parse_structured_output
 from bayesaudit.pilot.transfer import (
     calibration_transfer_metrics,
@@ -44,6 +50,7 @@ from bayesaudit.pilot.types import (
     PILOT_ARTIFACT_VERSION,
     PILOT_SCHEMA_VERSION,
     CostAccountingRecord,
+    CostReconciliationStatus,
     PilotExperimentConfig,
     PilotManifest,
     PilotPlan,
@@ -269,12 +276,102 @@ def run_provider_connectivity(
     }
 
 
-def run_real_workflow_pilot(config_path: Path, *, dry_run: bool) -> dict[str, Any]:
+def run_real_workflow_pilot(
+    config_path: Path,
+    *,
+    dry_run: bool,
+    allow_provider_calls: bool = False,
+    max_cost: float | None = None,
+    max_tokens: int | None = None,
+    max_requests: int | None = None,
+    max_trajectories: int | None = None,
+    allow_large_run: bool = False,
+    domain_block: str | None = None,
+) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
     output_dir = _output_dir(config)
     manifest = write_pilot_manifest(
         config, provider, plan, status="dry_run" if dry_run else "planned"
     )
+    if config.pilot_id == "phase7_workflow_openai_stage_b":
+        validation = validate_stage_b_config(config)
+        request_plan = stage_b_request_plan(config, provider, plan)
+        if not validation["valid"]:
+            raise ValueError(f"invalid Stage B config: {validation['errors']}")
+        if request_plan["maximum_possible_requests"] > int(
+            max_requests or config.request_ceiling or 0
+        ):
+            raise PermissionError("Stage B maximum possible requests exceed ceiling")
+        if plan.estimated_total_tokens > int(max_tokens or config.token_ceiling or 0):
+            raise PermissionError("Stage B estimated tokens exceed ceiling")
+        if plan.maximum_possible_cost > float(max_cost or config.cost_ceiling or 0.0):
+            raise PermissionError("Stage B estimated cost exceeds ceiling")
+        if dry_run:
+            return {
+                **plan.model_dump(mode="json"),
+                **request_plan,
+                "dry_run": True,
+                "pilot_manifest_status": manifest.status,
+                "provider_calls_performed": 0,
+                "output_dir": str(output_dir),
+                "cost_ceiling": max_cost if max_cost is not None else config.cost_ceiling,
+                "token_ceiling": max_tokens if max_tokens is not None else config.token_ceiling,
+                "request_ceiling": max_requests
+                if max_requests is not None
+                else config.request_ceiling,
+                "trajectory_ceiling": max_trajectories
+                if max_trajectories is not None
+                else config.trajectory_ceiling,
+            }
+        permission_payload = authorize_pilot_provider_run(
+            config_path,
+            allow_provider_calls=allow_provider_calls,
+            max_cost=max_cost,
+            max_tokens=max_tokens,
+            max_requests=max_requests,
+            max_trajectories=max_trajectories,
+            allow_large_run=allow_large_run,
+        )
+        if not permission_payload["allowed"]:
+            raise PermissionError("Stage B provider run blocked by Phase 7 safety gates")
+        if domain_block is None:
+            raise ValueError("Stage B real execution requires --domain-block")
+        payload = run_stage_b_domain_block(
+            config=config,
+            provider=provider,
+            plan=plan,
+            tasks=_selected_tasks(config),
+            output_dir=output_dir,
+            domain_block=domain_block,
+            max_requests=int(max_requests or config.request_ceiling or 0),
+            max_tokens=int(max_tokens or config.token_ceiling or 0),
+            max_cost=float(max_cost or config.cost_ceiling or 0.0),
+        )
+        final_summary = summarize_stage_b(config, provider, plan, output_dir)
+        final_manifest = write_pilot_manifest(config, provider, plan, status="completed")
+        final_manifest.completed_requests = int(final_summary["actual_requests"])
+        final_manifest.cached_requests = int(final_summary["cached_executions"])
+        final_manifest.failed_requests = int(final_summary["failed_requests"])
+        final_manifest.actual_tokens = int(final_summary["total_tokens"])
+        final_manifest.token_derived_cost_usd = Decimal(
+            str(final_summary["token_derived_cost_usd"])
+        )
+        final_manifest.provider_reported_cost_usd = None
+        final_manifest.billed_cost_usd = None
+        final_manifest.cost_reconciliation_status = cast(
+            CostReconciliationStatus,
+            str(final_summary["cost_reconciliation_status"]),
+        )
+        final_manifest.pricing_table_version = str(final_summary["pricing_table_version"])
+        write_json_atomic(
+            output_dir / "pilot_manifest.json", final_manifest.model_dump(mode="json")
+        )
+        return {
+            **payload,
+            "final_summary": final_summary,
+            "provider_calls_performed": payload["summary"]["actual_requests"],
+            "output_dir": str(output_dir),
+        }
     write_json_atomic(
         output_dir / "workflow_quality_flags.json",
         _workflow_quality_placeholder(config, plan),
@@ -399,9 +496,8 @@ def summarize_real_pilot(config_path: Path) -> dict[str, Any]:
     if cost_record and cost_record.token_derived_cost_usd is not None:
         derived_cost = str(cost_record.token_derived_cost_usd)
     token_cost = response.get("token_derived_cost_usd") or derived_cost
-    cost_status = (
-        response.get("cost_reconciliation_status")
-        or (cost_record.cost_reconciliation_status if cost_record else "unreconciled")
+    cost_status = response.get("cost_reconciliation_status") or (
+        cost_record.cost_reconciliation_status if cost_record else "unreconciled"
     )
     return {
         "pilot_id": config.pilot_id,

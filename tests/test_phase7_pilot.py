@@ -38,6 +38,7 @@ from bayesaudit.pilot.prompts import (
     FORBIDDEN_PROMPT_TOKENS,
     TEMPLATE_VERSIONS,
     render_prompt,
+    render_stage_b_prompt,
     repair_prompt,
 )
 from bayesaudit.pilot.providers import (
@@ -52,6 +53,14 @@ from bayesaudit.pilot.providers import (
     execute_provider_or_cached,
     extract_openai_response,
     make_provider_request,
+)
+from bayesaudit.pilot.stage_b import (
+    _assert_prior_domains_valid,
+    _review_packet,
+    classify_stage_b_trajectory,
+    stage_b_request_plan,
+    stage_b_status,
+    validate_stage_b_config,
 )
 from bayesaudit.pilot.structured import parse_structured_output
 from bayesaudit.pilot.transfer import oversight_feasibility_records
@@ -79,6 +88,7 @@ from bayesaudit.schemas import (
     MessageRecord,
     ModelConfigRecord,
     ModelResponse,
+    ScoreResult,
     Trajectory,
     TrajectoryStatus,
     TrajectoryStep,
@@ -110,6 +120,9 @@ OPENAI_STAGE_A1 = ROOT / "phase7_connectivity_openai_stage_a1.yaml"
 OPENAI_STAGE_A1_CONFIG = "configs/experiments/phase7_connectivity_openai_stage_a1.yaml"
 OPENAI_PROVIDER_A1 = Path("configs/providers/remote/openai_phase7_stage_a1.yaml")
 OPENAI_PROVIDER_A1_CONFIG = "configs/providers/remote/openai_phase7_stage_a1.yaml"
+OPENAI_STAGE_B = ROOT / "phase7_workflow_openai_stage_b.yaml"
+OPENAI_STAGE_B_CONFIG = "configs/experiments/phase7_workflow_openai_stage_b.yaml"
+OPENAI_PROVIDER_B = Path("configs/providers/remote/openai_phase7_stage_b.yaml")
 
 
 def _task() -> BenchmarkTask:
@@ -137,6 +150,7 @@ def _plan(path: Path = CONNECTIVITY) -> PilotPlan:
         Path("configs/providers/local/disabled_template.yaml"),
         OPENAI_PROVIDER,
         OPENAI_PROVIDER_A1,
+        OPENAI_PROVIDER_B,
     ],
 )
 def test_phase7_provider_configs_validate(path: Path) -> None:
@@ -157,6 +171,7 @@ def test_phase7_provider_configs_validate(path: Path) -> None:
         FULL,
         OPENAI_STAGE_A,
         OPENAI_STAGE_A1,
+        OPENAI_STAGE_B,
     ],
 )
 def test_phase7_experiment_configs_have_plans(path: Path) -> None:
@@ -300,6 +315,399 @@ def test_openai_stage_a1_config_uses_diagnostic_budget_and_reasoning() -> None:
     assert plan.planned_requests == 1
     assert plan.estimated_total_tokens <= 3000
     assert plan.estimated_cost <= 0.01
+
+
+def _stage_b_plan() -> tuple[PilotExperimentConfig, PilotProviderConfig, PilotPlan]:
+    config = load_pilot_experiment_config(OPENAI_STAGE_B)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_B)
+    plan = estimate_pilot_plan(config, provider, task_count=3)
+    return config, provider, plan
+
+
+def test_stage_b_config_has_six_trajectory_factor_count() -> None:
+    config, provider, plan = _stage_b_plan()
+    validation = validate_stage_b_config(config)
+    request_plan = stage_b_request_plan(config, provider, plan)
+    assert validation["valid"] is True
+    assert request_plan["planned_trajectories"] == 6
+    assert plan.planned_trajectories == 6
+
+
+def test_stage_b_config_has_exactly_three_domains() -> None:
+    config, provider, plan = _stage_b_plan()
+    request_plan = stage_b_request_plan(config, provider, plan)
+    assert set(request_plan["domains"]) == {"privacy", "authorization", "evidence"}
+    assert request_plan["task_ids"] == [
+        "task_privacy_aggregate_only",
+        "task_authorization_local_only",
+        "task_evidence_claim_support",
+    ]
+
+
+def test_stage_b_config_has_exactly_two_architectures() -> None:
+    config, provider, plan = _stage_b_plan()
+    request_plan = stage_b_request_plan(config, provider, plan)
+    assert request_plan["architectures"] == [
+        "structured_inheritance",
+        "unstructured_delegation",
+    ]
+    assert config.architectures == [
+        ArchitectureKind.UNSTRUCTURED_DELEGATION,
+        ArchitectureKind.STRUCTURED_INHERITANCE,
+    ]
+
+
+def test_stage_b_depth_is_fixed_at_one() -> None:
+    config, _, _ = _stage_b_plan()
+    assert config.delegation_depths == [1]
+    assert config.branching_factors == [1]
+
+
+def test_stage_b_honest_behavior_only() -> None:
+    config, _, _ = _stage_b_plan()
+    assert config.behavior_conditions == ["honest"]
+
+
+def test_stage_b_has_no_attacker() -> None:
+    config, _, _ = _stage_b_plan()
+    assert config.attacker_conditions == ["none"]
+
+
+def test_stage_b_has_no_oversight() -> None:
+    config, _, _ = _stage_b_plan()
+    assert config.oversight_conditions == ["none"]
+    assert config.external_tools_enabled is False
+
+
+def test_stage_b_request_count_planning() -> None:
+    config, provider, plan = _stage_b_plan()
+    request_plan = stage_b_request_plan(config, provider, plan)
+    assert request_plan["planner_requests_per_trajectory"] == 1
+    assert request_plan["worker_requests_per_trajectory"] == 1
+    assert request_plan["aggregator_requests_per_trajectory"] == 1
+    assert request_plan["verification_requests_per_trajectory"] == 0
+    assert request_plan["structured_output_repair_requests_per_trajectory"] == 0
+    assert request_plan["expected_total_requests"] == 18
+    assert request_plan["maximum_possible_requests"] == 18
+
+
+def test_stage_b_request_ceiling_enforced() -> None:
+    with pytest.raises(PermissionError, match="requests exceed ceiling"):
+        run_real_workflow_pilot(
+            OPENAI_STAGE_B,
+            dry_run=True,
+            max_cost=0.10,
+            max_tokens=60000,
+            max_requests=17,
+            max_trajectories=6,
+        )
+
+
+def test_stage_b_token_ceiling_enforced() -> None:
+    with pytest.raises(PermissionError, match="tokens exceed ceiling"):
+        run_real_workflow_pilot(
+            OPENAI_STAGE_B,
+            dry_run=True,
+            max_cost=0.10,
+            max_tokens=53999,
+            max_requests=24,
+            max_trajectories=6,
+        )
+
+
+def test_stage_b_cost_ceiling_enforced() -> None:
+    with pytest.raises(PermissionError, match="cost exceeds ceiling"):
+        run_real_workflow_pilot(
+            OPENAI_STAGE_B,
+            dry_run=True,
+            max_cost=0.001,
+            max_tokens=60000,
+            max_requests=24,
+            max_trajectories=6,
+        )
+
+
+def test_stage_b_domain_block_execution_order() -> None:
+    config, provider, plan = _stage_b_plan()
+    request_plan = stage_b_request_plan(config, provider, plan)
+    rows = request_plan["request_rows"]
+    assert [row["domain"] for row in rows[:2]] == ["privacy", "privacy"]
+    assert [row["domain"] for row in rows[2:4]] == ["authorization", "authorization"]
+    assert [row["domain"] for row in rows[4:]] == ["evidence", "evidence"]
+    assert [row["architecture"] for row in rows[:2]] == [
+        "unstructured_delegation",
+        "structured_inheritance",
+    ]
+
+
+def test_stage_b_stops_after_privacy_infrastructure_failure(tmp_path: Path) -> None:
+    (tmp_path / "workflow_classifications.jsonl").write_text(
+        json.dumps(
+            {
+                "domain": "privacy",
+                "classification": "invalid_infrastructure",
+                "trajectory_id": "t1",
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="privacy"):
+        _assert_prior_domains_valid(tmp_path, "authorization")
+
+
+def test_stage_b_stops_after_authorization_infrastructure_failure(tmp_path: Path) -> None:
+    rows = [
+        {"domain": "privacy", "classification": "valid", "trajectory_id": "p1"},
+        {"domain": "privacy", "classification": "valid", "trajectory_id": "p2"},
+        {
+            "domain": "authorization",
+            "classification": "invalid_infrastructure",
+            "trajectory_id": "a1",
+        },
+    ]
+    (tmp_path / "workflow_classifications.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in rows) + "\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(RuntimeError, match="authorization"):
+        _assert_prior_domains_valid(tmp_path, "evidence")
+
+
+def test_stage_b_dry_run_performs_zero_provider_calls() -> None:
+    payload = run_real_workflow_pilot(
+        OPENAI_STAGE_B,
+        dry_run=True,
+        max_cost=0.10,
+        max_tokens=60000,
+        max_requests=24,
+        max_trajectories=6,
+    )
+    assert payload["provider_calls_performed"] == 0
+    assert payload["expected_total_requests"] == 18
+
+
+def test_stage_b_pricing_table_version_preserved_in_plan() -> None:
+    config, provider, plan = _stage_b_plan()
+    request_plan = stage_b_request_plan(config, provider, plan)
+    assert (
+        request_plan["pricing_table_version"]
+        == "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1"
+    )
+
+
+def _stage_b_trajectory_for_classification(
+    *,
+    final_text: str = "Worker found North 150 and South 100 from the worker result.",
+    architecture: ArchitectureKind = ArchitectureKind.UNSTRUCTURED_DELEGATION,
+) -> Trajectory:
+    task = _task()
+    root = TrajectoryStep(
+        step_id="s1",
+        sequence_index=1,
+        agent_id="planner",
+        role="planner",
+        depth=0,
+        kind=WorkflowStepKind.PLANNING,
+        input_messages=[MessageRecord(role="user", content="full original task")],
+        model_response=_response(
+            '{"agent_role":"planner","proposed_subtask":"Compute regional averages",'
+            '"confidence":0.8}'
+        ),
+        metadata={"proposed_subtask": "Compute regional averages"},
+    )
+    worker = TrajectoryStep(
+        step_id="s2",
+        sequence_index=2,
+        parent_step_id="s1",
+        agent_id="worker",
+        role="worker",
+        depth=1,
+        kind=WorkflowStepKind.DELEGATION,
+        input_messages=[MessageRecord(role="user", content="Compute regional averages")],
+        model_response=_response("worker result: North 150; South 100"),
+    )
+    final = TrajectoryStep(
+        step_id="s3",
+        sequence_index=3,
+        parent_step_id="s1",
+        agent_id="planner",
+        role="planner",
+        depth=0,
+        kind=WorkflowStepKind.FINAL_OUTPUT,
+        input_messages=[MessageRecord(role="user", content="worker result: North 150; South 100")],
+        model_response=_response(final_text),
+    )
+    return Trajectory(
+        trajectory_id="traj_stage_b_test",
+        task_id=task.task_id,
+        task_version=task.task_version,
+        scenario_hash=task.scenario_hash,
+        experiment_id="phase7_stage_b",
+        run_id="run_stage_b_test",
+        architecture=architecture,
+        behavior_condition=BehaviorCondition.HONEST,
+        model_configuration=ModelConfigRecord(provider="openai", model_id="gpt-5-nano"),
+        oversight_policy="none",
+        oversight_budget=BudgetState(initial_budget=0.0, remaining_budget=0.0, consumed_budget=0.0),
+        seed=1,
+        status=TrajectoryStatus.COMPLETED,
+        configuration_hash="hash",
+        steps=[root, worker, final],
+    )
+
+
+def _score_for_stage_b(trajectory: Trajectory) -> ScoreResult:
+    return ScoreResult(
+        task_id=trajectory.task_id,
+        trajectory_id=trajectory.trajectory_id,
+        scorer_name="privacy",
+        scorer_version="v1",
+        task_success=True,
+        task_correctness_score=1.0,
+        utility_score=1.0,
+        trajectory_violation_count=0,
+        final_output_violation_count=0,
+        internal_only_violation_count=0,
+        severity_weighted_harm=0.0,
+    )
+
+
+def test_stage_b_workflow_classification_valid() -> None:
+    trajectory = _stage_b_trajectory_for_classification()
+    parsed = [parse_structured_output('{"agent_role":"x","confidence":0.8}', repair_limit=0)] * 3
+    classification = classify_stage_b_trajectory(
+        trajectory=trajectory,
+        score=_score_for_stage_b(trajectory),
+        parsed_records=parsed,
+        quality_flags=[],
+        architecture=ArchitectureKind.UNSTRUCTURED_DELEGATION,
+    )
+    assert classification["classification"] == "valid"
+    assert classification["delegation_meaningful"] is True
+    assert classification["aggregator_used_worker"] is True
+
+
+def test_stage_b_workflow_classification_failure() -> None:
+    trajectory = _stage_b_trajectory_for_classification(final_text="unrelated final")
+    parsed = [parse_structured_output('{"agent_role":"x","confidence":0.8}', repair_limit=0)] * 3
+    classification = classify_stage_b_trajectory(
+        trajectory=trajectory,
+        score=_score_for_stage_b(trajectory),
+        parsed_records=parsed,
+        quality_flags=[],
+        architecture=ArchitectureKind.UNSTRUCTURED_DELEGATION,
+    )
+    assert classification["classification"] == "invalid_model_workflow"
+
+
+def test_stage_b_pass_calculation() -> None:
+    rows = [
+        {
+            "classification": "valid",
+            "architecture": "unstructured_delegation",
+            "domain": "privacy",
+            "final_output_scorable": True,
+        },
+        {
+            "classification": "valid",
+            "architecture": "structured_inheritance",
+            "domain": "privacy",
+            "final_output_scorable": True,
+        },
+        {
+            "classification": "valid_with_minor_issue",
+            "architecture": "unstructured_delegation",
+            "domain": "authorization",
+            "final_output_scorable": True,
+        },
+        {
+            "classification": "valid",
+            "architecture": "structured_inheritance",
+            "domain": "authorization",
+            "final_output_scorable": True,
+        },
+        {
+            "classification": "invalid_model_workflow",
+            "architecture": "unstructured_delegation",
+            "domain": "evidence",
+            "final_output_scorable": True,
+        },
+        {
+            "classification": "valid",
+            "architecture": "structured_inheritance",
+            "domain": "evidence",
+            "final_output_scorable": True,
+        },
+    ]
+    assert stage_b_status(rows, 0) == "passed"
+
+
+def test_stage_b_failure_calculation() -> None:
+    rows = [
+        {
+            "classification": "invalid_model_workflow",
+            "architecture": "unstructured_delegation",
+            "domain": "privacy",
+            "final_output_scorable": True,
+        }
+        for _ in range(6)
+    ]
+    assert stage_b_status(rows, 0) == "failed"
+
+
+def test_stage_b_review_packet_generation() -> None:
+    trajectory = _stage_b_trajectory_for_classification()
+    score = _score_for_stage_b(trajectory)
+    packet = _review_packet(
+        trajectory=trajectory,
+        score=score,
+        quality_flags=[],
+        classification={"classification": "valid"},
+        stage_results=[],
+        task=_task(),
+    )
+    assert packet["packet_label"] == "developer workflow inspection packet"
+    assert packet["trajectory_id"] == trajectory.trajectory_id
+
+
+def test_stage_b_status_is_blocked_before_all_trajectories_attempted() -> None:
+    rows = [{"classification": "valid", "architecture": "unstructured_delegation"}]
+    assert stage_b_status(rows, 0) == "blocked"
+
+
+def test_stage_b_prompt_includes_source_materials_without_hidden_labels() -> None:
+    prompt = render_stage_b_prompt(
+        task=_task(),
+        architecture="unstructured_delegation",
+        agent_role="planner",
+        delegation_depth=0,
+    )
+    assert "Supplied materials" in prompt.rendered_prompt
+    assert "ground_truth" not in prompt.rendered_prompt.lower()
+
+
+def test_stage_b_structured_missing_constraint_state_is_infrastructure_failure() -> None:
+    trajectory = _stage_b_trajectory_for_classification(
+        architecture=ArchitectureKind.STRUCTURED_INHERITANCE
+    )
+    parsed = [parse_structured_output('{"agent_role":"x","confidence":0.8}', repair_limit=0)] * 3
+    classification = classify_stage_b_trajectory(
+        trajectory=trajectory,
+        score=_score_for_stage_b(trajectory),
+        parsed_records=parsed,
+        quality_flags=[],
+        architecture=ArchitectureKind.STRUCTURED_INHERITANCE,
+    )
+    assert classification["classification"] == "invalid_infrastructure"
+    assert classification["constraint_state_issue"] is True
+
+
+def test_stage_b_prompt_echo_flag_is_diagnostic() -> None:
+    trajectory = _trajectory(final_input="worker result", worker_output="worker result")
+    trajectory.steps[0].model_response = _response("original task")
+    flags = workflow_quality_flags(trajectory)
+    assert "prompt_echo" in flags.flags
 
 
 def _stage_a1_pricing() -> PricingRecord:
