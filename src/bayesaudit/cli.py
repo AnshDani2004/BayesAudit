@@ -307,6 +307,10 @@ def main() -> None:
     workflow_pilot.add_argument("--config", type=Path, required=True)
     workflow_pilot.add_argument("--dry-run", action="store_true")
     workflow_pilot.add_argument("--domain-block", choices=["privacy", "authorization", "evidence"])
+    workflow_pilot.add_argument(
+        "--architecture-block",
+        choices=["unstructured_delegation", "structured_inheritance"],
+    )
     _add_provider_ceiling_args(workflow_pilot)
 
     measurement_pilot = subparsers.add_parser("run-measurement-pilot")
@@ -685,6 +689,7 @@ def main() -> None:
             max_trajectories=args.max_trajectories,
             allow_large_run=args.allow_large_run,
             domain_block=args.domain_block,
+            architecture_block=args.architecture_block,
         )
     elif args.command == "run-measurement-pilot" or args.command == "evaluate-real-scorers":
         payload = run_measurement_pilot(args.config, dry_run=getattr(args, "dry_run", True))

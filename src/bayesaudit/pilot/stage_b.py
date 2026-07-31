@@ -265,12 +265,17 @@ def run_stage_b_domain_block(
     max_requests: int,
     max_tokens: int,
     max_cost: float,
+    architecture_block: str | None = None,
 ) -> dict[str, Any]:
     if domain_block not in STAGE_B_DOMAIN_ORDER:
         raise ValueError(f"unknown Stage B domain block: {domain_block}")
     _assert_prior_domains_valid(output_dir, domain_block)
     tasks_by_id = {task.task_id: task for task in tasks}
     specs = [spec for spec in _trajectory_specs(config) if str(spec["domain"]) == domain_block]
+    if architecture_block is not None:
+        specs = [spec for spec in specs if str(spec["architecture"]) == architecture_block]
+        if not specs:
+            raise ValueError(f"unknown Stage B architecture block: {architecture_block}")
     cache = RequestCache(output_dir / "request_cache")
     ledger = ProviderLedger(output_dir / "provider_request_ledger.jsonl")
     attempted: list[dict[str, Any]] = []
@@ -310,11 +315,17 @@ def run_stage_b_domain_block(
             max_cost=max_cost,
         )
     domain_summary = summarize_stage_b(config, provider, plan, output_dir)
+    infrastructure_valid = (
+        _domain_architecture_infrastructure_valid(output_dir, domain_block, architecture_block)
+        if architecture_block is not None
+        else _domain_infrastructure_valid(output_dir, domain_block)
+    )
     domain_payload = {
         "domain": domain_block,
+        "architecture_block": architecture_block,
         "attempted": attempted,
         "summary": domain_summary,
-        "infrastructure_valid": _domain_infrastructure_valid(output_dir, domain_block),
+        "infrastructure_valid": infrastructure_valid,
     }
     append_jsonl(output_dir / "stage_b_domain_summaries.jsonl", domain_payload)
     write_json_atomic(output_dir / "stage_b_summary.json", domain_summary)
@@ -1670,6 +1681,20 @@ def _domain_infrastructure_valid(output_dir: Path, domain: str) -> bool:
     rows = read_jsonl(output_dir / "workflow_classifications.jsonl")
     domain_rows = [row for row in rows if row.get("domain") == domain]
     return len(domain_rows) == 2 and not any(
+        row.get("classification") == "invalid_infrastructure" for row in domain_rows
+    )
+
+
+def _domain_architecture_infrastructure_valid(
+    output_dir: Path, domain: str, architecture: str | None
+) -> bool:
+    rows = read_jsonl(output_dir / "workflow_classifications.jsonl")
+    domain_rows = [
+        row
+        for row in rows
+        if row.get("domain") == domain and row.get("architecture") == architecture
+    ]
+    return len(domain_rows) == 1 and not any(
         row.get("classification") == "invalid_infrastructure" for row in domain_rows
     )
 

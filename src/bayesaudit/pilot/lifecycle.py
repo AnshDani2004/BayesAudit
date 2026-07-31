@@ -287,6 +287,7 @@ def run_real_workflow_pilot(
     max_trajectories: int | None = None,
     allow_large_run: bool = False,
     domain_block: str | None = None,
+    architecture_block: str | None = None,
 ) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
     output_dir = _output_dir(config)
@@ -355,6 +356,7 @@ def run_real_workflow_pilot(
             max_requests=int(max_requests or config.request_ceiling or 0),
             max_tokens=int(max_tokens or config.token_ceiling or 0),
             max_cost=float(max_cost or config.cost_ceiling or 0.0),
+            architecture_block=architecture_block,
         )
         final_summary = summarize_stage_b(config, provider, plan, output_dir)
         final_manifest = write_pilot_manifest(config, provider, plan, status="completed")
