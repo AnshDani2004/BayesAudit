@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +15,11 @@ from bayesaudit.pilot.config import (
     load_pilot_experiment_config,
     load_pilot_provider_config,
     validate_provider_config,
+)
+from bayesaudit.pilot.costs import (
+    calculate_cost_accounting,
+    load_pricing_record,
+    load_pricing_record_path,
 )
 from bayesaudit.pilot.lifecycle import (
     build_real_annotation_sample,
@@ -50,9 +56,12 @@ from bayesaudit.pilot.providers import (
 from bayesaudit.pilot.structured import parse_structured_output
 from bayesaudit.pilot.transfer import oversight_feasibility_records
 from bayesaudit.pilot.types import (
+    CostAccountingRecord,
     PilotExperimentConfig,
     PilotPlan,
     PilotProviderConfig,
+    PricingRecord,
+    ProviderAttemptCostInput,
     ProviderResponseRecord,
 )
 from bayesaudit.pilot.validation import (
@@ -291,6 +300,275 @@ def test_openai_stage_a1_config_uses_diagnostic_budget_and_reasoning() -> None:
     assert plan.planned_requests == 1
     assert plan.estimated_total_tokens <= 3000
     assert plan.estimated_cost <= 0.01
+
+
+def _stage_a1_pricing() -> PricingRecord:
+    return load_pricing_record("openai", "gpt-5-nano-2025-08-07")
+
+
+def _cost_for_attempt(
+    attempt: ProviderAttemptCostInput,
+    *,
+    estimated: Decimal | None = Decimal("0.0015"),
+    pricing: PricingRecord | None = None,
+) -> CostAccountingRecord:
+    return calculate_cost_accounting(
+        provider="openai",
+        model_identifier="gpt-5-nano-2025-08-07",
+        attempts=[attempt],
+        pricing=_stage_a1_pricing() if pricing is None else pricing,
+        estimated_cost_usd=estimated,
+        conservative_upper_bound_usd=estimated,
+    )
+
+
+def test_stage_a1_token_derived_cost_uses_versioned_pricing() -> None:
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(input_tokens=31, output_tokens=33, reasoning_tokens=0)
+    )
+    assert record.input_cost_usd == Decimal("0.00000155")
+    assert record.cached_input_cost_usd == Decimal("0")
+    assert record.output_cost_usd == Decimal("0.0000132")
+    assert record.token_derived_cost_usd == Decimal("0.00001475")
+    assert record.cost_reconciliation_status == "token_derived"
+    assert (
+        record.pricing_table_version
+        == "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1"
+    )
+
+
+def test_cached_input_pricing_uses_cached_rate() -> None:
+    record = _cost_for_attempt(ProviderAttemptCostInput(input_tokens=10, cached_input_tokens=10))
+    assert record.input_cost_usd == Decimal("0")
+    assert record.cached_input_cost_usd == Decimal("0.00000005")
+    assert record.token_derived_cost_usd == Decimal("0.00000005")
+
+
+def test_mixed_cached_and_noncached_input_pricing() -> None:
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(input_tokens=100, cached_input_tokens=40, output_tokens=10)
+    )
+    assert record.noncached_input_tokens == 60
+    assert record.input_cost_usd == Decimal("0.000003")
+    assert record.cached_input_cost_usd == Decimal("0.0000002")
+    assert record.output_cost_usd == Decimal("0.000004")
+    assert record.token_derived_cost_usd == Decimal("0.0000072")
+
+
+def test_zero_token_response_has_zero_token_derived_cost() -> None:
+    record = _cost_for_attempt(ProviderAttemptCostInput())
+    assert record.token_derived_cost_usd == Decimal("0")
+    assert record.cost_reconciliation_status == "token_derived"
+
+
+def test_reasoning_tokens_are_not_double_counted() -> None:
+    baseline = _cost_for_attempt(ProviderAttemptCostInput(input_tokens=31, output_tokens=33))
+    with_reasoning = _cost_for_attempt(
+        ProviderAttemptCostInput(input_tokens=31, output_tokens=33, reasoning_tokens=20)
+    )
+    assert with_reasoning.token_derived_cost_usd == baseline.token_derived_cost_usd
+    assert "not double counted" in " ".join(with_reasoning.notes)
+
+
+def test_missing_usage_is_estimated_only() -> None:
+    record = _cost_for_attempt(ProviderAttemptCostInput(usage_present=False))
+    assert record.token_derived_cost_usd is None
+    assert record.cost_reconciliation_status == "estimated_only"
+
+
+def test_missing_pricing_record_blocks_token_derived_cost() -> None:
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(input_tokens=31, output_tokens=33),
+        pricing=None,
+        estimated=Decimal("0.0015"),
+    )
+    assert record.token_derived_cost_usd == Decimal("0.00001475")
+    no_pricing = calculate_cost_accounting(
+        provider="openai",
+        model_identifier="gpt-5-nano-2025-08-07",
+        attempts=[ProviderAttemptCostInput(input_tokens=31, output_tokens=33)],
+        pricing=None,
+        estimated_cost_usd=Decimal("0.0015"),
+    )
+    assert no_pricing.token_derived_cost_usd is None
+    assert no_pricing.cost_reconciliation_status == "estimated_only"
+
+
+def test_unknown_model_has_no_pricing_record() -> None:
+    with pytest.raises(KeyError):
+        load_pricing_record("openai", "unknown-model")
+
+
+def test_regional_uplift_is_explicit_component() -> None:
+    pricing = _stage_a1_pricing().model_copy(
+        update={"regional_uplift_multiplier": Decimal("1.10")}
+    )
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(input_tokens=31, output_tokens=33),
+        pricing=pricing,
+    )
+    assert record.regional_uplift_usd == Decimal("0.000001475")
+    assert record.token_derived_cost_usd == Decimal("0.000016225")
+
+
+def test_fixed_tool_charge_is_explicit_component() -> None:
+    pricing = _stage_a1_pricing().model_copy(update={"fixed_tool_charge_usd": Decimal("0.0002")})
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(input_tokens=31, output_tokens=33),
+        pricing=pricing,
+    )
+    assert record.fixed_tool_charge_usd == Decimal("0.0002")
+    assert record.token_derived_cost_usd == Decimal("0.00021475")
+
+
+def test_retry_with_one_billed_and_one_unbilled_attempt() -> None:
+    record = calculate_cost_accounting(
+        provider="openai",
+        model_identifier="gpt-5-nano-2025-08-07",
+        attempts=[
+            ProviderAttemptCostInput(input_tokens=31, output_tokens=33, billed=True),
+            ProviderAttemptCostInput(input_tokens=999, output_tokens=999, billed=False),
+        ],
+        pricing=_stage_a1_pricing(),
+    )
+    assert record.billed_attempt_count == 1
+    assert record.unbilled_attempt_count == 1
+    assert record.token_derived_cost_usd == Decimal("0.00001475")
+
+
+def test_cache_hit_adds_zero_incremental_provider_cost() -> None:
+    record = calculate_cost_accounting(
+        provider="openai",
+        model_identifier="gpt-5-nano-2025-08-07",
+        attempts=[
+            ProviderAttemptCostInput(
+                status="cached",
+                input_tokens=31,
+                output_tokens=33,
+                billed=False,
+            )
+        ],
+        pricing=_stage_a1_pricing(),
+    )
+    assert record.cache_hit_count == 1
+    assert record.token_derived_cost_usd == Decimal("0")
+    assert record.cost_reconciliation_status == "token_derived"
+
+
+def test_failed_request_with_reported_usage_is_token_derived() -> None:
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(status="failed", input_tokens=31, output_tokens=33)
+    )
+    assert record.token_derived_cost_usd == Decimal("0.00001475")
+    assert record.cost_reconciliation_status == "token_derived"
+
+
+def test_failed_request_without_usage_remains_unreconciled() -> None:
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(status="failed", usage_present=False),
+        estimated=None,
+    )
+    assert record.token_derived_cost_usd is None
+    assert record.cost_reconciliation_status == "unreconciled"
+
+
+def test_cost_accounting_uses_decimal_precision() -> None:
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(input_tokens=3, cached_input_tokens=1, output_tokens=7)
+    )
+    assert record.token_derived_cost_usd == Decimal("0.000002905")
+    assert isinstance(record.token_derived_cost_usd, Decimal)
+
+
+def test_pricing_table_version_and_hash_are_preserved() -> None:
+    pricing = _stage_a1_pricing()
+    record = _cost_for_attempt(ProviderAttemptCostInput(input_tokens=31, output_tokens=33))
+    assert record.pricing_table_version == pricing.pricing_table_version
+    assert record.pricing_configuration_hash == pricing.configuration_hash
+
+
+def test_provider_reported_cost_is_distinct_from_token_derived_cost() -> None:
+    record = _cost_for_attempt(
+        ProviderAttemptCostInput(
+            input_tokens=31,
+            output_tokens=33,
+            provider_reported_cost_usd=Decimal("0.01"),
+        )
+    )
+    assert record.provider_reported_cost_usd == Decimal("0.01")
+    assert record.token_derived_cost_usd == Decimal("0.00001475")
+    assert record.cost_reconciliation_status == "provider_reported"
+
+
+def test_conservative_upper_bound_is_not_labeled_actual_cost() -> None:
+    record = _cost_for_attempt(ProviderAttemptCostInput(input_tokens=31, output_tokens=33))
+    payload = record.model_dump(mode="json")
+    assert payload["conservative_upper_bound_usd"] == "0.0015"
+    assert "actual_cost" not in payload
+    assert "reconciled_cost" not in payload
+
+
+def test_report_summary_preserves_nullable_billed_cost(tmp_path: Path) -> None:
+    config = load_pilot_experiment_config(OPENAI_STAGE_A1).model_copy(
+        update={"output_root": tmp_path}
+    )
+    path = tmp_path / "stage_a1.yaml"
+    path.write_text(config.model_dump_json(), encoding="utf-8")
+    output_dir = tmp_path / config.pilot_id
+    output_dir.mkdir(parents=True)
+    (output_dir / "provider_request_ledger.jsonl").write_text(
+        json.dumps({"request_hash": "abc", "status": "completed"}) + "\n",
+        encoding="utf-8",
+    )
+    (output_dir / "provider_failures.jsonl").write_text("", encoding="utf-8")
+    (output_dir / "connectivity_response.json").write_text(
+        json.dumps(
+            {
+                "total_tokens": 64,
+                "provider_reported_usage": {
+                    "input_tokens": 31,
+                    "cached_input_tokens": 0,
+                    "output_tokens": 33,
+                    "reasoning_tokens": 0,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    summary = summarize_real_pilot(path)
+    assert summary["token_derived_cost_usd"] == "0.00001475"
+    assert summary["provider_reported_cost_usd"] is None
+    assert summary["billed_cost_usd"] is None
+
+
+def test_historical_stage_a_failure_summary_remains_unreconciled(tmp_path: Path) -> None:
+    config = load_pilot_experiment_config(OPENAI_STAGE_A).model_copy(
+        update={"output_root": tmp_path}
+    )
+    path = tmp_path / "stage_a.yaml"
+    path.write_text(config.model_dump_json(), encoding="utf-8")
+    output_dir = tmp_path / config.pilot_id
+    output_dir.mkdir(parents=True)
+    (output_dir / "provider_request_ledger.jsonl").write_text(
+        json.dumps({"request_hash": "abc", "status": "failed"}) + "\n",
+        encoding="utf-8",
+    )
+    (output_dir / "provider_failures.jsonl").write_text(
+        json.dumps({"failure_type": "unknown_provider_error"}) + "\n",
+        encoding="utf-8",
+    )
+    summary = summarize_real_pilot(path)
+    assert summary["failed_requests"] == 1
+    assert summary["token_derived_cost_usd"] is None
+    assert summary["cost_reconciliation_status"] == "unreconciled"
+
+
+def test_pricing_record_path_validates_configuration_hash() -> None:
+    record = load_pricing_record_path(Path("configs/pricing/openai_gpt5_nano_2025_08_07.yaml"))
+    assert (
+        record.configuration_hash
+        == "767fa5ca39aac5617fb39d81e6cb9a0f197264b5d097d51cec3deb01214eff61"
+    )
 
 
 @pytest.mark.parametrize(

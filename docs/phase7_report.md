@@ -39,14 +39,14 @@ Current empirical status:
 - Requests completed against real providers: `1`.
 - Requests cached from real providers: `1`.
 - Requests failed against real providers: `1`.
-- Actual cost: Stage A unreconciled; Stage A.1 reconciled at `$0.000064`.
+- Cost status: Stage A unreconciled; Stage A.1 token-derived local cost is `$0.00001475`.
 - Actual token usage: Stage A unreconciled; Stage A.1 used `64` total tokens.
 - Real-model trajectory count: `2` attempted across Stage A and Stage A.1.
 - Valid real-model trajectory count: `1`.
 - Excluded real-model trajectory count: `1`.
 - Pilot observations: Stage A failed before cache verification; Stage A.1 passed and cache verification passed.
 - Synthetic comparisons: previous phases only.
-- Test status after Stage A.1 adapter coverage: `472 passed`.
+- Test status after Stage A.2 cost-accounting audit coverage: `493 passed`.
 
 ## Stage A: Real-Provider Connectivity
 
@@ -123,10 +123,24 @@ Current empirical status:
 - Output tokens: `33`
 - Reasoning tokens: `0`
 - Total tokens: `64`
-- Estimated cost: `$0.0015`
-- Reconciled cost: `$0.000064`
+- estimated_cost_usd: `$0.0015`
+- conservative_upper_bound_usd: `$0.0015`
+- token_derived_cost_usd: `$0.00001475`
+- provider_reported_cost_usd: null; OpenAI returned token usage but no monetary cost.
+- billed_cost_usd: null; no external billing-source reconciliation was performed.
+- cost_reconciliation_status: `token_derived`
+- Pricing-table version: `openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1`
+- Pricing configuration hash: `767fa5ca39aac5617fb39d81e6cb9a0f197264b5d097d51cec3deb01214eff61`
+- Pricing components:
+  - noncached input: `31 * $0.05 / 1,000,000 = $0.00000155`
+  - cached input: `0 * $0.005 / 1,000,000 = $0`
+  - output: `33 * $0.40 / 1,000,000 = $0.00001320`
+  - reasoning tokens: `0`; not double counted because reasoning tokens are included in output usage accounting.
+  - regional uplift: `$0`
+  - additional fixed fees: `$0`
+  - fixed tool charges: `$0`
 - Token ceiling utilization: `2.13%`
-- Cost ceiling utilization: `0.64%`
+- Cost ceiling utilization: `0.1475%` by token-derived local cost.
 - Request ceiling utilization: `100%` for actual provider requests
 - Trajectory ceiling utilization: `100%`
 - Cache verification result: passed; second local execution used the same request hash and the complete cache entry.
@@ -135,6 +149,14 @@ Current empirical status:
 - Previous Stage A reconciliation status: unreconciled from preserved artifacts.
 - External-action result: passed; no tools were configured or invoked.
 - Stage A.1 status: `passed`
+
+Correction note:
+
+- Previous value: Stage A.1 was described as reconciled at `$0.000064`.
+- Corrected value: Stage A.1 has `token_derived_cost_usd = $0.00001475`; `provider_reported_cost_usd = null`; `billed_cost_usd = null`.
+- Root cause: BayesAudit calculated the previous value by multiplying the actual 64 tokens by conservative provider-config estimate fields of `$0.001` per 1k input/output tokens. That was a local estimate, not provider-reported or externally billed cost.
+- Affected artifacts: docs and future response/manifest schemas now separate `estimated_cost_usd`, `token_derived_cost_usd`, `provider_reported_cost_usd`, `billed_cost_usd`, `conservative_upper_bound_usd`, and `cost_reconciliation_status`. The historical raw Stage A.1 response was not modified.
+- Conclusions changed: no connectivity conclusion changed; Stage A.1 remains passed, Stage A remains unreconciled, Stage B has not begun, and the benchmark remains `not_ready_to_freeze`.
 
 Measurement validation:
 

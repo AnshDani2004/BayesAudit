@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +16,11 @@ from bayesaudit.pilot.config import (
     config_hash,
     load_pilot_experiment_config,
     load_pilot_provider_config,
+)
+from bayesaudit.pilot.costs import (
+    calculate_cost_accounting,
+    load_pricing_record,
+    response_attempt_from_usage,
 )
 from bayesaudit.pilot.prompts import openai_stage_a1_diagnostic_prompt, render_prompt
 from bayesaudit.pilot.providers import (
@@ -37,6 +43,7 @@ from bayesaudit.pilot.transfer import (
 from bayesaudit.pilot.types import (
     PILOT_ARTIFACT_VERSION,
     PILOT_SCHEMA_VERSION,
+    CostAccountingRecord,
     PilotExperimentConfig,
     PilotManifest,
     PilotPlan,
@@ -202,11 +209,27 @@ def run_provider_connectivity(
     write_json_atomic(output_dir / "connectivity_structured_output.json", parsed)
     manifest_status: PilotStatus = "completed"
     final_manifest = write_pilot_manifest(config, provider, plan, status=manifest_status)
-    final_manifest.completed_requests = 0 if cached else 1
-    final_manifest.cached_requests = 1 if cached else 0
+    ledger_rows = read_jsonl(output_dir / "provider_request_ledger.jsonl")
+    completed_rows = [row for row in ledger_rows if row.get("status") == "completed"]
+    cached_rows = [row for row in ledger_rows if row.get("status") == "cached"]
+    final_manifest.completed_requests = len(completed_rows)
+    final_manifest.cached_requests = len(cached_rows)
     final_manifest.actual_tokens = response.total_tokens
-    final_manifest.actual_cost = response.estimated_cost
+    final_manifest.estimated_cost_usd = Decimal(str(plan.estimated_cost))
+    final_manifest.token_derived_cost_usd = response.token_derived_cost_usd
+    final_manifest.provider_reported_cost_usd = response.provider_reported_cost_usd
+    final_manifest.billed_cost_usd = response.billed_cost_usd
+    final_manifest.conservative_upper_bound_usd = Decimal(str(plan.maximum_possible_cost))
+    final_manifest.cost_reconciliation_status = response.cost_reconciliation_status
+    final_manifest.pricing_table_version = response.pricing_table_version
+    final_manifest.pricing_components = response.pricing_components
     write_json_atomic(output_dir / "pilot_manifest.json", final_manifest.model_dump(mode="json"))
+    incremental_cost = _incremental_cost_accounting(
+        provider,
+        plan,
+        response.provider_reported_usage,
+        cached=cached,
+    )
     return {
         **plan.model_dump(mode="json"),
         "dry_run": False,
@@ -221,7 +244,25 @@ def run_provider_connectivity(
         "output_tokens": response.output_tokens,
         "reasoning_tokens": response.provider_reported_usage.get("reasoning_tokens", 0),
         "total_tokens": response.total_tokens,
-        "actual_cost": response.estimated_cost,
+        "estimated_cost_usd": str(Decimal(str(plan.estimated_cost))),
+        "token_derived_cost_usd": (
+            str(incremental_cost.token_derived_cost_usd)
+            if incremental_cost.token_derived_cost_usd is not None
+            else None
+        ),
+        "provider_reported_cost_usd": (
+            str(incremental_cost.provider_reported_cost_usd)
+            if incremental_cost.provider_reported_cost_usd is not None
+            else None
+        ),
+        "billed_cost_usd": (
+            str(incremental_cost.billed_cost_usd)
+            if incremental_cost.billed_cost_usd is not None
+            else None
+        ),
+        "conservative_upper_bound_usd": str(Decimal(str(plan.maximum_possible_cost))),
+        "cost_reconciliation_status": incremental_cost.cost_reconciliation_status,
+        "pricing_table_version": incremental_cost.pricing_table_version,
         "finish_reason": response.finish_reason,
         "structured_output_valid": bool(parsed.get("valid")),
         "output_dir": str(output_dir),
@@ -351,7 +392,17 @@ def summarize_real_pilot(config_path: Path) -> dict[str, Any]:
         else {}
     )
     actual_tokens = int(response.get("total_tokens", 0) or 0) if completed else 0
-    actual_cost = float(response.get("estimated_cost", 0.0) or 0.0) if completed else 0.0
+    cost_record = (
+        _preserved_response_cost_accounting(provider, plan, response) if completed else None
+    )
+    derived_cost = None
+    if cost_record and cost_record.token_derived_cost_usd is not None:
+        derived_cost = str(cost_record.token_derived_cost_usd)
+    token_cost = response.get("token_derived_cost_usd") or derived_cost
+    cost_status = (
+        response.get("cost_reconciliation_status")
+        or (cost_record.cost_reconciliation_status if cost_record else "unreconciled")
+    )
     return {
         "pilot_id": config.pilot_id,
         "provider": provider.provider_name or provider.provider_class,
@@ -363,7 +414,24 @@ def summarize_real_pilot(config_path: Path) -> dict[str, Any]:
         "estimated_tokens": plan.estimated_total_tokens,
         "actual_tokens": actual_tokens,
         "estimated_cost": plan.estimated_cost,
-        "actual_cost": actual_cost,
+        "estimated_cost_usd": str(Decimal(str(plan.estimated_cost))),
+        "token_derived_cost_usd": token_cost,
+        "provider_reported_cost_usd": response.get("provider_reported_cost_usd")
+        or (
+            str(cost_record.provider_reported_cost_usd)
+            if cost_record and cost_record.provider_reported_cost_usd is not None
+            else None
+        ),
+        "billed_cost_usd": response.get("billed_cost_usd")
+        or (
+            str(cost_record.billed_cost_usd)
+            if cost_record and cost_record.billed_cost_usd is not None
+            else None
+        ),
+        "conservative_upper_bound_usd": str(Decimal(str(plan.maximum_possible_cost))),
+        "cost_reconciliation_status": cost_status,
+        "pricing_table_version": response.get("pricing_table_version")
+        or (cost_record.pricing_table_version if cost_record else None),
         "real_model_trajectory_count": len(completed),
         "valid_trajectory_count": len(completed),
         "excluded_trajectory_count": 0,
@@ -485,6 +553,8 @@ def write_pilot_manifest(
         request_ceiling=config.request_ceiling,
         trajectory_ceiling=config.trajectory_ceiling,
         estimated_cost=plan.estimated_cost,
+        estimated_cost_usd=Decimal(str(plan.estimated_cost)),
+        conservative_upper_bound_usd=Decimal(str(plan.maximum_possible_cost)),
         estimated_tokens=plan.estimated_total_tokens,
         planned_requests=plan.planned_requests,
         human_review_sampling_plan=config.human_review_sampling_plan,
@@ -493,6 +563,60 @@ def write_pilot_manifest(
     )
     write_json_atomic(_output_dir(config) / "pilot_manifest.json", manifest.model_dump(mode="json"))
     return manifest
+
+
+def _incremental_cost_accounting(
+    provider: PilotProviderConfig,
+    plan: PilotPlan,
+    usage: dict[str, Any],
+    *,
+    cached: bool,
+) -> CostAccountingRecord:
+    provider_name = provider.provider_name or provider.provider_class
+    model_identifier = provider.model_identifier or "mock-deterministic-v1"
+    try:
+        pricing = load_pricing_record(provider_name, model_identifier)
+    except KeyError:
+        pricing = None
+    return calculate_cost_accounting(
+        provider=provider_name,
+        model_identifier=model_identifier,
+        attempts=[response_attempt_from_usage(usage, status="cached" if cached else "completed")],
+        pricing=pricing,
+        estimated_cost_usd=Decimal(str(plan.estimated_cost)),
+        conservative_upper_bound_usd=Decimal(str(plan.maximum_possible_cost)),
+    )
+
+
+def _preserved_response_cost_accounting(
+    provider: PilotProviderConfig,
+    plan: PilotPlan,
+    response: dict[str, Any],
+) -> CostAccountingRecord:
+    provider_name = provider.provider_name or provider.provider_class
+    model_identifier = provider.model_identifier or "mock-deterministic-v1"
+    try:
+        pricing = load_pricing_record(provider_name, model_identifier)
+    except KeyError:
+        pricing = None
+    usage = response.get("provider_reported_usage")
+    if not isinstance(usage, dict):
+        usage = {
+            "input_tokens": int(response.get("input_tokens", 0) or 0),
+            "cached_input_tokens": 0,
+            "output_tokens": int(response.get("output_tokens", 0) or 0),
+            "reasoning_tokens": 0,
+        }
+        if not any(usage.values()):
+            usage = {}
+    return calculate_cost_accounting(
+        provider=provider_name,
+        model_identifier=model_identifier,
+        attempts=[response_attempt_from_usage(usage, status="completed")],
+        pricing=pricing,
+        estimated_cost_usd=Decimal(str(plan.estimated_cost)),
+        conservative_upper_bound_usd=Decimal(str(plan.maximum_possible_cost)),
+    )
 
 
 def _valid_stage_a1_diagnostic_response(response: Any) -> bool:

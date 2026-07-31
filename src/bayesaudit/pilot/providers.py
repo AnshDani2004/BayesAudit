@@ -12,7 +12,14 @@ from pathlib import Path
 from typing import Any
 
 from bayesaudit.hash_utils import canonical_json_hash, text_hash
+from bayesaudit.pilot.costs import (
+    calculate_cost_accounting,
+    cost_record_json,
+    load_pricing_record,
+    response_attempt_from_usage,
+)
 from bayesaudit.pilot.types import (
+    CostAccountingRecord,
     OpenAIExtractionResult,
     PermissionGateRecord,
     PilotExperimentConfig,
@@ -160,7 +167,12 @@ class ProviderAdapter:
         input_tokens = int(usage.get("input_tokens", 0) or 0)
         output_tokens = int(usage.get("output_tokens", 0) or 0)
         total_tokens = int(usage.get("total_tokens", input_tokens + output_tokens) or 0)
-        estimated_cost = _estimated_response_cost(self.config, input_tokens, output_tokens)
+        cost_record = _response_cost_accounting(
+            self.config,
+            request,
+            usage,
+            status="completed",
+        )
         return ProviderResponseRecord(
             response_id="resp_" + text_hash(json.dumps(payload, sort_keys=True, default=str))[:20],
             request_hash=request.request_hash,
@@ -174,8 +186,16 @@ class ProviderAdapter:
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             total_tokens=total_tokens,
-            estimated_cost=estimated_cost,
+            estimated_cost=request.estimated_cost,
             provider_reported_cost=None,
+            estimated_cost_usd=cost_record.estimated_cost_usd,
+            token_derived_cost_usd=cost_record.token_derived_cost_usd,
+            provider_reported_cost_usd=cost_record.provider_reported_cost_usd,
+            billed_cost_usd=cost_record.billed_cost_usd,
+            conservative_upper_bound_usd=cost_record.conservative_upper_bound_usd,
+            cost_reconciliation_status=cost_record.cost_reconciliation_status,
+            pricing_table_version=cost_record.pricing_table_version,
+            pricing_components=cost_record_json(cost_record),
         )
 
     def _post_openai_json(
@@ -880,12 +900,26 @@ def _extract_openai_finish_reason(payload: dict[str, Any]) -> str:
     return "unknown"
 
 
-def _estimated_response_cost(
-    provider: PilotProviderConfig, input_tokens: int, output_tokens: int
-) -> float:
-    return (
-        input_tokens / 1000.0 * provider.estimated_cost_per_1k_input_tokens
-        + output_tokens / 1000.0 * provider.estimated_cost_per_1k_output_tokens
+def _response_cost_accounting(
+    provider: PilotProviderConfig,
+    request: ProviderRequestRecord,
+    usage: dict[str, Any],
+    *,
+    status: str,
+) -> CostAccountingRecord:
+    provider_name = provider.provider_name or provider.provider_class
+    model_identifier = provider.model_identifier or "mock-deterministic-v1"
+    try:
+        pricing = load_pricing_record(provider_name, model_identifier)
+    except KeyError:
+        pricing = None
+    return calculate_cost_accounting(
+        provider=provider_name,
+        model_identifier=model_identifier,
+        attempts=[response_attempt_from_usage(usage, status=status)],
+        pricing=pricing,
+        estimated_cost_usd=request.estimated_cost,
+        conservative_upper_bound_usd=request.estimated_cost * (1.0 + float(provider.max_retries)),
     )
 
 

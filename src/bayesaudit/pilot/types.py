@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal
 
@@ -60,6 +61,71 @@ OpenAIExtractionStatus = Literal[
     "unsupported_response_shape",
     "serialization_failed",
 ]
+CostReconciliationStatus = Literal[
+    "provider_reported",
+    "token_derived",
+    "externally_billed",
+    "estimated_only",
+    "unreconciled",
+]
+
+
+class PricingRecord(StrictModel):
+    schema_version: str = "bayesaudit.pilot.pricing.v1"
+    pricing_table_version: str
+    provider: str
+    model_identifier: str
+    currency: Literal["USD"] = "USD"
+    input_price_per_million_tokens: Decimal
+    cached_input_price_per_million_tokens: Decimal
+    output_price_per_million_tokens: Decimal
+    effective_date: str
+    pricing_source_description: str
+    regional_uplift_multiplier: Decimal = Decimal("1")
+    additional_fixed_fee_usd: Decimal = Decimal("0")
+    fixed_tool_charge_usd: Decimal = Decimal("0")
+    configuration_hash: str
+
+
+class ProviderAttemptCostInput(StrictModel):
+    status: Literal["completed", "failed", "cached"] = "completed"
+    input_tokens: int = 0
+    cached_input_tokens: int = 0
+    output_tokens: int = 0
+    reasoning_tokens: int = 0
+    usage_present: bool = True
+    billed: bool = True
+    provider_reported_cost_usd: Decimal | None = None
+
+
+class CostAccountingRecord(StrictModel):
+    schema_version: str = PILOT_SCHEMA_VERSION
+    currency: Literal["USD"] = "USD"
+    provider: str
+    model_identifier: str
+    pricing_table_version: str | None = None
+    pricing_configuration_hash: str | None = None
+    estimated_cost_usd: Decimal | None = None
+    token_derived_cost_usd: Decimal | None = None
+    provider_reported_cost_usd: Decimal | None = None
+    billed_cost_usd: Decimal | None = None
+    conservative_upper_bound_usd: Decimal | None = None
+    cost_reconciliation_status: CostReconciliationStatus
+    input_tokens: int = 0
+    cached_input_tokens: int = 0
+    noncached_input_tokens: int = 0
+    output_tokens: int = 0
+    reasoning_tokens: int = 0
+    input_cost_usd: Decimal | None = None
+    cached_input_cost_usd: Decimal | None = None
+    output_cost_usd: Decimal | None = None
+    regional_uplift_usd: Decimal | None = None
+    additional_fixed_fee_usd: Decimal | None = None
+    fixed_tool_charge_usd: Decimal | None = None
+    billed_attempt_count: int = 0
+    unbilled_attempt_count: int = 0
+    cache_hit_count: int = 0
+    notes: list[str] = Field(default_factory=list)
 
 
 class PilotProviderConfig(StrictModel):
@@ -260,6 +326,14 @@ class PilotManifest(StrictModel):
     trajectory_ceiling: int | None
     estimated_cost: float
     actual_cost: float = 0.0
+    estimated_cost_usd: Decimal | None = None
+    token_derived_cost_usd: Decimal | None = None
+    provider_reported_cost_usd: Decimal | None = None
+    billed_cost_usd: Decimal | None = None
+    conservative_upper_bound_usd: Decimal | None = None
+    cost_reconciliation_status: CostReconciliationStatus = "unreconciled"
+    pricing_table_version: str | None = None
+    pricing_components: dict[str, Any] = Field(default_factory=dict)
     estimated_tokens: int
     actual_tokens: int = 0
     planned_requests: int
@@ -324,6 +398,14 @@ class ProviderResponseRecord(StrictModel):
     total_tokens: int = 0
     estimated_cost: float = 0.0
     provider_reported_cost: float | None = None
+    estimated_cost_usd: Decimal | None = None
+    token_derived_cost_usd: Decimal | None = None
+    provider_reported_cost_usd: Decimal | None = None
+    billed_cost_usd: Decimal | None = None
+    conservative_upper_bound_usd: Decimal | None = None
+    cost_reconciliation_status: CostReconciliationStatus = "unreconciled"
+    pricing_table_version: str | None = None
+    pricing_components: dict[str, Any] = Field(default_factory=dict)
     timestamp: datetime = Field(default_factory=utc_now)
 
 
