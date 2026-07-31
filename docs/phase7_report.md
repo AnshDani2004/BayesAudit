@@ -13,7 +13,7 @@ Repository:
 Provider integrations:
 
 - Mock provider config for CI and local validation.
-- OpenAI Stage A connectivity config for one explicitly authorized real-provider request.
+- OpenAI Stage A and Stage A.1 connectivity configs for tightly capped real-provider requests.
 - Disabled remote API template.
 - Disabled local/open-weight template.
 
@@ -31,22 +31,22 @@ Pilot scope:
 
 Current empirical status:
 
-- Models used: `mock-deterministic-phase7` and one Stage A request to `gpt-5-nano-2025-08-07`.
-- Provider selected for Stage A real execution: `openai`.
-- Exact model selected for Stage A real execution: `gpt-5-nano-2025-08-07`.
+- Models used: `mock-deterministic-phase7` and Stage A/A.1 requests to `gpt-5-nano-2025-08-07`.
+- Provider selected for Stage A and A.1 real execution: `openai`.
+- Exact model selected for Stage A and A.1 real execution: `gpt-5-nano-2025-08-07`.
 - Provider authorization result: allowed after explicit config enablement, `OPENAI_API_KEY` presence check, non-CI check, and CLI ceilings.
 - Requests planned for default connectivity dry run: `1`.
-- Requests completed against real providers: `0`.
-- Requests cached from real providers: `0`.
+- Requests completed against real providers: `1`.
+- Requests cached from real providers: `1`.
 - Requests failed against real providers: `1`.
-- Actual cost: not reconciled; the Stage A request failed before provider usage was preserved.
-- Actual token usage: not reconciled; the Stage A request failed before provider usage was preserved.
-- Real-model trajectory count: `1` attempted.
-- Valid real-model trajectory count: `0`.
+- Actual cost: Stage A unreconciled; Stage A.1 reconciled at `$0.000064`.
+- Actual token usage: Stage A unreconciled; Stage A.1 used `64` total tokens.
+- Real-model trajectory count: `2` attempted across Stage A and Stage A.1.
+- Valid real-model trajectory count: `1`.
 - Excluded real-model trajectory count: `1`.
-- Pilot observations: Stage A failed before cache verification.
+- Pilot observations: Stage A failed before cache verification; Stage A.1 passed and cache verification passed.
 - Synthetic comparisons: previous phases only.
-- Test status after Stage A adapter coverage: `447 passed`.
+- Test status after Stage A.1 adapter coverage: `472 passed`.
 
 ## Stage A: Real-Provider Connectivity
 
@@ -90,6 +90,52 @@ Current empirical status:
 - External-action result: passed; no external tools were configured or invoked.
 - Stage A status: `failed`
 
+## Stage A.1: Response Diagnostic and Connectivity Retry
+
+- Date: `2026-07-31`
+- Branch: `codex/phase7-real-model-pilot`
+- Starting commit: `7b31e00`
+- Stage A.1 repair commit: `fee7e2a`
+- Provider: `openai`
+- Exact model ID: `gpt-5-nano-2025-08-07`
+- Credential environment variable: `OPENAI_API_KEY`
+- Task: `task_privacy_aggregate_only`
+- Architecture: `single_agent`
+- Behavior: `honest`
+- Oversight condition: `none`
+- Attacker condition: `none`
+- Reasoning effort: `minimal`
+- Max output tokens: `1000`
+- Streaming: disabled
+- Structured output request: not used
+- Planned provider requests: `1`
+- Actual provider requests: `1`
+- Cached local executions: `1`
+- Failed requests: `0`
+- Response status: `completed`
+- Incomplete reason: none
+- Output item types: `reasoning`, `message`
+- Message content item types: `output_text`
+- Extraction path: `output.message.content.output_text`
+- Structured parsing result: exact diagnostic JSON matched expected value.
+- Input tokens: `31`
+- Cached input tokens: `0`
+- Output tokens: `33`
+- Reasoning tokens: `0`
+- Total tokens: `64`
+- Estimated cost: `$0.0015`
+- Reconciled cost: `$0.000064`
+- Token ceiling utilization: `2.13%`
+- Cost ceiling utilization: `0.64%`
+- Request ceiling utilization: `100%` for actual provider requests
+- Trajectory ceiling utilization: `100%`
+- Cache verification result: passed; second local execution used the same request hash and the complete cache entry.
+- Duplicate-billing result: passed; second local execution performed zero provider calls.
+- Raw-response preservation result: passed; redacted raw provider response was written before extraction.
+- Previous Stage A reconciliation status: unreconciled from preserved artifacts.
+- External-action result: passed; no tools were configured or invoked.
+- Stage A.1 status: `passed`
+
 Measurement validation:
 
 - Workflow-quality findings: not available for real traces; mock-safe dry-run artifacts only.
@@ -108,6 +154,7 @@ Readiness:
 Limitations:
 
 - Stage A made one real provider request and failed before cache verification.
+- Stage A.1 passed connectivity and cache verification but does not freeze the benchmark.
 - Stage B has not begun.
 - All Phase 7 results produced by default commands are implementation validation, dry-run plans, or placeholder artifacts for downstream review.
 - No benchmark freeze or Phase 8 start is authorized by this report.
