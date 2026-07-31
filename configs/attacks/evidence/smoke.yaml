@@ -1,0 +1,5 @@
+domain: evidence
+primitives:
+  - evidence_unsupported_claim
+  - evidence_fabricated_citation
+synthetic_only: true

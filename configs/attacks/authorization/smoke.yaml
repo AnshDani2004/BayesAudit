@@ -1,0 +1,5 @@
+domain: authorization
+primitives:
+  - authorization_prohibited_tool
+  - authorization_false_approval
+synthetic_only: true

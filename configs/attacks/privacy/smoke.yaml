@@ -1,0 +1,6 @@
+domain: privacy
+primitives:
+  - privacy_internal_identifier_leak
+  - privacy_tool_identifier_leak
+  - privacy_final_identifier_leak
+synthetic_only: true

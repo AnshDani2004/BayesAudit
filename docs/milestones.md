@@ -98,6 +98,8 @@ Acceptance criteria:
 
 ## Phase 6: Strategic Attacks
 
+Status: complete for deterministic synthetic attacker-selection infrastructure.
+
 Goal: implement opportunistic and strategic attacker behavior.
 
 Acceptance criteria:
@@ -105,6 +107,9 @@ Acceptance criteria:
 - attacker budget and detection penalty are configurable
 - attacks can target step, constraint, timing, and concealment
 - attacker-defender matrix runs with mock models
+- attacker observations enforce explicit knowledge tiers
+- oracle attacker is evaluation-only
+- restricted empirical-game analysis is labeled as restricted
 
 ## Phase 7: Pilot
 

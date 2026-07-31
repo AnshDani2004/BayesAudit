@@ -13,3 +13,5 @@ The deployable registry rejects oracle policies unless `evaluation=True`. All no
 Policy configs live under `configs/policies/`. Phase 4 experiment configs can inline policies through `oversight_policies`, combine them with `oversight_budgets`, and choose `oversight_mode: shadow` or `oversight_mode: intervention`.
 
 Phase 5 adds learned adaptive policies that consume monitor predictions and posterior risk states. These policies are allocation rules rather than hidden-label detectors; the confirmatory split should stay frozen for preregistered monitor-policy comparisons.
+
+Phase 6 compares oversight policies under synthetic attacker selection. Oracle defender and oracle attacker results are upper bounds and must not be presented as deployable policies.

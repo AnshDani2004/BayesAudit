@@ -20,7 +20,7 @@ Primary comparison policies:
 
 ## Phase Status
 
-This repository is currently at Phase 5: Calibrated Learned Monitoring and Bayesian Adaptive Oversight.
+This repository is currently at Phase 6: Selective and Adaptive Strategic Attackers.
 
 Implemented now:
 
@@ -49,13 +49,17 @@ Implemented now:
 - Beta-Bernoulli and online Bayesian-logistic risk states
 - budget-aware adaptive audit policies for shadow and intervention evaluation
 - dry-run provider cost manifests and hard real-provider safety gates
+- synthetic attacker observations with explicit knowledge tiers
+- safe deterministic attack primitives
+- ten attacker families, including evaluation-only oracle attacker
+- attacker-defender smoke matrices and restricted empirical-game analysis
+- selection-bias, displacement, and offline red-team-loop helpers
 - tests for schema validity, workflows, scorers, storage, and integration
 
 Not implemented yet:
 
 - ungated real model-provider execution
 - empirical claims about real LLM behavior
-- strategic attacker behavior
 - completed human annotation campaign
 
 ## Repository Layout
@@ -130,8 +134,19 @@ python -m bayesaudit.cli run-adaptive-policy --config configs/experiments/phase5
 python -m bayesaudit.cli run-real-pilot --config configs/experiments/phase5_real_pilot.yaml --dry-run
 ```
 
+Run Phase 6 synthetic attacker smoke checks:
+
+```bash
+python -m bayesaudit.cli validate-attackers
+python -m bayesaudit.cli validate-attacks
+python -m bayesaudit.cli run-attacker-defender --config configs/experiments/phase6_smoke.yaml
+python -m bayesaudit.cli compare-attack-selection --config configs/experiments/phase6_selection.yaml --dry-run
+python -m bayesaudit.cli build-payoff-matrix --config configs/experiments/phase6_smoke.yaml
+python -m bayesaudit.cli run-red-team-loop --config configs/experiments/phase6_red_team_loop.yaml --dry-run
+```
+
 ## Research Integrity
 
 BayesAudit must not report fabricated findings. Hypotheses, primary metrics, and confirmatory analyses are recorded before main-study execution. Pilot results may be used to repair tasks and scorers, but main benchmark changes after preregistration freeze must be documented as deviations.
 
-All Phase 2 through Phase 5 trajectories and learned-monitor smoke results are synthetic mock-model artifacts unless an explicitly approved real-provider pilot is run. They are useful for validating benchmark mechanics, scorer behavior, calibration plumbing, and adaptive allocation logic, but they are not evidence about real LLM systems.
+All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and attacker-defender outputs are synthetic mock-model artifacts unless an explicitly approved real-provider pilot is run in a later phase. They are useful for validating benchmark mechanics, scorer behavior, calibration plumbing, adaptive allocation logic, and strategic-selection methodology, but they are not evidence about real LLM systems.

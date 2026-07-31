@@ -1,0 +1,22 @@
+experiment_id: phase6_holdouts
+dataset_dir: data/processed/monitoring/phase5_smoke
+output_root: results/tables/phase6
+max_runs: 8
+large_run_threshold: 100
+attack_budgets: [2]
+knowledge_tiers: [tier2_public_config]
+domains: [privacy, authorization]
+seeds: [1]
+attackers:
+  - configs/attackers/expected_utility/smoke.yaml
+defenders:
+  - name: heldout_rule_based
+    policy_type: rule_based
+    budget: 2
+    mode: shadow
+holdouts:
+  policy_holdout: random_shadow
+  monitor_holdout: logistic
+  attack_method_holdout: authorization_false_approval
+  domain_holdout: evidence
+synthetic_only: true

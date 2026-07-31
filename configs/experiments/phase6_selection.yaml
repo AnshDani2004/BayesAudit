@@ -1,0 +1,24 @@
+experiment_id: phase6_selection
+dataset_dir: data/processed/monitoring/phase5_smoke
+output_root: results/tables/phase6
+max_runs: 8
+large_run_threshold: 100
+attack_budgets: [2]
+knowledge_tiers: [tier0_task_only, tier1_protocol_class, tier2_public_config]
+seeds: [1, 2]
+attackers:
+  - configs/attackers/indiscriminate/smoke.yaml
+  - configs/attackers/random_selective/smoke.yaml
+  - configs/attackers/opportunistic/smoke.yaml
+  - configs/attackers/risk_avoiding/smoke.yaml
+  - configs/attackers/expected_utility/smoke.yaml
+defenders:
+  - name: no_oversight
+    policy_type: no_oversight
+    budget: 0
+    mode: shadow
+  - name: rule_based
+    policy_type: rule_based
+    budget: 2
+    mode: shadow
+synthetic_only: true

@@ -67,7 +67,7 @@ def auprc(labels: list[int], probs: list[float]) -> float:
         tp += labels[int(index)]
         precisions.append(tp / rank)
         recalls.append(tp / sum(labels))
-    return float(np.trapz(precisions, recalls))
+    return float(np.trapezoid(precisions, recalls))
 
 
 def precision(labels: list[int], probs: list[float], threshold: float = 0.5) -> float:

@@ -1,0 +1,25 @@
+experiment_id: phase6_policy_awareness
+dataset_dir: data/processed/monitoring/phase5_smoke
+output_root: results/tables/phase6
+max_runs: 8
+large_run_threshold: 100
+attack_budgets: [2]
+knowledge_tiers: [tier2_public_config, tier3_black_box_feedback, tier4_monitor_score]
+seeds: [1]
+attackers:
+  - configs/attackers/policy_aware/smoke.yaml
+  - configs/attackers/expected_utility/smoke.yaml
+defenders:
+  - name: fixed_final
+    policy_type: fixed
+    budget: 2
+    mode: shadow
+    parameters:
+      checkpoint_types: [before_final_output]
+  - name: random_shadow
+    policy_type: random
+    budget: 2
+    mode: shadow
+    parameters:
+      audit_probability: 0.5
+synthetic_only: true

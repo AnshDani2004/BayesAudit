@@ -13,6 +13,8 @@ Implemented policies:
 
 Each decision records risk estimate, expected severity, intervention effectiveness, expected net value, action, reason, remaining budget, and whether the policy is online. Shadow evaluation compares allocation choices without executing interventions; intervention evaluation can execute budgeted actions through the existing Phase 4 replay/intervention machinery.
 
+Phase 6 evaluates these policies against synthetic attacker-selection pressure. Policy-aware attacker results should be interpreted as restricted empirical-game stress tests, not as real-world model attack demonstrations.
+
 ```bash
 python -m bayesaudit.cli run-adaptive-policy --config configs/experiments/phase5_smoke.yaml
 python -m bayesaudit.cli compare-monitor-policy-pairs --config configs/experiments/phase5_smoke.yaml

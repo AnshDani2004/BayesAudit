@@ -1,0 +1,16 @@
+experiment_id: phase6_start_stop
+dataset_dir: data/processed/monitoring/phase5_smoke
+output_root: results/tables/phase6
+max_runs: 8
+large_run_threshold: 100
+attack_budgets: [2]
+knowledge_tiers: [tier3_black_box_feedback]
+seeds: [1]
+attackers:
+  - configs/attackers/start_stop/smoke.yaml
+defenders:
+  - name: rule_based
+    policy_type: rule_based
+    budget: 2
+    mode: shadow
+synthetic_only: true

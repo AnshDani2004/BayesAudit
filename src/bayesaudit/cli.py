@@ -17,6 +17,13 @@ from bayesaudit.adaptive.policies import (
     value_of_information_policy,
 )
 from bayesaudit.annotations.monitoring import export_annotations, validate_annotation_import
+from bayesaudit.attackers.analysis import build_payoff_matrix, red_team_loop
+from bayesaudit.attackers.config import (
+    load_phase6_experiment_config,
+    validate_attackers,
+    validate_attacks,
+)
+from bayesaudit.attackers.lifecycle import run_attacker_defender_matrix
 from bayesaudit.benchmark.io import load_tasks
 from bayesaudit.constraints.inheritance import build_registry, create_envelope, verify_envelope
 from bayesaudit.monitoring.calibration import (
@@ -225,6 +232,43 @@ def main() -> None:
     real_pilot.add_argument("--config", type=Path, required=True)
     real_pilot.add_argument("--dry-run", action="store_true")
     real_pilot.add_argument("--allow-provider-calls", action="store_true")
+
+    validate_attackers_parser = subparsers.add_parser("validate-attackers")
+    validate_attackers_parser.add_argument("--root", type=Path, default=Path("configs/attackers"))
+
+    subparsers.add_parser("validate-attacks")
+
+    run_attacker = subparsers.add_parser("run-attacker")
+    run_attacker.add_argument("--config", type=Path, required=True)
+    run_attacker.add_argument("--dry-run", action="store_true")
+
+    run_attacker_defender = subparsers.add_parser("run-attacker-defender")
+    run_attacker_defender.add_argument("--config", type=Path, required=True)
+    run_attacker_defender.add_argument("--dry-run", action="store_true")
+    run_attacker_defender.add_argument("--allow-large-run", action="store_true")
+
+    compare_selection = subparsers.add_parser("compare-attack-selection")
+    compare_selection.add_argument("--config", type=Path, required=True)
+    compare_selection.add_argument("--dry-run", action="store_true")
+
+    payoff = subparsers.add_parser("build-payoff-matrix")
+    payoff.add_argument("--config", type=Path, required=True)
+
+    exploit = subparsers.add_parser("evaluate-exploitability")
+    exploit.add_argument("--config", type=Path, required=True)
+
+    inspect_attack = subparsers.add_parser("inspect-attack-run")
+    inspect_attack.add_argument("--config", type=Path, required=True)
+
+    inspect_attacker_state = subparsers.add_parser("inspect-attacker-state")
+    inspect_attacker_state.add_argument("--config", type=Path, required=True)
+
+    red_team = subparsers.add_parser("run-red-team-loop")
+    red_team.add_argument("--config", type=Path, required=True)
+    red_team.add_argument("--dry-run", action="store_true")
+
+    summarize_phase6 = subparsers.add_parser("summarize-phase6")
+    summarize_phase6.add_argument("--config", type=Path, required=True)
 
     args = parser.parse_args()
     if args.command == "validate-scenarios":
@@ -458,6 +502,72 @@ def main() -> None:
         if not args.dry_run and provider_manifest.status == "blocked":
             raise PermissionError("real pilot blocked by provider safety gates")
         payload = provider_manifest.model_dump(mode="json")
+    elif args.command == "validate-attackers":
+        payload = validate_attackers(args.root)
+    elif args.command == "validate-attacks":
+        payload = validate_attacks()
+    elif args.command == "run-attacker":
+        phase6_config = load_phase6_experiment_config(args.config)
+        payload = run_attacker_defender_matrix(phase6_config, dry_run=args.dry_run)
+    elif args.command == "run-attacker-defender":
+        phase6_config = load_phase6_experiment_config(args.config)
+        if args.allow_large_run:
+            phase6_config.allow_large_run = True
+        payload = run_attacker_defender_matrix(phase6_config, dry_run=args.dry_run)
+    elif args.command == "compare-attack-selection":
+        phase6_config = load_phase6_experiment_config(args.config)
+        payload = run_attacker_defender_matrix(phase6_config, dry_run=args.dry_run)
+        payload["comparison"] = {
+            "capability_held_fixed": True,
+            "selection_policies": [attacker.name for attacker in phase6_config.attackers],
+            "synthetic_only": True,
+        }
+    elif args.command == "build-payoff-matrix" or args.command == "evaluate-exploitability":
+        phase6_config = load_phase6_experiment_config(args.config)
+        run_payload = run_attacker_defender_matrix(phase6_config)
+        outcomes_path = Path(run_payload["output_dir"]) / "attacker_defender_outcomes.json"
+        from bayesaudit.attackers.types import AttackerDefenderOutcome
+        from bayesaudit.storage.jsonl import read_json
+
+        outcomes_payload = read_json(outcomes_path)
+        raw_outcomes = outcomes_payload.get("records", [])
+        outcomes = (
+            [AttackerDefenderOutcome.model_validate(row) for row in raw_outcomes]
+            if isinstance(raw_outcomes, list)
+            else []
+        )
+        matrix = build_payoff_matrix(outcomes)
+        payload = matrix.model_dump(mode="json")
+    elif args.command == "inspect-attack-run":
+        phase6_config = load_phase6_experiment_config(args.config)
+        payload = run_attacker_defender_matrix(phase6_config)
+        payload["inspection"] = {
+            "delegation_tree": "synthetic monitor-example checkpoints",
+            "attack_opportunities": payload.get("planned_attacker_defender_evaluations", 0),
+            "defender_observations": "redacted oversight observations only",
+            "final_attack_outcome": "see attack_events.json",
+        }
+    elif args.command == "inspect-attacker-state":
+        phase6_config = load_phase6_experiment_config(args.config)
+        first = phase6_config.attackers[0] if phase6_config.attackers else None
+        payload = {
+            "found": first is not None,
+            "attacker": first.name if first is not None else None,
+            "knowledge_tier": first.knowledge_tier if first is not None else None,
+            "attack_budget": first.attack_budget if first is not None else 0,
+            "oracle_evaluation_only": bool(first.evaluation_only) if first is not None else False,
+        }
+    elif args.command == "run-red-team-loop":
+        phase6_config = load_phase6_experiment_config(args.config)
+        iterations = (
+            int(phase6_config.attackers[0].parameters.get("iterations", 2))
+            if phase6_config.attackers
+            else 2
+        )
+        payload = red_team_loop(iterations, dry_run=args.dry_run)
+    elif args.command == "summarize-phase6":
+        phase6_config = load_phase6_experiment_config(args.config)
+        payload = run_attacker_defender_matrix(phase6_config, dry_run=True)
     else:
         raise AssertionError(args.command)
     print(json.dumps(payload, indent=2, sort_keys=True, default=str))

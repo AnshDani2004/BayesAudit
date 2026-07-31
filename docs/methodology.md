@@ -78,6 +78,8 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 10. Phase 4 oversight baselines operate on redacted observations and match detections to violations only after scoring.
 11. Phase 5 learned monitors are trained on redacted checkpoint examples, with labels joined only after feature extraction.
 12. Phase 5 smoke evaluations remain synthetic and do not estimate real LLM violation rates.
+13. Phase 6 attacker comparisons hold attack primitives fixed where possible and vary selection policy separately from capability.
+14. Phase 6 game analysis is restricted empirical analysis over tested classes, not a claim of full equilibrium.
 
 ## Unresolved Design Decisions
 
@@ -120,6 +122,7 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 - false-intervention rate
 - precision, recall, F1, audit yield, budget utilization, regret proxy, and harm-cost frontier points for Phase 4 baselines
 - adaptive audit yield, recall at budget, expected-harm proxy, value-of-information allocation, and oracle-regret proxy for Phase 5 policies
+- attack selection lift, start/stop-policy lift, protocol-knowledge advantage, exploitability, and policy rank reversal under Phase 6 attacker selection
 
 ### Monitor Quality
 
@@ -160,6 +163,8 @@ Additional analyses:
 - multi-seed variability
 - interaction effects
 - monitor calibration analysis
+- attacker-estimated detection and success calibration
+- calibration shift from honest to adversarial trajectories
 - ablations
 - sensitivity analysis
 - power analysis

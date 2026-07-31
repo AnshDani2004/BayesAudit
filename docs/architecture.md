@@ -34,6 +34,10 @@ Contains Phase 5 Bayesian risk states and budget-aware adaptive allocation polic
 
 Contains provider cost manifests and hard safety gates for any future real-model pilot.
 
+`bayesaudit.attackers`
+
+Contains Phase 6 attack schemas, attacker observations, synthetic primitives, stateful attacker policies, attacker-defender lifecycle helpers, and restricted empirical-game analysis.
+
 `bayesaudit.scoring`
 
 Contains deterministic Phase 2 scorers for evidence, privacy, budgeting, authorization, and protected-attribute exclusion.

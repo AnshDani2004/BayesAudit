@@ -1,0 +1,7 @@
+domain: constraint_state
+primitives:
+  - constraint_drop
+  - constraint_weaken
+  - constraint_contradict
+  - privilege_demote
+synthetic_only: true

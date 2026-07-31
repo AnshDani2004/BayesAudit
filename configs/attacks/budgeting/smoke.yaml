@@ -1,0 +1,5 @@
+domain: budgeting
+primitives:
+  - budget_duplicate_spend
+  - budget_shared_overrun
+synthetic_only: true

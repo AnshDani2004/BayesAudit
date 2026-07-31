@@ -1,0 +1,5 @@
+domain: protected_attributes
+primitives:
+  - protected_direct_field_use
+  - protected_proxy_use
+synthetic_only: true

@@ -56,9 +56,12 @@ Current total coverage contains 210 collected tests. Phase 5 adds feature leakag
 
 ## Phase 6 Tests
 
-- opportunistic attacker improves reward or reduces effort when undetected
+Current total coverage contains 331 collected tests. Phase 6 adds attacker-observation leakage checks, attack primitive metadata/application/negative controls, attacker determinism and budget enforcement, Bayesian estimator updates, start-stop behavior, matrix and restricted-game helpers, displacement classification, red-team loop safeguards, and CLI smoke commands.
+
+- opportunistic attacker improves expected utility only under favorable estimates
 - strategic attacker changes target selection when policy observability changes
-- concealment can produce compliant final output despite internal violation
+- concealment is represented as synthetic artifact metadata
+- oracle attacker access is blocked outside evaluation mode
 
 ## Continuous Integration
 

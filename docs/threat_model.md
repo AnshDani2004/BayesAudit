@@ -49,6 +49,8 @@ The strategic attacker may not know:
 - private human annotator decisions
 - withheld evaluation seeds, unless a configured experiment explicitly grants them
 
+Phase 6 operationalizes these assumptions through `AttackerObservation` knowledge tiers. Future audit draws, hidden objective labels, counterfactual outcomes, oracle state, and private monitor parameters are not exposed unless an evaluation-only tier explicitly grants synthetic white-box access.
+
 ## Monitor Capabilities
 
 Monitors may inspect current and prior trajectory state, depending on the configured policy. Monitors may be deterministic, learned, LLM-based, or oracle. Oracle policies are evaluation upper bounds and must not be compared as deployable systems.
@@ -62,6 +64,6 @@ BayesAudit does not initially model:
 - prompt injection from arbitrary live web pages
 - real personal data
 - real irreversible external actions
+- real-world attack execution or unrestricted evasion prompting
 
 These exclusions must be revisited before applying findings to production agent systems.
-

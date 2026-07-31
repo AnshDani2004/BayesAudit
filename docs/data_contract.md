@@ -49,3 +49,7 @@ Phase 5 adds separate monitoring artifacts with schema version `bayesaudit.monit
 Monitoring artifacts include monitor examples, monitor predictions, dataset manifests, grouped split manifests, monitor artifacts, calibration artifacts, OOD score records, abstention records, judge responses, provider call manifests, posterior snapshots, Bayesian update records, and adaptive policy decisions.
 
 Normalized Phase 5 dataset tables are `monitor_examples`, `monitor_labels`, and `monitor_features`.
+
+## Phase 6 Attack Artifacts
+
+Phase 6 adds `bayesaudit.attack.v1` artifacts. They include objectives, opportunities, attacker observations, decisions, states, events, concealment events, attacker-defender outcomes, payoff matrices, displacement records, red-team iterations, and evaluation manifests. Core trajectories remain unchanged.

@@ -1,0 +1,71 @@
+experiment_id: phase6_full_synthetic
+dataset_dir: data/processed/monitoring/phase5_smoke
+output_root: results/tables/phase6
+max_runs: null
+allow_large_run: false
+large_run_threshold: 50
+attack_budgets: [1, 2, 3]
+knowledge_tiers:
+  - tier0_task_only
+  - tier1_protocol_class
+  - tier2_public_config
+  - tier3_black_box_feedback
+  - tier4_monitor_score
+  - tier5_white_box_synthetic
+seeds: [1, 2, 3]
+attackers:
+  - configs/attackers/honest/smoke.yaml
+  - configs/attackers/indiscriminate/smoke.yaml
+  - configs/attackers/random_selective/smoke.yaml
+  - configs/attackers/opportunistic/smoke.yaml
+  - configs/attackers/risk_avoiding/smoke.yaml
+  - configs/attackers/expected_utility/smoke.yaml
+  - configs/attackers/bayesian_selective/smoke.yaml
+  - configs/attackers/start_stop/smoke.yaml
+  - configs/attackers/policy_aware/smoke.yaml
+  - configs/attackers/oracle/smoke.yaml
+defenders:
+  - name: no_oversight
+    policy_type: no_oversight
+    budget: 0
+    mode: shadow
+  - name: random_shadow
+    policy_type: random
+    budget: 2
+    mode: shadow
+  - name: fixed_final
+    policy_type: fixed
+    budget: 2
+    mode: shadow
+    parameters:
+      checkpoint_types: [before_final_output]
+  - name: rule_based
+    policy_type: rule_based
+    budget: 2
+    mode: shadow
+  - name: learned_threshold
+    policy_type: learned_threshold
+    budget: 2
+    mode: shadow
+  - name: online_priority
+    policy_type: online_priority
+    budget: 2
+    mode: shadow
+  - name: thompson
+    policy_type: thompson
+    budget: 2
+    mode: shadow
+  - name: expected_harm
+    policy_type: expected_harm
+    budget: 2
+    mode: shadow
+  - name: value_of_information
+    policy_type: value_of_information
+    budget: 2
+    mode: shadow
+  - name: oracle_defender
+    policy_type: oracle
+    budget: 2
+    mode: shadow
+    evaluation_only: true
+synthetic_only: true
