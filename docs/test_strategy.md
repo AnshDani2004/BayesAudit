@@ -65,7 +65,7 @@ Current total coverage contains 331 collected tests. Phase 6 adds attacker-obser
 
 ## Phase 7 Tests
 
-Current total coverage contains 426 collected tests. Phase 7 tests cover branch/base manifest metadata, provider gate failures, credential-free configs, CI blocking, cost/token/request/trajectory ceilings, permission records, cache hits, stable request hashes, sampling/model/prompt cache invalidation, partial cache rejection, mock connectivity, prompt rendering, hidden-label leakage checks, structured-output parsing and bounded repair, workflow-quality flags, scorer-human disagreement records, blind annotation exports, sampling probabilities, agreement metrics, monitor/calibration/OOD transfer summaries, oversight feasibility, task/scorer readiness, freeze proposal generation, Phase 8 planning, and CLI dry-run commands.
+Current total coverage contains 426 collected tests. The previous structured-output repair-template skip was removed; the repair prompt now has direct coverage and no Phase 7 test skip is required for mock/offline behavior. Phase 7 tests cover branch/base manifest metadata, provider gate failures, credential-free configs, CI blocking, cost/token/request/trajectory ceilings, permission records, cache hits, stable request hashes, sampling/model/prompt cache invalidation, partial cache rejection, mock connectivity, prompt rendering, hidden-label leakage checks, structured-output parsing and bounded repair, workflow-quality flags, scorer-human disagreement records, blind annotation exports, sampling probabilities, agreement metrics, monitor/calibration/OOD transfer summaries, oversight feasibility, task/scorer readiness, freeze proposal generation, Phase 8 planning, and CLI dry-run commands.
 
 ## Continuous Integration
 

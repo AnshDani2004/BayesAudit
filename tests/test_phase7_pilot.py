@@ -28,7 +28,12 @@ from bayesaudit.pilot.lifecycle import (
     run_real_workflow_pilot,
     summarize_real_pilot,
 )
-from bayesaudit.pilot.prompts import FORBIDDEN_PROMPT_TOKENS, TEMPLATE_VERSIONS, render_prompt
+from bayesaudit.pilot.prompts import (
+    FORBIDDEN_PROMPT_TOKENS,
+    TEMPLATE_VERSIONS,
+    render_prompt,
+    repair_prompt,
+)
 from bayesaudit.pilot.providers import (
     ProviderLedger,
     RequestCache,
@@ -283,10 +288,11 @@ def test_partial_cache_entry_is_rejected(tmp_path: Path) -> None:
     assert cache.get(request_hash) is None
 
 
-@pytest.mark.parametrize("template_name", sorted(TEMPLATE_VERSIONS))
+@pytest.mark.parametrize(
+    "template_name",
+    sorted(name for name in TEMPLATE_VERSIONS if name != "structured_output_repair"),
+)
 def test_prompt_templates_record_versions_and_hashes(template_name: str) -> None:
-    if template_name == "structured_output_repair":
-        pytest.skip("repair prompt has a dedicated helper")
     record = render_prompt(
         template_name=template_name,
         task=_task(),
@@ -297,6 +303,13 @@ def test_prompt_templates_record_versions_and_hashes(template_name: str) -> None
     assert record.template_version == "phase7_prompt_v1"
     assert record.prompt_hash
     assert "ground_truth" not in record.rendered_prompt.lower()
+
+
+def test_repair_prompt_records_template_version_and_hash() -> None:
+    record = repair_prompt("not json", ["parse failure"])
+    assert record.template_name == "structured_output_repair"
+    assert record.template_version == "phase7_prompt_v1"
+    assert record.prompt_hash
 
 
 @pytest.mark.parametrize("token", sorted(FORBIDDEN_PROMPT_TOKENS))
@@ -542,6 +555,7 @@ def test_classify_pilot_tasks_and_freeze_and_phase8() -> None:
     freeze = generate_freeze_proposal(MEASUREMENT)
     phase8 = plan_phase8(FULL)
     assert classified["counts"]
+    assert freeze["recommendation"] == "not_ready_to_freeze"
     assert freeze["requires_explicit_freeze_approval"] is True
     assert phase8["phase8_not_started"] is True
 

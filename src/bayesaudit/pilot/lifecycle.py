@@ -333,12 +333,13 @@ def generate_freeze_proposal(config_path: Path) -> dict[str, Any]:
         "schema_version": PILOT_SCHEMA_VERSION,
         "artifact_version": PILOT_ARTIFACT_VERSION,
         "pilot_id": config.pilot_id,
-        "recommendation": "ready_after_specified_repairs",
+        "recommendation": "not_ready_to_freeze",
         "final_proposed_task_set": [task.task_id for task in tasks],
         "removed_tasks": [],
         "redesigned_tasks": [],
         "known_limitations": [
-            "proposal is generated before any authorized real-provider pilot observations"
+            "proposal is generated before any authorized real-provider pilot observations",
+            "benchmark freeze requires explicit approval after real-pilot review",
         ],
         "requires_explicit_freeze_approval": True,
     }
