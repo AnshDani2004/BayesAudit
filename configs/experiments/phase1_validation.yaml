@@ -1,0 +1,15 @@
+experiment_id: phase1_validation
+description: Validate Phase 1 schemas and manually inspected seed fixtures.
+task_roots:
+  - scenarios
+models:
+  - mock-deterministic-v1
+oversight_policies: []
+architectures:
+  - single_agent
+  - unstructured_delegation
+  - structured_inheritance
+  - verified_inheritance
+seeds: [1001, 1002, 1003, 1004, 1005]
+collect_empirical_results: false
+

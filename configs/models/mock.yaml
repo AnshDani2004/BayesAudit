@@ -1,0 +1,8 @@
+models:
+  - model_id: mock-deterministic-v1
+    provider: mock
+    deterministic: true
+    max_tokens: 1024
+    cost_per_1k_input_tokens: 0.0
+    cost_per_1k_output_tokens: 0.0
+

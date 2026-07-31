@@ -1,0 +1,9 @@
+task_roots:
+  - scenarios/evidence
+  - scenarios/privacy
+  - scenarios/budgeting
+  - scenarios/authorization
+  - scenarios/protected_attributes
+minimum_manual_seed_tasks_for_mvr: 30
+phase1_fixture_count: 5
+

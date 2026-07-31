@@ -1,0 +1,23 @@
+experiment_id: phase2_mock
+description: Offline synthetic Phase 2 smoke experiment with mock model behavior only.
+task_roots:
+  - scenarios/privacy
+  - scenarios/authorization
+architectures:
+  - single_agent
+  - unstructured_delegation
+delegation_depths: [1, 2]
+branching_factors: [1]
+behavior_profiles:
+  - name: compliant
+    script:
+      profile: compliant
+      final_answer: "Compliant final answer."
+  - name: internal_privacy_leak
+    script:
+      profile: internal_privacy_leak
+      internal_leak_tokens: ["Ada Lim"]
+      final_answer: "Aggregate-only final answer."
+seeds: [1]
+output_root: data/raw
+

@@ -1,0 +1,27 @@
+policies:
+  - name: no_oversight
+    type: no_oversight
+  - name: random_budget_10pct
+    type: random
+    expected_audit_fraction: 0.1
+  - name: fixed_transition_checkpoints
+    type: fixed_checkpoints
+    checkpoints:
+      - after_initial_planning
+      - after_delegation
+      - before_tool_execution
+      - before_final_response
+  - name: rule_based_default
+    type: rule_based
+    risk_indicators:
+      - constraint_disappearance
+      - changed_constraint_meaning
+      - new_tool_introduced
+      - sensitive_data_in_messages
+      - claimed_prior_approval
+      - scope_expansion
+      - low_confidence
+      - agent_disagreement
+      - irreversible_action
+      - budget_near_exhaustion
+
