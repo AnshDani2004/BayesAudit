@@ -35,17 +35,24 @@ from bayesaudit.pilot.prompts import (
     repair_prompt,
 )
 from bayesaudit.pilot.providers import (
+    ProviderAdapter,
     ProviderLedger,
     RequestCache,
     authorize_provider_run,
     classify_provider_failure,
     estimate_pilot_plan,
     execute_mock_or_cached,
+    execute_provider_or_cached,
     make_provider_request,
 )
 from bayesaudit.pilot.structured import parse_structured_output
 from bayesaudit.pilot.transfer import oversight_feasibility_records
-from bayesaudit.pilot.types import PilotExperimentConfig, PilotPlan, PilotProviderConfig
+from bayesaudit.pilot.types import (
+    PilotExperimentConfig,
+    PilotPlan,
+    PilotProviderConfig,
+    ProviderResponseRecord,
+)
 from bayesaudit.pilot.validation import (
     compare_scorer_to_human,
     default_scorer_readiness,
@@ -83,6 +90,10 @@ TRANSFER_CONFIG = "configs/experiments/phase7_monitor_transfer.yaml"
 OVERSIGHT_CONFIG = "configs/experiments/phase7_oversight.yaml"
 ANNOTATION_CONFIG = "configs/experiments/phase7_annotation_sample.yaml"
 FULL_CONFIG = "configs/experiments/phase7_full_pilot.yaml"
+OPENAI_STAGE_A = ROOT / "phase7_connectivity_openai_stage_a.yaml"
+OPENAI_STAGE_A_CONFIG = "configs/experiments/phase7_connectivity_openai_stage_a.yaml"
+OPENAI_PROVIDER = Path("configs/providers/remote/openai_phase7_stage_a.yaml")
+OPENAI_PROVIDER_CONFIG = "configs/providers/remote/openai_phase7_stage_a.yaml"
 
 
 def _task() -> BenchmarkTask:
@@ -108,6 +119,7 @@ def _plan(path: Path = CONNECTIVITY) -> PilotPlan:
         Path("configs/providers/mock/smoke.yaml"),
         Path("configs/providers/remote/disabled_template.yaml"),
         Path("configs/providers/local/disabled_template.yaml"),
+        OPENAI_PROVIDER,
     ],
 )
 def test_phase7_provider_configs_validate(path: Path) -> None:
@@ -118,13 +130,13 @@ def test_phase7_provider_configs_validate(path: Path) -> None:
 
 @pytest.mark.parametrize(
     "path",
-    [CONNECTIVITY, WORKFLOW, MEASUREMENT, TRANSFER, OVERSIGHT, ANNOTATION, FULL],
+    [CONNECTIVITY, WORKFLOW, MEASUREMENT, TRANSFER, OVERSIGHT, ANNOTATION, FULL, OPENAI_STAGE_A],
 )
 def test_phase7_experiment_configs_have_plans(path: Path) -> None:
     payload = estimate_pilot_cost(path)
     assert payload["schema_version"] == "bayesaudit.pilot.v1"
     assert payload["planned_trajectories"] >= 0
-    assert payload["estimated_cost"] == 0.0
+    assert payload["estimated_cost"] >= 0.0
 
 
 def test_pilot_manifest_records_base_branch_and_commit(tmp_path: Path) -> None:
@@ -143,6 +155,16 @@ def test_pilot_manifest_records_base_branch_and_commit(tmp_path: Path) -> None:
     "gate_name",
     [
         "provider_calls_enabled_in_config",
+        "experiment_provider_calls_enabled",
+        "provider_cache_enabled",
+        "experiment_cache_enabled",
+        "provider_resume_enabled",
+        "experiment_resume_enabled",
+        "provider_raw_response_preservation_enabled",
+        "provider_secret_redaction_enabled",
+        "provider_external_tools_disabled",
+        "experiment_external_tools_disabled",
+        "provider_fallback_model_absent",
         "cli_allow_provider_calls",
         "provider_named",
         "model_identifier_named",
@@ -210,6 +232,108 @@ def test_provider_permission_hard_ceilings_block(kwargs: dict[str, Any], failed_
     assert record.final_authorization_decision == "block"
 
 
+def test_openai_stage_a_config_is_exact_and_tightly_capped() -> None:
+    provider = load_pilot_provider_config(OPENAI_PROVIDER)
+    config = load_pilot_experiment_config(OPENAI_STAGE_A)
+    plan = estimate_pilot_plan(config, provider, task_count=1)
+    assert provider.provider_name == "openai"
+    assert provider.model_identifier == "gpt-5-nano-2025-08-07"
+    assert provider.credential_env_var == "OPENAI_API_KEY"
+    assert provider.enabled is True
+    assert provider.external_tools_enabled is False
+    assert provider.fallback_model_identifier is None
+    assert config.provider_calls_enabled is True
+    assert config.cache_enabled is True
+    assert config.resume_enabled is True
+    assert config.external_tools_enabled is False
+    assert config.behavior_conditions == ["honest"]
+    assert config.attacker_conditions == ["none"]
+    assert config.oversight_conditions == ["none"]
+    assert plan.planned_trajectories == 1
+    assert plan.planned_requests == 1
+    assert plan.estimated_total_tokens <= 3000
+    assert plan.estimated_cost <= 0.01
+
+
+@pytest.mark.parametrize(
+    "provider_payload",
+    [
+        {"provider_class": "remote_api", "model": "gpt-5-nano-2025-08-07", "enabled": True},
+        {"provider_class": "remote_api", "provider": "openai", "enabled": True},
+        {
+            "provider_class": "remote_api",
+            "provider": "openai",
+            "model": "gpt-5-nano-2025-08-07",
+            "enabled": True,
+        },
+    ],
+)
+def test_openai_provider_requires_exact_provider_model_and_credential(
+    provider_payload: dict[str, Any],
+) -> None:
+    with pytest.raises(ValueError):
+        PilotProviderConfig.model_validate(provider_payload)
+
+
+def test_openai_authorization_record_is_redacted_and_allows_with_explicit_gates(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER)
+    config = load_pilot_experiment_config(OPENAI_STAGE_A)
+    plan = estimate_pilot_plan(config, provider, task_count=1)
+    record = authorize_provider_run(
+        config,
+        provider,
+        plan,
+        allow_provider_calls=True,
+        max_cost=0.01,
+        max_tokens=3000,
+        max_requests=2,
+        max_trajectories=1,
+        manifest_written=True,
+        current_code_commit="abc123",
+    )
+    serialized = json.dumps(record.model_dump(mode="json"), sort_keys=True)
+    assert record.final_authorization_decision == "allow"
+    assert record.provider == "openai"
+    assert record.model_identifier == "gpt-5-nano-2025-08-07"
+    assert record.credential_env_var == "OPENAI_API_KEY"
+    assert record.credential_present is True
+    assert record.ci_environment is False
+    assert record.current_code_commit == "abc123"
+    assert record.planned_requests == 1
+    assert record.planned_trajectories == 1
+    assert record.max_cost == 0.01
+    assert "secret-value-that-must-not-appear" not in serialized
+
+
+def test_openai_authorization_blocks_when_credential_missing(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER)
+    config = load_pilot_experiment_config(OPENAI_STAGE_A)
+    plan = estimate_pilot_plan(config, provider, task_count=1)
+    record = authorize_provider_run(
+        config,
+        provider,
+        plan,
+        allow_provider_calls=True,
+        max_cost=0.01,
+        max_tokens=3000,
+        max_requests=2,
+        max_trajectories=1,
+        manifest_written=True,
+    )
+    failed = {gate.gate_name for gate in record.gates if gate.status == "failed"}
+    assert "credential_environment_variable_present" in failed
+    assert record.credential_present is False
+    assert record.final_authorization_decision == "block"
+
+
 def test_provider_permission_blocks_in_ci(monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setenv("CI", "true")
     record = authorize_provider_run(
@@ -255,6 +379,107 @@ def test_request_hash_stable_and_cache_hit_avoids_second_call(tmp_path: Path) ->
     assert cached_first is False
     assert cached_second is True
     assert ledger.seen_completed(request.request_hash)
+
+
+def test_openai_cache_hit_avoids_provider_invocation(
+    tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
+    provider = load_pilot_provider_config(OPENAI_PROVIDER)
+    request = make_provider_request(
+        provider,
+        prompt_hash="prompt",
+        rendered_prompt="Return JSON only.",
+    )
+    cache = RequestCache(tmp_path / "cache")
+    ledger = ProviderLedger(tmp_path / "ledger.jsonl")
+    cache.put(
+        ProviderResponseRecord(
+            response_id="resp_cached",
+            request_hash=request.request_hash,
+            response_hash="hash",
+            provider_request_id="resp_provider",
+            finish_reason="completed",
+            raw_output='{"agent_role":"assistant","confidence":1}',
+            input_tokens=10,
+            output_tokens=5,
+            total_tokens=15,
+            estimated_cost=0.00001,
+        )
+    )
+
+    def fail_if_called(
+        self: ProviderAdapter, request_arg: Any, prompt: str
+    ) -> ProviderResponseRecord:
+        raise AssertionError("provider should not be invoked on cache hit")
+
+    monkeypatch.setattr(ProviderAdapter, "complete", fail_if_called)
+    _, cached = execute_provider_or_cached(
+        provider,
+        request,
+        rendered_prompt="Return JSON only.",
+        cache=cache,
+        ledger=ledger,
+    )
+    from bayesaudit.storage.jsonl import read_jsonl
+
+    rows = read_jsonl(tmp_path / "ledger.jsonl")
+    assert cached is True
+    assert [row["status"] for row in rows] == ["cached"]
+
+
+def test_openai_response_metadata_and_usage_parsing(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER)
+    request = make_provider_request(
+        provider,
+        prompt_hash="prompt",
+        rendered_prompt="Return JSON only.",
+    )
+    payload = {
+        "id": "resp_123",
+        "status": "completed",
+        "output": [
+            {
+                "content": [
+                    {
+                        "type": "output_text",
+                        "text": (
+                            '{"agent_role":"assistant","final_answer":"ok",'
+                            '"confidence":0.8}'
+                        ),
+                    }
+                ]
+            }
+        ],
+        "usage": {
+            "input_tokens": 11,
+            "input_tokens_details": {"cached_tokens": 3},
+            "output_tokens": 7,
+            "output_tokens_details": {"reasoning_tokens": 2},
+            "total_tokens": 18,
+        },
+    }
+
+    def fake_post(
+        self: ProviderAdapter, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        assert body["model"] == "gpt-5-nano-2025-08-07"
+        assert body["max_output_tokens"] == 300
+        assert api_key == "secret-value-that-must-not-appear"
+        return payload
+
+    monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
+    response = ProviderAdapter(provider).complete(request, "Return JSON only.")
+    serialized = json.dumps(response.model_dump(mode="json"), sort_keys=True)
+    assert response.provider_request_id == "resp_123"
+    assert response.finish_reason == "completed"
+    assert response.input_tokens == 11
+    assert response.output_tokens == 7
+    assert response.total_tokens == 18
+    assert response.provider_reported_usage["cached_input_tokens"] == 3
+    assert response.provider_reported_usage["reasoning_tokens"] == 2
+    assert response.raw_provider_response["id"] == "resp_123"
+    assert "secret-value-that-must-not-appear" not in serialized
 
 
 @pytest.mark.parametrize(

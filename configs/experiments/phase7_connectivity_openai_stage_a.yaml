@@ -1,0 +1,27 @@
+pilot_id: phase7_connectivity_openai_stage_a
+stage: connectivity
+provider_config: configs/providers/remote/openai_phase7_stage_a.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy]
+task_ids:
+  - task_privacy_aggregate_only
+architectures: [single_agent]
+delegation_depths: [1]
+branching_factors: [1]
+behavior_conditions: [honest]
+attacker_conditions: [none]
+oversight_conditions: [none]
+seeds: [1]
+provider_calls_enabled: true
+cache_enabled: true
+resume_enabled: true
+external_tools_enabled: false
+max_cost_usd: 0.01
+max_total_tokens: 3000
+max_requests: 2
+max_trajectories: 1
+max_runs: 1
+large_run_threshold: 1
+human_review_sample_size: 0
+notes: "Stage A only: one real OpenAI connectivity trajectory, followed by identical cache verification rerun."

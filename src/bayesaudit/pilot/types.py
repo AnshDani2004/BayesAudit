@@ -6,7 +6,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import Field, NonNegativeFloat, NonNegativeInt, PositiveInt, model_validator
+from pydantic import (
+    AliasChoices,
+    Field,
+    NonNegativeFloat,
+    NonNegativeInt,
+    PositiveInt,
+    model_validator,
+)
 
 from bayesaudit.schemas import ArchitectureKind, Domain, StrictModel, utc_now
 
@@ -47,8 +54,12 @@ ProviderFailureType = Literal[
 
 class PilotProviderConfig(StrictModel):
     provider_class: ProviderClass
-    provider_name: str | None = None
-    model_identifier: str | None = None
+    provider_name: str | None = Field(
+        default=None, validation_alias=AliasChoices("provider_name", "provider")
+    )
+    model_identifier: str | None = Field(
+        default=None, validation_alias=AliasChoices("model_identifier", "model")
+    )
     enabled: bool = False
     credential_env_var: str | None = None
     endpoint: str | None = None
@@ -61,6 +72,12 @@ class PilotProviderConfig(StrictModel):
     estimated_cost_per_1k_input_tokens: NonNegativeFloat = 0.0
     estimated_cost_per_1k_output_tokens: NonNegativeFloat = 0.0
     sampling_parameters: dict[str, float | int | str | bool | None] = Field(default_factory=dict)
+    cache_enabled: bool = True
+    resume_enabled: bool = True
+    raw_response_preservation_enabled: bool = True
+    secret_redaction_enabled: bool = True
+    external_tools_enabled: bool = False
+    fallback_model_identifier: str | None = None
     local_cost_assumption: str | None = None
     runtime_metadata: dict[str, str] = Field(default_factory=dict)
     hardware_metadata: dict[str, str] = Field(default_factory=dict)
@@ -76,6 +93,10 @@ class PilotProviderConfig(StrictModel):
             raise ValueError("remote_api provider configs must name credential_env_var")
         if self.provider_class == "local" and not (self.endpoint or self.local_runtime):
             raise ValueError("local provider configs must name endpoint or local_runtime")
+        if self.provider_class == "remote_api" and self.external_tools_enabled:
+            raise ValueError("remote_api Stage A configs must not enable external tools")
+        if self.provider_class == "remote_api" and self.fallback_model_identifier:
+            raise ValueError("remote_api Stage A configs must not define fallback models")
         return self
 
 
@@ -98,10 +119,22 @@ class PilotExperimentConfig(StrictModel):
     calibration_artifacts: list[Path] = Field(default_factory=list)
     seeds: list[int] = Field(default_factory=lambda: [1])
     sampling_parameters: dict[str, float | int | str | bool | None] = Field(default_factory=dict)
-    cost_ceiling: NonNegativeFloat | None = None
-    token_ceiling: NonNegativeInt | None = None
-    request_ceiling: NonNegativeInt | None = None
-    trajectory_ceiling: NonNegativeInt | None = None
+    cost_ceiling: NonNegativeFloat | None = Field(
+        default=None, validation_alias=AliasChoices("cost_ceiling", "max_cost_usd")
+    )
+    token_ceiling: NonNegativeInt | None = Field(
+        default=None, validation_alias=AliasChoices("token_ceiling", "max_total_tokens")
+    )
+    request_ceiling: NonNegativeInt | None = Field(
+        default=None, validation_alias=AliasChoices("request_ceiling", "max_requests")
+    )
+    trajectory_ceiling: NonNegativeInt | None = Field(
+        default=None, validation_alias=AliasChoices("trajectory_ceiling", "max_trajectories")
+    )
+    provider_calls_enabled: bool = False
+    cache_enabled: bool = True
+    resume_enabled: bool = True
+    external_tools_enabled: bool = False
     max_runs: NonNegativeInt | None = None
     large_run_threshold: NonNegativeInt = 100
     allow_large_run: bool = False
@@ -157,8 +190,22 @@ class ProviderPermissionRecord(StrictModel):
     timestamp: datetime = Field(default_factory=utc_now)
     provider: str | None
     model_identifier: str | None
+    credential_env_var: str | None = None
+    credential_present: bool = False
+    ci_environment: bool = False
+    current_code_commit: str | None = None
     configuration_hash: str
     command_line_authorization: bool
+    planned_requests: int = 0
+    planned_trajectories: int = 0
+    estimated_input_tokens: int = 0
+    estimated_output_tokens: int = 0
+    estimated_total_tokens: int = 0
+    estimated_cost: float = 0.0
+    max_cost: float | None = None
+    max_tokens: int | None = None
+    max_requests: int | None = None
+    max_trajectories: int | None = None
     environment_classification: str
     gates: list[PermissionGateRecord]
     final_authorization_decision: Literal["allow", "block"] = "block"
@@ -256,6 +303,7 @@ class ProviderResponseRecord(StrictModel):
     provider_request_id: str | None = None
     finish_reason: str | None = None
     raw_output: str
+    raw_provider_response: dict[str, Any] = Field(default_factory=dict)
     parsed_output: dict[str, Any] = Field(default_factory=dict)
     provider_reported_usage: dict[str, Any] = Field(default_factory=dict)
     input_tokens: int = 0

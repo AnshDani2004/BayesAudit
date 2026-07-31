@@ -20,8 +20,9 @@ from bayesaudit.pilot.providers import (
     ProviderLedger,
     RequestCache,
     authorize_provider_run,
+    classify_provider_failure,
     estimate_pilot_plan,
-    execute_mock_or_cached,
+    execute_provider_or_cached,
     make_provider_request,
     write_permission_record,
 )
@@ -47,7 +48,7 @@ from bayesaudit.pilot.validation import (
     readiness_counts,
 )
 from bayesaudit.schemas import ArchitectureKind, BenchmarkTask, Domain
-from bayesaudit.storage.jsonl import read_jsonl, write_json_atomic
+from bayesaudit.storage.jsonl import append_jsonl, read_json, read_jsonl, write_json_atomic
 
 
 def estimate_pilot_cost(config_path: Path) -> dict[str, Any]:
@@ -81,6 +82,7 @@ def authorize_pilot_provider_run(
         allow_large_run=allow_large_run,
         output_writable=_writable(output_dir),
         manifest_written=True,
+        current_code_commit=_git("rev-parse", "--short", "HEAD"),
     )
     path = write_permission_record(output_dir, record)
     return {
@@ -141,21 +143,52 @@ def run_provider_connectivity(
         prompt_hash=prompt.prompt_hash,
         rendered_prompt=prompt.rendered_prompt,
     )
+    write_json_atomic(output_dir / "prompt_render_record.json", prompt.model_dump(mode="json"))
+    write_json_atomic(output_dir / "provider_request_record.json", request.model_dump(mode="json"))
     cache = RequestCache(output_dir / "request_cache")
     ledger = ProviderLedger(output_dir / "provider_request_ledger.jsonl")
-    response, cached = execute_mock_or_cached(
-        provider,
-        request,
-        rendered_prompt=prompt.rendered_prompt,
-        cache=cache,
-        ledger=ledger,
-    )
+    try:
+        response, cached = execute_provider_or_cached(
+            provider,
+            request,
+            rendered_prompt=prompt.rendered_prompt,
+            cache=cache,
+            ledger=ledger,
+        )
+    except Exception as exc:
+        failure = classify_provider_failure(
+            exc, provider=provider, request_hash=request.request_hash
+        )
+        ledger.append_request(request.model_copy(update={"status": "failed", "attempt_count": 1}))
+        append_jsonl(output_dir / "provider_failures.jsonl", failure.model_dump(mode="json"))
+        write_json_atomic(
+            output_dir / "provider_failure_record.json", failure.model_dump(mode="json")
+        )
+        write_pilot_manifest(config, provider, plan, status="failed")
+        return {
+            **plan.model_dump(mode="json"),
+            "dry_run": False,
+            "provider_calls_performed": 1,
+            "cached_requests": 0,
+            "completed_requests": 0,
+            "failed_requests": 1,
+            "failure_type": failure.failure_type,
+            "failure_message": failure.message,
+            "output_dir": str(output_dir),
+        }
     parsed = parse_structured_output(response.raw_output)
     write_json_atomic(output_dir / "connectivity_response.json", response.model_dump(mode="json"))
     write_json_atomic(
         output_dir / "connectivity_structured_output.json",
         parsed.model_dump(mode="json"),
     )
+    manifest_status: PilotStatus = "completed"
+    final_manifest = write_pilot_manifest(config, provider, plan, status=manifest_status)
+    final_manifest.completed_requests = 0 if cached else 1
+    final_manifest.cached_requests = 1 if cached else 0
+    final_manifest.actual_tokens = response.total_tokens
+    final_manifest.actual_cost = response.estimated_cost
+    write_json_atomic(output_dir / "pilot_manifest.json", final_manifest.model_dump(mode="json"))
     return {
         **plan.model_dump(mode="json"),
         "dry_run": False,
@@ -163,6 +196,15 @@ def run_provider_connectivity(
         "cached_requests": 1 if cached else 0,
         "completed_requests": 1,
         "failed_requests": 0,
+        "request_hash": request.request_hash,
+        "prompt_hash": prompt.prompt_hash,
+        "input_tokens": response.input_tokens,
+        "cached_input_tokens": response.provider_reported_usage.get("cached_input_tokens", 0),
+        "output_tokens": response.output_tokens,
+        "reasoning_tokens": response.provider_reported_usage.get("reasoning_tokens", 0),
+        "total_tokens": response.total_tokens,
+        "actual_cost": response.estimated_cost,
+        "finish_reason": response.finish_reason,
         "structured_output_valid": parsed.valid,
         "output_dir": str(output_dir),
     }
@@ -285,6 +327,13 @@ def summarize_real_pilot(config_path: Path) -> dict[str, Any]:
     completed = [row for row in ledger_rows if row.get("status") == "completed"]
     cached = [row for row in ledger_rows if row.get("status") == "cached"]
     failed = read_jsonl(output_dir / "provider_failures.jsonl")
+    response = (
+        read_json(output_dir / "connectivity_response.json")
+        if (output_dir / "connectivity_response.json").exists()
+        else {}
+    )
+    actual_tokens = int(response.get("total_tokens", 0) or 0) if completed else 0
+    actual_cost = float(response.get("estimated_cost", 0.0) or 0.0) if completed else 0.0
     return {
         "pilot_id": config.pilot_id,
         "provider": provider.provider_name or provider.provider_class,
@@ -294,11 +343,11 @@ def summarize_real_pilot(config_path: Path) -> dict[str, Any]:
         "cached_requests": len(cached),
         "failed_requests": len(failed),
         "estimated_tokens": plan.estimated_total_tokens,
-        "actual_tokens": sum(int(row.get("estimated_input_tokens", 0)) for row in completed),
+        "actual_tokens": actual_tokens,
         "estimated_cost": plan.estimated_cost,
-        "actual_cost": sum(float(row.get("estimated_cost", 0.0)) for row in completed),
-        "real_model_trajectory_count": 0,
-        "valid_trajectory_count": 0,
+        "actual_cost": actual_cost,
+        "real_model_trajectory_count": len(completed),
+        "valid_trajectory_count": len(completed),
         "excluded_trajectory_count": 0,
         "exploratory_only": True,
     }

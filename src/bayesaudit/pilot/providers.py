@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import json
 import os
+import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Any
 
@@ -69,6 +73,96 @@ class ProviderAdapter:
             total_tokens=request.estimated_input_tokens + request.estimated_output_tokens,
             estimated_cost=request.estimated_cost,
         )
+
+    def complete(self, request: ProviderRequestRecord, prompt: str) -> ProviderResponseRecord:
+        if self.config.provider_class == "mock":
+            return self.complete_mock(request, prompt)
+        if (
+            self.config.provider_class == "remote_api"
+            and (self.config.provider_name or "").lower() == "openai"
+        ):
+            return self._complete_openai(request, prompt)
+        raise ValueError(f"unsupported provider adapter: {self.config.provider_class}")
+
+    def _complete_openai(
+        self, request: ProviderRequestRecord, prompt: str
+    ) -> ProviderResponseRecord:
+        credential_name = self.config.credential_env_var
+        api_key = os.environ.get(credential_name or "")
+        if not credential_name or not api_key:
+            raise PermissionError("OpenAI credential environment variable is not present")
+        endpoint = self.config.endpoint or "https://api.openai.com/v1/responses"
+        max_output_tokens = int(
+            self.config.sampling_parameters.get(
+                "max_output_tokens", self.config.estimated_output_tokens_per_request
+            )
+            or self.config.estimated_output_tokens_per_request
+        )
+        body: dict[str, Any] = {
+            "model": self.model_identifier,
+            "input": prompt,
+            "max_output_tokens": max_output_tokens,
+        }
+        if "temperature" in self.config.sampling_parameters:
+            body["temperature"] = self.config.sampling_parameters["temperature"]
+        if "top_p" in self.config.sampling_parameters:
+            body["top_p"] = self.config.sampling_parameters["top_p"]
+        payload = self._post_openai_json(endpoint, body, api_key)
+        raw_output = _extract_openai_text(payload)
+        usage = _extract_openai_usage(payload)
+        input_tokens = int(usage.get("input_tokens", 0) or 0)
+        output_tokens = int(usage.get("output_tokens", 0) or 0)
+        total_tokens = int(usage.get("total_tokens", input_tokens + output_tokens) or 0)
+        estimated_cost = _estimated_response_cost(self.config, input_tokens, output_tokens)
+        if not raw_output:
+            raise ValueError("OpenAI response did not contain output text")
+        return ProviderResponseRecord(
+            response_id="resp_" + text_hash(json.dumps(payload, sort_keys=True, default=str))[:20],
+            request_hash=request.request_hash,
+            response_hash=text_hash(raw_output),
+            provider_request_id=str(payload.get("id") or ""),
+            finish_reason=_extract_openai_finish_reason(payload),
+            raw_output=raw_output,
+            raw_provider_response=payload,
+            parsed_output={},
+            provider_reported_usage=usage,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+            total_tokens=total_tokens,
+            estimated_cost=estimated_cost,
+            provider_reported_cost=None,
+        )
+
+    def _post_openai_json(
+        self, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        data = json.dumps(body, sort_keys=True).encode("utf-8")
+        request = urllib.request.Request(
+            endpoint,
+            data=data,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        last_error: Exception | None = None
+        attempts = int(self.config.max_retries) + 1
+        for attempt in range(attempts):
+            try:
+                with urllib.request.urlopen(
+                    request, timeout=int(self.config.timeout_seconds)
+                ) as response:
+                    payload = json.loads(response.read().decode("utf-8"))
+                if not isinstance(payload, dict):
+                    raise ValueError("OpenAI response payload was not a JSON object")
+                return payload
+            except Exception as exc:
+                last_error = exc
+                if attempt >= attempts - 1 or not _retryable_openai_error(exc):
+                    break
+                time.sleep(float(self.config.backoff_initial_seconds) * (2**attempt))
+        raise _redacted_openai_exception(last_error)
 
 
 def adapter_for(config: PilotProviderConfig) -> ProviderAdapter:
@@ -153,9 +247,44 @@ def authorize_provider_run(
     allow_large_run: bool = False,
     output_writable: bool = True,
     manifest_written: bool = False,
+    current_code_commit: str | None = None,
 ) -> ProviderPermissionRecord:
     gates = [
         _gate("provider_calls_enabled_in_config", provider.enabled, "provider config enabled"),
+        _gate(
+            "experiment_provider_calls_enabled",
+            config.provider_calls_enabled,
+            "experiment config enables provider calls",
+        ),
+        _gate("provider_cache_enabled", provider.cache_enabled, "provider cache enabled"),
+        _gate("experiment_cache_enabled", config.cache_enabled, "experiment cache enabled"),
+        _gate("provider_resume_enabled", provider.resume_enabled, "provider resume enabled"),
+        _gate("experiment_resume_enabled", config.resume_enabled, "experiment resume enabled"),
+        _gate(
+            "provider_raw_response_preservation_enabled",
+            provider.raw_response_preservation_enabled,
+            "provider raw-response preservation enabled",
+        ),
+        _gate(
+            "provider_secret_redaction_enabled",
+            provider.secret_redaction_enabled,
+            "provider secret redaction enabled",
+        ),
+        _gate(
+            "provider_external_tools_disabled",
+            not provider.external_tools_enabled,
+            "provider external tools disabled",
+        ),
+        _gate(
+            "experiment_external_tools_disabled",
+            not config.external_tools_enabled,
+            "experiment external tools disabled",
+        ),
+        _gate(
+            "provider_fallback_model_absent",
+            not provider.fallback_model_identifier,
+            "provider fallback model absent",
+        ),
         _gate("cli_allow_provider_calls", allow_provider_calls, "CLI allow flag supplied"),
         _gate("provider_named", bool(provider.provider_name), "provider name is explicit"),
         _gate("model_identifier_named", bool(provider.model_identifier), "model ID is explicit"),
@@ -213,8 +342,24 @@ def authorize_provider_run(
         permission_id="perm_" + canonical_json_hash([gate.model_dump() for gate in gates])[:20],
         provider=provider.provider_name or provider.provider_class,
         model_identifier=provider.model_identifier,
+        credential_env_var=provider.credential_env_var,
+        credential_present=bool(
+            provider.credential_env_var and os.environ.get(provider.credential_env_var)
+        ),
+        ci_environment=_ci_environment(),
+        current_code_commit=current_code_commit,
         configuration_hash=plan.configuration_hash,
         command_line_authorization=allow_provider_calls,
+        planned_requests=plan.planned_requests,
+        planned_trajectories=plan.planned_trajectories,
+        estimated_input_tokens=plan.estimated_input_tokens,
+        estimated_output_tokens=plan.estimated_output_tokens,
+        estimated_total_tokens=plan.estimated_total_tokens,
+        estimated_cost=plan.estimated_cost,
+        max_cost=max_cost,
+        max_tokens=max_tokens,
+        max_requests=max_requests,
+        max_trajectories=max_trajectories,
         environment_classification="ci" if _ci_environment() else "local",
         gates=gates,
         final_authorization_decision="allow" if allowed else "block",
@@ -302,7 +447,7 @@ class ProviderLedger:
         append_jsonl(self.path, request.model_dump(mode="json"))
 
 
-def execute_mock_or_cached(
+def execute_provider_or_cached(
     provider: PilotProviderConfig,
     request: ProviderRequestRecord,
     *,
@@ -315,13 +460,30 @@ def execute_mock_or_cached(
         cached_request = request.model_copy(update={"status": "cached", "attempt_count": 0})
         ledger.append_request(cached_request)
         return cached, True
-    response = adapter_for(provider).complete_mock(
+    response = adapter_for(provider).complete(
         request.model_copy(update={"status": "completed", "attempt_count": 1}),
         rendered_prompt,
     )
     cache.put(response)
     ledger.append_request(request.model_copy(update={"status": "completed", "attempt_count": 1}))
     return response, False
+
+
+def execute_mock_or_cached(
+    provider: PilotProviderConfig,
+    request: ProviderRequestRecord,
+    *,
+    rendered_prompt: str,
+    cache: RequestCache,
+    ledger: ProviderLedger,
+) -> tuple[ProviderResponseRecord, bool]:
+    return execute_provider_or_cached(
+        provider,
+        request,
+        rendered_prompt=rendered_prompt,
+        cache=cache,
+        ledger=ledger,
+    )
 
 
 def classify_provider_failure(
@@ -343,6 +505,10 @@ def classify_provider_failure(
         retry = "bounded_retry"
     elif "invalid" in message:
         failure_type = "invalid_request"
+    elif "context" in message:
+        failure_type = "context_length_failure"
+    elif "content" in message and "filter" in message:
+        failure_type = "content_filter"
     return ProviderFailureRecord(
         failure_id="fail_"
         + canonical_json_hash({"request": request_hash, "message": str(exc)})[:20],
@@ -396,3 +562,86 @@ def _ci_environment() -> bool:
     return os.environ.get("CI", "").lower() in {"1", "true", "yes"} or bool(
         os.environ.get("GITHUB_ACTIONS")
     )
+
+
+def _extract_openai_text(payload: dict[str, Any]) -> str:
+    direct = payload.get("output_text")
+    if isinstance(direct, str) and direct.strip():
+        return direct
+    parts: list[str] = []
+    output = payload.get("output")
+    if isinstance(output, list):
+        for item in output:
+            if not isinstance(item, dict):
+                continue
+            content = item.get("content")
+            if not isinstance(content, list):
+                continue
+            for content_item in content:
+                if not isinstance(content_item, dict):
+                    continue
+                text = content_item.get("text")
+                if isinstance(text, str):
+                    parts.append(text)
+    return "\n".join(part for part in parts if part.strip())
+
+
+def _extract_openai_usage(payload: dict[str, Any]) -> dict[str, Any]:
+    usage = payload.get("usage")
+    if not isinstance(usage, dict):
+        return {}
+    normalized = dict(usage)
+    input_details = usage.get("input_tokens_details")
+    if isinstance(input_details, dict):
+        normalized["cached_input_tokens"] = int(input_details.get("cached_tokens", 0) or 0)
+    output_details = usage.get("output_tokens_details")
+    if isinstance(output_details, dict):
+        normalized["reasoning_tokens"] = int(output_details.get("reasoning_tokens", 0) or 0)
+    return normalized
+
+
+def _extract_openai_finish_reason(payload: dict[str, Any]) -> str:
+    if payload.get("status"):
+        return str(payload["status"])
+    incomplete = payload.get("incomplete_details")
+    if isinstance(incomplete, dict) and incomplete.get("reason"):
+        return "incomplete:" + str(incomplete["reason"])
+    return "unknown"
+
+
+def _estimated_response_cost(
+    provider: PilotProviderConfig, input_tokens: int, output_tokens: int
+) -> float:
+    return (
+        input_tokens / 1000.0 * provider.estimated_cost_per_1k_input_tokens
+        + output_tokens / 1000.0 * provider.estimated_cost_per_1k_output_tokens
+    )
+
+
+def _retryable_openai_error(exc: Exception) -> bool:
+    if isinstance(exc, urllib.error.HTTPError):
+        return exc.code in {408, 409, 429, 500, 502, 503, 504}
+    if isinstance(exc, TimeoutError):
+        return True
+    if isinstance(exc, urllib.error.URLError):
+        return True
+    message = str(exc).lower()
+    return "timeout" in message or "rate" in message or "server" in message
+
+
+def _redacted_openai_exception(exc: Exception | None) -> Exception:
+    if exc is None:
+        return RuntimeError("unknown OpenAI provider error")
+    if isinstance(exc, urllib.error.HTTPError):
+        body = exc.read().decode("utf-8", errors="replace")
+        return RuntimeError(f"openai_http_error status={exc.code} body={_redact(body)}")
+    return RuntimeError(_redact(str(exc)))
+
+
+def _redact(text: str) -> str:
+    redacted = text
+    for key_name in ("OPENAI_API_KEY",):
+        key = os.environ.get(key_name)
+        if key:
+            redacted = redacted.replace(key, "[REDACTED]")
+    return redacted
