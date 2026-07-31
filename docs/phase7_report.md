@@ -13,6 +13,7 @@ Repository:
 Provider integrations:
 
 - Mock provider config for CI and local validation.
+- OpenAI Stage A connectivity config for one explicitly authorized real-provider request.
 - Disabled remote API template.
 - Disabled local/open-weight template.
 
@@ -30,22 +31,64 @@ Pilot scope:
 
 Current empirical status:
 
-- Models used: none beyond mock validation.
-- Provider selected for real execution: none supplied.
-- Exact model selected for real execution: none supplied.
-- Provider authorization result: blocked before the first provider call because no explicit enabled real-provider config with exact provider/model, credential environment variable, and CLI ceilings was supplied.
+- Models used: `mock-deterministic-phase7` and one Stage A request to `gpt-5-nano-2025-08-07`.
+- Provider selected for Stage A real execution: `openai`.
+- Exact model selected for Stage A real execution: `gpt-5-nano-2025-08-07`.
+- Provider authorization result: allowed after explicit config enablement, `OPENAI_API_KEY` presence check, non-CI check, and CLI ceilings.
 - Requests planned for default connectivity dry run: `1`.
 - Requests completed against real providers: `0`.
 - Requests cached from real providers: `0`.
-- Requests failed against real providers: `0`.
-- Actual cost: `0.0`.
-- Actual token usage: `0`.
-- Real-model trajectory count: `0`.
+- Requests failed against real providers: `1`.
+- Actual cost: not reconciled; the Stage A request failed before provider usage was preserved.
+- Actual token usage: not reconciled; the Stage A request failed before provider usage was preserved.
+- Real-model trajectory count: `1` attempted.
 - Valid real-model trajectory count: `0`.
-- Excluded real-model trajectory count: `0`.
-- Pilot observations: not yet generated.
+- Excluded real-model trajectory count: `1`.
+- Pilot observations: Stage A failed before cache verification.
 - Synthetic comparisons: previous phases only.
-- Test status after skipped-test resolution: `426 passed`.
+- Test status after Stage A adapter coverage: `447 passed`.
+
+## Stage A: Real-Provider Connectivity
+
+- Date: `2026-07-31`
+- Branch: `codex/phase7-real-model-pilot`
+- Base commit: `f5c1962`
+- Starting commit: `055009a`
+- Stage A execution commit: `be0e693`
+- Provider: `openai`
+- Exact model ID: `gpt-5-nano-2025-08-07`
+- Credential environment variable: `OPENAI_API_KEY`
+- Task: `task_privacy_aggregate_only`
+- Architecture: `single_agent`
+- Behavior: `honest`
+- Oversight condition: `none`
+- Attacker condition: `none`
+- Planned trajectories: `1`
+- Attempted trajectories: `1`
+- Valid trajectories: `0`
+- Excluded trajectories: `1`
+- Planned provider requests: `1`
+- Actual provider requests: `1`
+- Cached executions: `0`
+- Failed requests: `1`
+- Estimated input tokens: `1000`
+- Cached input tokens: not available
+- Estimated output tokens: `300`
+- Reasoning tokens: not available
+- Estimated total tokens: `1300`
+- Estimated cost: `$0.0013`
+- Actual cost: not reconciled
+- Cost ceiling utilization: estimated `13%`; actual not reconciled
+- Token ceiling utilization: estimated `43.3%`; actual not reconciled
+- Request ceiling utilization: `50%`
+- Trajectory ceiling utilization: `100%`
+- Structured parsing result: not attempted; no usable model-output text was preserved.
+- Cache verification result: failed; no complete cache entry was created.
+- Duplicate-billing verification result: no duplicate paid request was made; the identical rerun was not executed because it would not have been cache-served.
+- Credential-redaction result: passed; the `OPENAI_API_KEY` value was not found in workspace files or Stage A artifacts by redacted scan.
+- Raw-response preservation result: failed for this execution; adapter repair added raw failure-payload preservation for future empty-output responses.
+- External-action result: passed; no external tools were configured or invoked.
+- Stage A status: `failed`
 
 Measurement validation:
 
@@ -64,7 +107,7 @@ Readiness:
 
 Limitations:
 
-- No real provider has been called.
-- Empirical Stage A is blocked pending an explicit user-supplied provider configuration and explicit real-run ceilings.
+- Stage A made one real provider request and failed before cache verification.
+- Stage B has not begun.
 - All Phase 7 results produced by default commands are implementation validation, dry-run plans, or placeholder artifacts for downstream review.
 - No benchmark freeze or Phase 8 start is authorized by this report.

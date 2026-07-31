@@ -35,6 +35,7 @@ from bayesaudit.pilot.prompts import (
     repair_prompt,
 )
 from bayesaudit.pilot.providers import (
+    OpenAIProviderError,
     ProviderAdapter,
     ProviderLedger,
     RequestCache,
@@ -480,6 +481,34 @@ def test_openai_response_metadata_and_usage_parsing(monkeypatch: MonkeyPatch) ->
     assert response.provider_reported_usage["reasoning_tokens"] == 2
     assert response.raw_provider_response["id"] == "resp_123"
     assert "secret-value-that-must-not-appear" not in serialized
+
+
+def test_openai_empty_output_failure_is_classified(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    provider = load_pilot_provider_config(OPENAI_PROVIDER)
+    request = make_provider_request(
+        provider,
+        prompt_hash="prompt",
+        rendered_prompt="Return JSON only.",
+    )
+    payload = {
+        "id": "resp_empty",
+        "status": "completed",
+        "output": [],
+        "usage": {"input_tokens": 11, "output_tokens": 0, "total_tokens": 11},
+    }
+
+    def fake_post(
+        self: ProviderAdapter, endpoint: str, body: dict[str, Any], api_key: str
+    ) -> dict[str, Any]:
+        return payload
+
+    monkeypatch.setattr(ProviderAdapter, "_post_openai_json", fake_post)
+    with pytest.raises(OpenAIProviderError) as exc_info:
+        ProviderAdapter(provider).complete(request, "Return JSON only.")
+    assert exc_info.value.payload["id"] == "resp_empty"
+    failure = classify_provider_failure(exc_info.value, provider=provider, request_hash="hash")
+    assert failure.failure_type == "empty_output"
 
 
 @pytest.mark.parametrize(

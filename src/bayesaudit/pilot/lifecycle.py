@@ -164,6 +164,11 @@ def run_provider_connectivity(
         write_json_atomic(
             output_dir / "provider_failure_record.json", failure.model_dump(mode="json")
         )
+        raw_failure_payload = getattr(exc, "payload", None)
+        if isinstance(raw_failure_payload, dict) and raw_failure_payload:
+            write_json_atomic(
+                output_dir / "provider_failure_raw_response.json", raw_failure_payload
+            )
         write_pilot_manifest(config, provider, plan, status="failed")
         return {
             **plan.model_dump(mode="json"),

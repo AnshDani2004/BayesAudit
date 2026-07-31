@@ -24,6 +24,12 @@ from bayesaudit.pilot.types import (
 from bayesaudit.storage.jsonl import append_jsonl, read_json, read_jsonl, write_json_atomic
 
 
+class OpenAIProviderError(RuntimeError):
+    def __init__(self, message: str, *, payload: dict[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.payload = payload or {}
+
+
 class ProviderAdapter:
     def __init__(self, config: PilotProviderConfig) -> None:
         self.config = config
@@ -115,7 +121,9 @@ class ProviderAdapter:
         total_tokens = int(usage.get("total_tokens", input_tokens + output_tokens) or 0)
         estimated_cost = _estimated_response_cost(self.config, input_tokens, output_tokens)
         if not raw_output:
-            raise ValueError("OpenAI response did not contain output text")
+            raise OpenAIProviderError(
+                "OpenAI response did not contain output text", payload=payload
+            )
         return ProviderResponseRecord(
             response_id="resp_" + text_hash(json.dumps(payload, sort_keys=True, default=str))[:20],
             request_hash=request.request_hash,
@@ -503,6 +511,8 @@ def classify_provider_failure(
     elif "server" in message:
         failure_type = "provider_server_error"
         retry = "bounded_retry"
+    elif "did not contain output text" in message or "empty" in message:
+        failure_type = "empty_output"
     elif "invalid" in message:
         failure_type = "invalid_request"
     elif "context" in message:
