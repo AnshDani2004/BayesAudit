@@ -54,3 +54,26 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Rerun requirement: no rerun required; subsequent blocks require separate provider authorization at the post-fix commit.
 - Current repair commit: `520690d`
 - Reviewer: Codex
+
+## P7C1A-001: Privacy Scorer Prompt/Input Contamination
+
+- Date: `2026-08-01`
+- Component: deterministic privacy scorer and Stage C.1a adjudication artifacts
+- Task IDs: `task_privacy_aggregate_only`; `task_privacy_final_masking`
+- Trajectory IDs: all eight Stage C.1 privacy trajectories across `unstructured_delegation`, `structured_inheritance`, depth `1`, and depth `2`
+- Original scorer version: `privacy:v1`
+- Prompt version: `phase7_prompt_v2`
+- Schema version: `bayesaudit.phase7.stage_c1a.*.v1`
+- Original behavior: `privacy:v1` searched all step text through `all_step_texts`, which combines prompt/input messages with model responses, and then labeled any sensitive-token occurrence as direct identifier leakage.
+- Observed issue: Stage C.1a provenance review found `294` sensitive-token occurrences in the review cohort, all benchmark-originated. The eight automated privacy positives had `0` model-response occurrences, `0` tool-argument occurrences, and `0` final-output occurrences under response/tool-only provenance.
+- Evidence: `configs/experiments/phase7_stage_c1a_summary.json` records `8` scorer false positives, `0` confirmed genuine internal-only violations, `0` confirmed final-output violations, and positive predictive value `0.0` on the reviewed positive set.
+- Root cause: scorer input contamination. The v1 scorer counted benchmark-supplied prompt/input context as if it were a model-originated disclosure and did not attribute source, authorization, prompt versus response, or benchmark-originated exposure.
+- Outcome classification: `scorer_repair_required`
+- Bug fix versus benchmark redesign: scorer bug fix plus adjudication/documentation artifact; no task, prompt renderer, provider artifact, or historical Stage C.1 output was rewritten.
+- Repair made: added `privacy:v2`, which scores model responses and tool arguments only, records source attribution evidence, preserves prompt-only benchmark context as non-scored provenance, and leaves `privacy:v1` registered for historical comparability.
+- New version: `privacy:v2`
+- Historical comparability: original Stage C.1 scores and labels remain readable and unchanged; C.1a corrected labels are stored separately in `configs/experiments/phase7_stage_c1a_adjudicated_labels.json`.
+- Label impact: original Stage C.1 automated privacy positives remain `8`; Stage C.1a confirmed genuine positives are `0`; false positives are `8`; no false negatives were found in the reviewed controls.
+- Rerun requirement: no Stage C.1 provider rerun required. Future Stage C.2 privacy measurement should use `privacy:v2` unless separately authorized otherwise.
+- Current commit at artifact generation: `995ba4f`
+- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.

@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 from pytest import CaptureFixture, MonkeyPatch
 
+import bayesaudit.pilot.lifecycle as lifecycle_module
 import bayesaudit.pilot.stage_c as stage_c_module
 from bayesaudit.benchmark.io import load_tasks
 from bayesaudit.cli import main
@@ -2192,7 +2193,9 @@ def test_stage_c1_six_task_selection_and_request_plan() -> None:
     assert config.attacker_conditions == ["none"]
 
 
-def test_stage_c1_dry_run_and_authorization_record(monkeypatch: MonkeyPatch) -> None:
+def test_stage_c1_dry_run_and_authorization_record(
+    tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", "placeholder-value-that-must-not-appear")
     monkeypatch.delenv("CI", raising=False)
     monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
@@ -2200,6 +2203,11 @@ def test_stage_c1_dry_run_and_authorization_record(monkeypatch: MonkeyPatch) -> 
         stage_c_module,
         "STAGE_C1_TASK_MANIFEST",
         Path("results/tables/phase7/stage_c1_test_task_selection.json"),
+    )
+    monkeypatch.setattr(
+        lifecycle_module,
+        "_output_dir",
+        lambda config: tmp_path / config.pilot_id,
     )
     payload = run_measurement_pilot(
         OPENAI_STAGE_C1,

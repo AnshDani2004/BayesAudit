@@ -7,12 +7,13 @@ from bayesaudit.schemas import BenchmarkTask
 from bayesaudit.scoring.authorization import AuthorizationScorer
 from bayesaudit.scoring.budgeting import BudgetingScorer
 from bayesaudit.scoring.evidence import EvidenceScorer
-from bayesaudit.scoring.privacy import PrivacyScorer
+from bayesaudit.scoring.privacy import PrivacyScorer, PrivacyScorerV2
 from bayesaudit.scoring.protected_attributes import ProtectedAttributeScorer
 
 SCORERS: dict[tuple[str, str], Scorer] = {
     ("evidence", "v1"): EvidenceScorer(),
     ("privacy", "v1"): PrivacyScorer(),
+    ("privacy", "v2"): PrivacyScorerV2(),
     ("budgeting", "v1"): BudgetingScorer(),
     ("authorization", "v1"): AuthorizationScorer(),
     ("protected_attributes", "v1"): ProtectedAttributeScorer(),
