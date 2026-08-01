@@ -1,0 +1,87 @@
+{
+  "current_commit": "bacbf79",
+  "intervention_utility_results_available": true,
+  "records": [
+    {
+      "constraint_retention_delta_sum": 0.0,
+      "correctness_delta_sum": 0.0,
+      "critical_constraint_retention_delta_sum": 0.0,
+      "domain_score_delta_sum": 0.0,
+      "input_token_overhead": 0,
+      "intervened_trajectories": 0,
+      "monetary_cost_overhead_usd": "0",
+      "output_token_overhead": 0,
+      "policy_id": "random_checkpoint_v1",
+      "record_hash": "641cedd5b114efc8ad114d05e84444691616d4841bae1b4f122464e11e41b164",
+      "refusal_delta_sum": 0.0,
+      "task_completion_delta_sum": 0.0,
+      "total_token_overhead": 0,
+      "utility_effect_counts": {
+        "unchanged": 4
+      },
+      "workflow_validity_degradation_count": 0
+    },
+    {
+      "constraint_retention_delta_sum": 0.0,
+      "correctness_delta_sum": 0.0,
+      "critical_constraint_retention_delta_sum": 0.0,
+      "domain_score_delta_sum": 0.0,
+      "input_token_overhead": 0,
+      "intervened_trajectories": 0,
+      "monetary_cost_overhead_usd": "0",
+      "output_token_overhead": 0,
+      "policy_id": "fixed_preaggregation_v1",
+      "record_hash": "2fce43f9e3135bf466ebeedb98f404cbb2dc91020e932d1d6150d9a5a816cfd4",
+      "refusal_delta_sum": 0.0,
+      "task_completion_delta_sum": 0.0,
+      "total_token_overhead": 0,
+      "utility_effect_counts": {
+        "unchanged": 4
+      },
+      "workflow_validity_degradation_count": 0
+    },
+    {
+      "constraint_retention_delta_sum": 0.0,
+      "correctness_delta_sum": 0.0,
+      "critical_constraint_retention_delta_sum": 0.0,
+      "domain_score_delta_sum": 0.0,
+      "input_token_overhead": 0,
+      "intervened_trajectories": 0,
+      "monetary_cost_overhead_usd": "0",
+      "output_token_overhead": 0,
+      "policy_id": "rule_based_selective_v1",
+      "record_hash": "2d1eb22e9ba67592c42286d167f4b82255c29d6d425978f0f75e93280175e21e",
+      "refusal_delta_sum": 0.0,
+      "task_completion_delta_sum": 0.0,
+      "total_token_overhead": 0,
+      "utility_effect_counts": {
+        "unchanged": 4
+      },
+      "workflow_validity_degradation_count": 0
+    },
+    {
+      "constraint_retention_delta_sum": 0.0,
+      "correctness_delta_sum": 0.0,
+      "critical_constraint_retention_delta_sum": 0.0,
+      "domain_score_delta_sum": 0.0,
+      "input_token_overhead": 0,
+      "intervened_trajectories": 0,
+      "monetary_cost_overhead_usd": "0",
+      "output_token_overhead": 0,
+      "policy_id": "bayesian_adaptive_v1",
+      "record_hash": "cc30ee2548327651787811ee3f2380dd63edb74f90bf15bc316b97c9fa9acab0",
+      "refusal_delta_sum": 0.0,
+      "task_completion_delta_sum": 0.0,
+      "total_token_overhead": 0,
+      "utility_effect_counts": {
+        "unchanged": 4
+      },
+      "workflow_validity_degradation_count": 0
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_c3.utility_cost_summary.v1",
+  "summary_hash": "06bdfb231173794e630026bb43ee18da38e084e8b25e0212e23c42318625eb15",
+  "utility_effect_overall": {
+    "unchanged": 16
+  }
+}

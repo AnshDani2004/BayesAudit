@@ -1,0 +1,16 @@
+{
+  "basis": {
+    "false_positive_metrics_reproducible": true,
+    "policy_artifacts_complete": true,
+    "risk_classifier_versions_stable": true,
+    "stage_c3_status": "passed",
+    "unresolved_policy_integration_defect": false,
+    "utility_metrics_available": true
+  },
+  "current_commit": "bacbf79",
+  "phase8_started": false,
+  "readiness_hash": "3c2205ac9c7cfc9ac609f774e1f1c678ebb967e89ca7ba5845482ba7ac41d0bc",
+  "schema_version": "bayesaudit.phase7.stage_d_readiness.v1",
+  "stage_d_readiness": "ready_for_stage_d",
+  "stage_d_was_run": false
+}

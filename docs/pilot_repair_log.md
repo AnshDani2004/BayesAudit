@@ -135,3 +135,43 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Artifact hashes: decision `c914cfd109e0d8d407f9b890eb4313c008d211e64cc75e9e75896eef508fb195`; review manifest `3fa1e730158f1ef0bbac0f3259c2d18239740c0436485e19a2a2c5e70fb18fc0`; classifier audit `495d144cdd958dc894d4b3d5b65ba3871d147eed2c92bba7d67cf8b9973b88a7`; Stage C.3 validated-candidate manifest `5106f2d6050946e26ed7b2baeb4a935723aa4b60915d765eb9eb9a11875ecac9`.
 - Current commit at artifact generation: `bf725d3`
 - Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+
+## P7C3-001: Negative-Control Oversight False-Positive and Cost Pilot
+
+- Date: `2026-08-01`
+- Stage: Phase 7 Stage C.3
+- Component: oversight policy replay, observable-risk runtime classifier, intervention gating, and utility-cost accounting
+- Input cohort: four frozen Stage C.2c negative controls from `configs/experiments/phase7_stage_c3_validated_candidate_manifest.json`
+- Source manifest hash: `5106f2d6050946e26ed7b2baeb4a935723aa4b60915d765eb9eb9a11875ecac9`
+- Provider/model authorization target: `openai` / `gpt-5-nano-2025-08-07`
+- Provider calls made: `0`
+- Counterfactual intervention continuations made: `0`
+- Policy-control evaluations: `16`
+- Policies evaluated: `random_checkpoint_v1`, `fixed_preaggregation_v1`, `rule_based_selective_v1`, and `bayesian_adaptive_v1`
+- Repaired classifier version used: `observable_risk:v2`
+- Observable-risk v2 classifier hash: `182c2b84dd07ee1d0fc3227a64d092919935612db0b1c8c271e78a4742200076`
+- Control manifest hash: `3bf353ea50663e6055eeb356fd2a139077fcfe0e88eaaa302b40773f1a91a871`
+- Policy manifest hash: `a58a01bebbb93f8d82f009d95962a15d3f3d4df0da9591218cf11726571232b2`
+- Information-boundary audit hash: `24ede294ca00360b68315ccc6161a02243c9bbae1e0fd3775332873613b38795`
+- Provider estimate hash: `319033bb1d67eae22d09a176c49b335a98843c3c4e7cb43b23801c54fc468b2b`
+- Provider authorization hash: `d750b89921893f68833322af94226d0e32cbdba7d161b54dbb7901f8d49a8a24`
+- False-positive summary hash: `5d43e388e3f3c5212e5f5f3d45db84f51a7efc498e0e3753f8a9dd06ba570f34`
+- Utility-cost summary hash: `06bdfb231173794e630026bb43ee18da38e084e8b25e0212e23c42318625eb15`
+- Budget summary hash: `1743cbe9c75acb5d19d58553a39d1b41a961f482ea87b24f3f65b86b695ab846`
+- Policy-comparison hash: `3888b1f2eeb04d6a5abb7758c24131e52a3703a27c3aa75283f21848033ecdb2`
+- Decision hash: `f1235597460c351f6f1d40dbf712c52f3f219d6cd8b7a61367b3a9750aa34261`
+- Stage D readiness hash: `3c2205ac9c7cfc9ac609f774e1f1c678ebb967e89ca7ba5845482ba7ac41d0bc`
+- Observed issue addressed: Stage C.2c found that C.2b observable-risk positives were false positives. Stage C.3 therefore evaluates oversight policy selectivity, false-positive behavior, provider-budget use, and utility-cost accounting on validated negative controls only.
+- Change made: added a Stage C.3 provider/config pair, a runtime wrapper for `observable_risk:v2` that forbids future information and adjudicated labels, frozen policy manifests, offline policy decisions, frozen intervention manifest construction, summaries, decision artifacts, and Stage D readiness output.
+- Task wording effect: none.
+- Scorer effect: none; Stage C.3 uses preserved objective scorer outputs and does not change privacy, authorization, or evidence scorers.
+- Label effect: none; Stage C.2c adjudicated labels are consumed only to define the frozen negative-control cohort and are not available to runtime policy decisions.
+- Prompt-rendering effect: no counterfactual continuation prompts were sent because no policy escalated to an intervention.
+- Comparability: Stage C.3 is comparable only as a negative-control false-positive, selectivity, budget-use, and utility-cost pilot. It cannot estimate positive-case recall, detection sensitivity, intervention prevention, or safety benefit.
+- Rerun requirement: no provider rerun required for Stage C.3 because the frozen intervention set is empty. Future Stage D requires separate authorization and must not inherit a benchmark-freeze decision from C.3.
+- Bug-fix versus redesign classification: oversight instrumentation and classifier-integration repair, not benchmark-task redesign.
+- Stage C.3 decision: `passed`
+- Stage D readiness: `ready_for_stage_d`
+- Benchmark status: `not_ready_to_freeze`
+- Current commit at artifact generation: `bacbf79`
+- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
