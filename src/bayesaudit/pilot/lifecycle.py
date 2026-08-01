@@ -34,6 +34,7 @@ from bayesaudit.pilot.providers import (
     write_permission_record,
 )
 from bayesaudit.pilot.stage_b import (
+    STAGE_B_REAL_PILOT_IDS,
     run_stage_b_domain_block,
     stage_b_request_plan,
     summarize_stage_b,
@@ -68,7 +69,20 @@ from bayesaudit.storage.jsonl import append_jsonl, read_json, read_jsonl, write_
 
 def estimate_pilot_cost(config_path: Path) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
-    del config
+    if config.pilot_id in STAGE_B_REAL_PILOT_IDS:
+        validation = validate_stage_b_config(config)
+        request_plan = stage_b_request_plan(config, provider, plan)
+        return {
+            **plan.model_dump(mode="json"),
+            **request_plan,
+            "stage_b_config_valid": validation["valid"],
+            "stage_b_config_errors": validation["errors"],
+            "cost_ceiling": config.cost_ceiling,
+            "token_ceiling": config.token_ceiling,
+            "request_ceiling": config.request_ceiling,
+            "trajectory_ceiling": config.trajectory_ceiling,
+            "output_dir": str(_output_dir(config)),
+        }
     return plan.model_dump(mode="json")
 
 
@@ -294,10 +308,7 @@ def run_real_workflow_pilot(
     manifest = write_pilot_manifest(
         config, provider, plan, status="dry_run" if dry_run else "planned"
     )
-    if config.pilot_id in {
-        "phase7_workflow_openai_stage_b",
-        "phase7_workflow_openai_stage_b1_privacy",
-    }:
+    if config.pilot_id in STAGE_B_REAL_PILOT_IDS:
         validation = validate_stage_b_config(config)
         request_plan = stage_b_request_plan(config, provider, plan)
         if not validation["valid"]:

@@ -406,8 +406,11 @@ def authorize_provider_run(
     ]
     allowed = all(gate.status == "passed" for gate in gates)
     maximum_possible_requests = plan.planned_requests * (1 + int(provider.max_retries))
-    if config.pilot_id == "phase7_workflow_openai_stage_b1_privacy":
-        maximum_possible_requests += 2
+    stage_b_repair_allowances = {
+        "phase7_workflow_openai_stage_b1_privacy": 2,
+        "phase7_workflow_openai_stage_b2_auth_evidence": 4,
+    }
+    maximum_possible_requests += stage_b_repair_allowances.get(config.pilot_id, 0)
     record = ProviderPermissionRecord(
         permission_id="perm_" + canonical_json_hash([gate.model_dump() for gate in gates])[:20],
         provider=provider.provider_name or provider.provider_class,

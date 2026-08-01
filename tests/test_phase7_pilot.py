@@ -59,7 +59,9 @@ from bayesaudit.pilot.providers import (
 from bayesaudit.pilot.stage_b import (
     _assert_prior_domains_valid,
     _review_packet,
+    _review_packet_path,
     classify_stage_b_trajectory,
+    combined_stage_b_status,
     stage_b_request_plan,
     stage_b_status,
     validate_stage_b_config,
@@ -136,6 +138,9 @@ OPENAI_PROVIDER_B = Path("configs/providers/remote/openai_phase7_stage_b.yaml")
 OPENAI_STAGE_B1 = ROOT / "phase7_workflow_openai_stage_b1_privacy.yaml"
 OPENAI_STAGE_B1_CONFIG = "configs/experiments/phase7_workflow_openai_stage_b1_privacy.yaml"
 OPENAI_PROVIDER_B1 = Path("configs/providers/remote/openai_phase7_stage_b1.yaml")
+OPENAI_STAGE_B2 = ROOT / "phase7_workflow_openai_stage_b2_auth_evidence.yaml"
+OPENAI_STAGE_B2_CONFIG = "configs/experiments/phase7_workflow_openai_stage_b2_auth_evidence.yaml"
+OPENAI_PROVIDER_B2 = Path("configs/providers/remote/openai_phase7_stage_b2.yaml")
 
 
 def _task() -> BenchmarkTask:
@@ -165,6 +170,7 @@ def _plan(path: Path = CONNECTIVITY) -> PilotPlan:
         OPENAI_PROVIDER_A1,
         OPENAI_PROVIDER_B,
         OPENAI_PROVIDER_B1,
+        OPENAI_PROVIDER_B2,
     ],
 )
 def test_phase7_provider_configs_validate(path: Path) -> None:
@@ -1017,7 +1023,7 @@ def test_openai_provider_requires_exact_provider_model_and_credential(
 def test_openai_authorization_record_is_redacted_and_allows_with_explicit_gates(
     monkeypatch: MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    monkeypatch.setenv("OPENAI_API_KEY", "placeholder-value-that-must-not-appear")
     monkeypatch.delenv("CI", raising=False)
     monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
     provider = load_pilot_provider_config(OPENAI_PROVIDER)
@@ -1046,7 +1052,7 @@ def test_openai_authorization_record_is_redacted_and_allows_with_explicit_gates(
     assert record.planned_requests == 1
     assert record.planned_trajectories == 1
     assert record.max_cost == 0.01
-    assert "secret-value-that-must-not-appear" not in serialized
+    assert "placeholder-value-that-must-not-appear" not in serialized
 
 
 def test_openai_authorization_blocks_when_credential_missing(monkeypatch: MonkeyPatch) -> None:
@@ -1970,6 +1976,177 @@ def test_stage_b1_status_fails_when_repair_ceiling_exceeded() -> None:
         "classification": "valid",
     }
     assert stage_b_status([row, row], 0, planned_trajectories=2, stage_b1=True) == "failed"
+
+
+def test_stage_b2_config_auth_evidence_request_plan() -> None:
+    config = load_pilot_experiment_config(OPENAI_STAGE_B2)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_B2)
+    plan = estimate_pilot_plan(config, provider, task_count=2)
+    request_plan = stage_b_request_plan(config, provider, plan)
+    validation = validate_stage_b_config(config)
+    assert validation["valid"] is True
+    assert request_plan["domains"] == ["authorization", "evidence"]
+    assert request_plan["task_ids"] == [
+        "task_authorization_local_only",
+        "task_evidence_claim_support",
+    ]
+    assert request_plan["architectures"] == [
+        "structured_inheritance",
+        "unstructured_delegation",
+    ]
+    assert request_plan["planned_trajectories"] == 4
+    assert request_plan["expected_total_requests"] == 12
+    assert request_plan["maximum_repair_requests"] == 4
+    assert request_plan["maximum_possible_requests"] == 16
+    assert request_plan["maximum_possible_total_tokens"] == 29600
+    assert Decimal(request_plan["maximum_possible_token_derived_cost_usd"]) < Decimal("0.05")
+    assert config.delegation_depths == [1]
+    assert config.behavior_conditions == ["honest"]
+    assert config.attacker_conditions == ["none"]
+    assert config.oversight_conditions == ["none"]
+
+
+def test_stage_b2_estimate_and_dry_run_zero_provider_calls() -> None:
+    estimate = estimate_pilot_cost(OPENAI_STAGE_B2)
+    assert estimate["provider"] == "openai"
+    assert estimate["model_identifier"] == "gpt-5-nano-2025-08-07"
+    assert estimate["stage_b_config_valid"] is True
+    assert estimate["expected_total_requests"] == 12
+    assert estimate["maximum_possible_requests"] == 16
+    assert estimate["prompt_template_versions"] == {
+        "planner": "phase7_prompt_v2",
+        "worker": "phase7_prompt_v2",
+        "aggregator": "phase7_prompt_v2",
+    }
+    assert estimate["schema_versions"] == {
+        "planner": STAGE_B1_SCHEMA_VERSION,
+        "worker": STAGE_B1_SCHEMA_VERSION,
+        "aggregator": STAGE_B1_SCHEMA_VERSION,
+    }
+    payload = run_real_workflow_pilot(
+        OPENAI_STAGE_B2,
+        dry_run=True,
+        max_cost=0.05,
+        max_tokens=30000,
+        max_requests=16,
+        max_trajectories=4,
+    )
+    assert payload["provider_calls_performed"] == 0
+    assert payload["maximum_possible_requests"] == 16
+
+
+def test_stage_b2_authorization_runs_before_evidence(tmp_path: Path) -> None:
+    config = load_pilot_experiment_config(OPENAI_STAGE_B2)
+    _assert_prior_domains_valid(tmp_path, "authorization", config=config)
+    with pytest.raises(RuntimeError, match="authorization"):
+        _assert_prior_domains_valid(tmp_path, "evidence", config=config)
+    rows = [
+        {
+            "domain": "authorization",
+            "architecture": "unstructured_delegation",
+            "classification": "valid",
+            "trajectory_id": "a1",
+        },
+        {
+            "domain": "authorization",
+            "architecture": "structured_inheritance",
+            "classification": "valid_with_minor_issue",
+            "trajectory_id": "a2",
+        },
+    ]
+    (tmp_path / "workflow_classifications.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in rows) + "\n",
+        encoding="utf-8",
+    )
+    _assert_prior_domains_valid(tmp_path, "evidence", config=config)
+
+
+def test_stage_b2_provider_authorization_includes_repair_request_ceiling(
+    monkeypatch: MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "secret-value-that-must-not-appear")
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    config = load_pilot_experiment_config(OPENAI_STAGE_B2)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_B2)
+    plan = estimate_pilot_plan(config, provider, task_count=2)
+    record = authorize_provider_run(
+        config,
+        provider,
+        plan,
+        allow_provider_calls=True,
+        max_cost=0.05,
+        max_tokens=30000,
+        max_requests=16,
+        max_trajectories=4,
+        manifest_written=True,
+        current_code_commit="abc123",
+    )
+    serialized = json.dumps(record.model_dump(mode="json"), sort_keys=True)
+    assert record.final_authorization_decision == "allow"
+    assert record.planned_requests == 12
+    assert record.planned_trajectories == 4
+    assert record.maximum_possible_requests == 16
+    assert record.pricing_table_version == "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1"
+    assert "secret-value-that-must-not-appear" not in serialized
+
+
+def test_stage_b2_native_schema_translation_and_review_packet_path() -> None:
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_B2)
+    metadata = stage_b1_response_schema_metadata("worker")
+    request = make_provider_request(
+        provider,
+        prompt_hash="prompt",
+        rendered_prompt="hello",
+        response_schema=metadata,
+    )
+    text = _openai_text_format(request.response_schema)
+    assert text["format"]["type"] == "json_schema"
+    assert text["format"]["name"] == "bayesaudit_stage_b1_worker"
+    assert request.response_schema["version"] == STAGE_B1_SCHEMA_VERSION
+    review_path = _review_packet_path(
+        "traj_phase7_workflow_openai_stage_b2_auth_evidence_task_authorization_local_only"
+        "_unstructured_delegation"
+    )
+    assert review_path == Path(
+        "data/derived/phase7_stage_b2/review_packets/"
+        "traj_phase7_workflow_openai_stage_b2_auth_evidence_task_authorization_local_only_"
+        "unstructured_delegation.json"
+    )
+
+
+def _combined_stage_b_rows() -> list[dict[str, Any]]:
+    rows = []
+    for domain in ["privacy", "authorization", "evidence"]:
+        for architecture in ["unstructured_delegation", "structured_inheritance"]:
+            rows.append(
+                {
+                    "domain": domain,
+                    "architecture": architecture,
+                    "classification": "valid_with_minor_issue",
+                    "workflow_semantic_status": "semantically_valid_with_minor_issue",
+                    "trajectory_execution_status": "complete",
+                    "final_output_scorable": True,
+                }
+            )
+    return rows
+
+
+def test_combined_stage_b_status_pass_failure_and_blocked() -> None:
+    rows = _combined_stage_b_rows()
+    assert combined_stage_b_status(rows, 0) == "passed"
+    failed_rows = [
+        row
+        | {
+            "classification": "invalid_model_workflow",
+            "workflow_semantic_status": "semantically_invalid",
+        }
+        if row["domain"] == "evidence"
+        else row
+        for row in rows
+    ]
+    assert combined_stage_b_status(failed_rows, 0) == "failed"
+    assert combined_stage_b_status(rows[:5], 0) == "blocked"
 
 
 def _response(content: str) -> ModelResponse:

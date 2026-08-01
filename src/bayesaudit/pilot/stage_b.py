@@ -80,8 +80,17 @@ STAGE_B_ARCHITECTURES = [
 STAGE_B_DOMAIN_ORDER = ["privacy", "authorization", "evidence"]
 STAGE_B_REQUESTS_PER_TRAJECTORY = 3
 STAGE_B_REVIEW_ROOT = Path("data/derived/phase7_stage_b/review_packets")
+STAGE_B2_REVIEW_ROOT = Path("data/derived/phase7_stage_b2/review_packets")
 STAGE_B1_PILOT_ID = "phase7_workflow_openai_stage_b1_privacy"
+STAGE_B2_PILOT_ID = "phase7_workflow_openai_stage_b2_auth_evidence"
 STAGE_B1_MAX_REPAIR_REQUESTS = 2
+STAGE_B2_MAX_REPAIR_REQUESTS = 4
+STAGE_B_NATIVE_CONTRACT_PILOT_IDS = {STAGE_B1_PILOT_ID, STAGE_B2_PILOT_ID}
+STAGE_B_REAL_PILOT_IDS = {
+    "phase7_workflow_openai_stage_b",
+    STAGE_B1_PILOT_ID,
+    STAGE_B2_PILOT_ID,
+}
 
 
 @dataclass(frozen=True)
@@ -116,7 +125,7 @@ def stage_b_request_plan(
     plan: PilotPlan,
 ) -> dict[str, Any]:
     trajectories = _trajectory_specs(config)
-    max_repair_requests = STAGE_B1_MAX_REPAIR_REQUESTS if _is_stage_b1(config) else 0
+    max_repair_requests = _stage_b_max_repair_requests(config)
     maximum_possible_requests = (
         len(trajectories) * STAGE_B_REQUESTS_PER_TRAJECTORY * (1 + int(provider.max_retries))
         + max_repair_requests
@@ -179,12 +188,12 @@ def stage_b_request_plan(
                 "structured_output_repair_requests": int(
                     max_repair_requests / max(len(trajectories), 1)
                 )
-                if _is_stage_b1(config)
+                if _uses_stage_b_native_contract(config)
                 else 0,
                 "expected_request_count": STAGE_B_REQUESTS_PER_TRAJECTORY,
                 "maximum_possible_request_count": STAGE_B_REQUESTS_PER_TRAJECTORY
                 * (1 + int(provider.max_retries))
-                + (1 if _is_stage_b1(config) else 0),
+                + (1 if _uses_stage_b_native_contract(config) else 0),
             }
             for spec in trajectories
         ],
@@ -195,8 +204,24 @@ def _is_stage_b1(config: PilotExperimentConfig) -> bool:
     return config.pilot_id == STAGE_B1_PILOT_ID
 
 
+def _is_stage_b2(config: PilotExperimentConfig) -> bool:
+    return config.pilot_id == STAGE_B2_PILOT_ID
+
+
+def _uses_stage_b_native_contract(config: PilotExperimentConfig) -> bool:
+    return config.pilot_id in STAGE_B_NATIVE_CONTRACT_PILOT_IDS
+
+
+def _stage_b_max_repair_requests(config: PilotExperimentConfig) -> int:
+    if _is_stage_b1(config):
+        return STAGE_B1_MAX_REPAIR_REQUESTS
+    if _is_stage_b2(config):
+        return STAGE_B2_MAX_REPAIR_REQUESTS
+    return 0
+
+
 def _stage_b_prompt_versions(config: PilotExperimentConfig) -> dict[str, str]:
-    if not _is_stage_b1(config):
+    if not _uses_stage_b_native_contract(config):
         return {
             "planner": "phase7_prompt_v1",
             "worker": "phase7_prompt_v1",
@@ -210,7 +235,7 @@ def _stage_b_prompt_versions(config: PilotExperimentConfig) -> dict[str, str]:
 
 
 def _stage_b_schema_versions(config: PilotExperimentConfig) -> dict[str, str]:
-    if not _is_stage_b1(config):
+    if not _uses_stage_b_native_contract(config):
         return {"shared": "PilotStructuredResponse"}
     return {
         "planner": STAGE_B1_SCHEMA_VERSION,
@@ -233,9 +258,25 @@ def validate_stage_b_config(config: PilotExperimentConfig) -> dict[str, Any]:
             errors.append("Stage B.1 must use task_privacy_aggregate_only only")
         if architectures != sorted(arch.value for arch in STAGE_B_ARCHITECTURES):
             errors.append("Stage B.1 must contain unstructured and structured architectures")
+    elif _is_stage_b2(config):
+        if len(trajectories) != 4:
+            errors.append("Stage B.2 must contain exactly four trajectories")
+        if domains != ["authorization", "evidence"]:
+            errors.append("Stage B.2 must contain authorization and evidence only")
+        if config.task_ids != [
+            "task_authorization_local_only",
+            "task_evidence_claim_support",
+        ]:
+            errors.append("Stage B.2 must use authorization and evidence task IDs only")
+        if architectures != sorted(arch.value for arch in STAGE_B_ARCHITECTURES):
+            errors.append("Stage B.2 must contain unstructured and structured architectures")
     elif len(trajectories) != 6:
         errors.append("Stage B must contain exactly six trajectories")
-    if not _is_stage_b1(config) and set(domains) != set(STAGE_B_DOMAIN_ORDER):
+    if (
+        not _is_stage_b1(config)
+        and not _is_stage_b2(config)
+        and set(domains) != set(STAGE_B_DOMAIN_ORDER)
+    ):
         errors.append("Stage B must contain privacy, authorization, and evidence domains")
     if architectures != sorted(arch.value for arch in STAGE_B_ARCHITECTURES):
         errors.append("Stage B must contain unstructured and structured architectures only")
@@ -267,9 +308,9 @@ def run_stage_b_domain_block(
     max_cost: float,
     architecture_block: str | None = None,
 ) -> dict[str, Any]:
-    if domain_block not in STAGE_B_DOMAIN_ORDER:
+    if domain_block not in _stage_b_domain_order(config):
         raise ValueError(f"unknown Stage B domain block: {domain_block}")
-    _assert_prior_domains_valid(output_dir, domain_block)
+    _assert_prior_domains_valid(output_dir, domain_block, config=config)
     tasks_by_id = {task.task_id: task for task in tasks}
     specs = [spec for spec in _trajectory_specs(config) if str(spec["domain"]) == domain_block]
     if architecture_block is not None:
@@ -518,6 +559,51 @@ def stage_b_status(
     return "failed"
 
 
+def combined_stage_b_status(
+    classification_rows: list[dict[str, Any]],
+    provider_failures: int,
+    *,
+    planned_trajectories: int = 6,
+) -> str:
+    """Evaluate the final Stage B pass criteria across B.1 and B.2 artifacts."""
+    classifications = [str(row.get("classification")) for row in classification_rows]
+    documented_failures = classifications.count("excluded_provider_failure")
+    undocumented_failures = max(provider_failures - documented_failures, 0)
+    if len(classification_rows) + undocumented_failures < planned_trajectories:
+        return "blocked"
+    if "invalid_infrastructure" in classifications:
+        return "failed"
+
+    validish_rows = [
+        row
+        for row in classification_rows
+        if row.get("classification") in {"valid", "valid_with_minor_issue"}
+        or row.get("workflow_semantic_status")
+        in {"semantically_valid", "semantically_valid_with_minor_issue"}
+    ]
+    if len(validish_rows) < 4:
+        return "failed"
+
+    for domain in STAGE_B_DOMAIN_ORDER:
+        domain_rows = [row for row in classification_rows if row.get("domain") == domain]
+        if len(domain_rows) < 2:
+            return "blocked"
+        architectures = {str(row.get("architecture")) for row in domain_rows}
+        if architectures != {arch.value for arch in STAGE_B_ARCHITECTURES}:
+            return "blocked"
+        if not any(
+            row.get("trajectory_execution_status") == "complete"
+            or row.get("classification") == "excluded_provider_failure"
+            for row in domain_rows
+        ):
+            return "blocked"
+        if not any(row in validish_rows for row in domain_rows):
+            return "failed"
+        if not any(row.get("final_output_scorable") for row in domain_rows):
+            return "failed"
+    return "passed"
+
+
 def _run_one_trajectory(
     *,
     config: PilotExperimentConfig,
@@ -662,9 +748,9 @@ def _call_stage_b_step(
     constraint_context: str | None = None,
 ) -> StageBStepResult:
     _assert_request_ceiling(output_dir, max_requests)
-    is_stage_b1 = _is_stage_b1(config)
+    is_stage_b_native = _uses_stage_b_native_contract(config)
     role_schema = (
-        stage_b1_response_schema_metadata(cast(StageBRole, role)) if is_stage_b1 else {}
+        stage_b1_response_schema_metadata(cast(StageBRole, role)) if is_stage_b_native else {}
     )
     prompt = render_stage_b_prompt(
         task=task,
@@ -675,7 +761,7 @@ def _call_stage_b_step(
         subtask=subtask,
         worker_output=worker_output,
         constraint_context=constraint_context,
-        contract_version="stage_b1" if is_stage_b1 else "stage_b",
+        contract_version="stage_b1" if is_stage_b_native else "stage_b",
     )
     request = make_provider_request(
         provider,
@@ -729,7 +815,7 @@ def _call_stage_b_step(
             refusal_count=len(response.raw_provider_response.get("refusals", []) or []),
             incomplete_reason=str(response.raw_provider_response.get("incomplete_details") or ""),
         )
-        if is_stage_b1
+        if is_stage_b_native
         else parse_structured_output(response.raw_output, repair_limit=0)
     )
     row = response.model_dump(mode="json")
@@ -752,7 +838,7 @@ def _call_stage_b_step(
         output_dir / "structured_records" / f"{request.request_id}_{role}.json",
         parsed.model_dump(mode="json"),
     )
-    if is_stage_b1 and not parsed.valid:
+    if is_stage_b_native and not parsed.valid:
         parsed = _maybe_repair_stage_b1_output(
             config=config,
             provider=provider,
@@ -797,7 +883,6 @@ def _maybe_repair_stage_b1_output(
     original: Any,
     response_schema: dict[str, Any],
 ) -> Any:
-    del config
     if original.structured_output_status not in {
         "schema_invalid",
         "recoverable_nonconforming",
@@ -806,7 +891,7 @@ def _maybe_repair_stage_b1_output(
         return original
     if _stage_b1_repair_count(output_dir, trajectory_id=trajectory_id) >= 1:
         return original
-    if _stage_b1_repair_count(output_dir) >= STAGE_B1_MAX_REPAIR_REQUESTS:
+    if _stage_b1_repair_count(output_dir) >= _stage_b_max_repair_requests(config):
         return original
     _assert_request_ceiling(output_dir, max_requests)
     prompt = stage_b1_repair_prompt(
@@ -1243,7 +1328,7 @@ def _write_trajectory_artifacts(
         stage_results=stage_results,
         task=task,
     )
-    review_path = STAGE_B_REVIEW_ROOT / f"{trajectory.trajectory_id}.json"
+    review_path = _review_packet_path(trajectory.trajectory_id)
     write_json_atomic(review_path, review_packet)
     write_json_atomic(
         output_dir / "review_packet_index" / f"{trajectory.trajectory_id}.json",
@@ -1312,7 +1397,7 @@ def _write_provider_failure_exclusion(
         "failures": [failure.failure_record],
         "suggested_workflow_classification": classification,
     }
-    review_path = STAGE_B_REVIEW_ROOT / f"{trajectory_id}.json"
+    review_path = _review_packet_path(trajectory_id)
     write_json_atomic(review_path, review_packet)
     write_json_atomic(
         output_dir / "review_packet_index" / f"{trajectory_id}.json",
@@ -1601,6 +1686,12 @@ def _trajectory_specs(config: PilotExperimentConfig) -> list[dict[str, Any]]:
     return specs
 
 
+def _stage_b_domain_order(config: PilotExperimentConfig | None = None) -> list[str]:
+    if config is not None and _is_stage_b2(config):
+        return ["authorization", "evidence"]
+    return STAGE_B_DOMAIN_ORDER
+
+
 def _task_domain_from_id(task_id: str) -> str:
     if task_id.startswith("task_privacy_"):
         return "privacy"
@@ -1699,9 +1790,15 @@ def _domain_architecture_infrastructure_valid(
     )
 
 
-def _assert_prior_domains_valid(output_dir: Path, domain_block: str) -> None:
-    index = STAGE_B_DOMAIN_ORDER.index(domain_block)
-    for prior in STAGE_B_DOMAIN_ORDER[:index]:
+def _assert_prior_domains_valid(
+    output_dir: Path,
+    domain_block: str,
+    *,
+    config: PilotExperimentConfig | None = None,
+) -> None:
+    domain_order = _stage_b_domain_order(config)
+    index = domain_order.index(domain_block)
+    for prior in domain_order[:index]:
         if not _domain_infrastructure_valid(output_dir, prior):
             raise RuntimeError(f"prior Stage B domain block is not infrastructure-valid: {prior}")
 
@@ -1777,6 +1874,12 @@ def _pricing_table_version(provider: PilotProviderConfig) -> str | None:
         ).pricing_table_version
     except KeyError:
         return None
+
+
+def _review_packet_path(trajectory_id: str) -> Path:
+    if STAGE_B2_PILOT_ID in trajectory_id:
+        return STAGE_B2_REVIEW_ROOT / f"{trajectory_id}.json"
+    return STAGE_B_REVIEW_ROOT / f"{trajectory_id}.json"
 
 
 def _summarize_prompt(prompt: str) -> str:
