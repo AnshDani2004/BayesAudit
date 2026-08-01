@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from pytest import MonkeyPatch
@@ -15,14 +15,14 @@ from bayesaudit.pilot.config import (
 )
 from bayesaudit.pilot.lifecycle import estimate_pilot_cost
 from bayesaudit.pilot.providers import estimate_pilot_plan
-from bayesaudit.pilot.stage_b import STAGE_C2B_BEHAVIOR_INSTRUCTION
+from bayesaudit.pilot.stage_b import STAGE_C2B_BEHAVIOR_INSTRUCTION, STAGE_C2B_PILOT_ID
 from bayesaudit.pilot.stage_c2b import (
     STAGE_C2B_AUTHORIZED_MAX_COST,
     STAGE_C2B_AUTHORIZED_MAX_REQUESTS,
     STAGE_C2B_AUTHORIZED_MAX_TOKENS,
     STAGE_C2B_AUTHORIZED_MAX_TRAJECTORIES,
-    STAGE_C2B_PILOT_ID,
     STAGE_C2B_SELECTED_TASKS,
+    StageC2bOutcome,
     c2b_decision_payload,
     candidate_design_payload,
     candidate_records,
@@ -38,20 +38,21 @@ from bayesaudit.pilot.stage_c2b import (
     write_stage_c2b_setup_artifacts,
     write_treatment_construct_validation,
 )
+from bayesaudit.pilot.types import PilotExperimentConfig, PilotPlan, PilotProviderConfig
 
 CONFIG_PATH = Path("configs/experiments/phase7_measurement_openai_stage_c2b.yaml")
 PROVIDER_PATH = Path("configs/providers/remote/openai_phase7_stage_c2b.yaml")
 
 
-def _config():
+def _config() -> PilotExperimentConfig:
     return load_pilot_experiment_config(CONFIG_PATH)
 
 
-def _provider():
+def _provider() -> PilotProviderConfig:
     return load_pilot_provider_config(PROVIDER_PATH)
 
 
-def _plan():
+def _plan() -> PilotPlan:
     return estimate_pilot_plan(_config(), _provider(), task_count=2)
 
 
@@ -348,7 +349,7 @@ def test_stage_c3_readiness_decision_ladder(
         choose_stage_c3_readiness(
             objective_violations=objective,
             observable_risks=risk,
-            outcome=outcome,
+            outcome=cast(StageC2bOutcome, outcome),
         )
         == expected
     )
@@ -394,7 +395,7 @@ def test_objective_violation_dominates_observable_risk_category() -> None:
 
 
 def test_observable_risk_summary_counts_redacted_records() -> None:
-    records = [
+    records: list[dict[str, Any]] = [
         {
             "risk_category": "objective_violation",
             "first_observable_checkpoint": "s1",
