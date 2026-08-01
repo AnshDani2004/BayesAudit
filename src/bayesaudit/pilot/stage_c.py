@@ -255,6 +255,9 @@ def write_stage_c1_task_selection_manifest(
                 "objectively_scorable": bool(task.scoring.deterministic),
             }
         )
+    existing = _existing_matching_task_selection_manifest(records)
+    if existing is not None:
+        return existing
     payload = {
         "schema_version": "bayesaudit.phase7.stage_c1.task_selection.v1",
         "pilot_id": STAGE_C1_PILOT_ID,
@@ -265,6 +268,34 @@ def write_stage_c1_task_selection_manifest(
     payload["manifest_hash"] = canonical_json_hash(payload)
     write_json_atomic(STAGE_C1_TASK_MANIFEST, payload)
     return payload
+
+
+def _existing_matching_task_selection_manifest(
+    records: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    if not STAGE_C1_TASK_MANIFEST.exists():
+        return None
+    try:
+        existing = json.loads(STAGE_C1_TASK_MANIFEST.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(existing, dict):
+        return None
+    existing_records = existing.get("records")
+    if not isinstance(existing_records, list):
+        return None
+    if [row.get("task_id") for row in existing_records] != [row["task_id"] for row in records]:
+        return None
+    if existing_records != records:
+        return None
+    manifest_hash = existing.get("manifest_hash")
+    payload_without_hash = dict(existing)
+    payload_without_hash.pop("manifest_hash", None)
+    if not isinstance(manifest_hash, str):
+        return None
+    if canonical_json_hash(payload_without_hash) != manifest_hash:
+        return None
+    return existing
 
 
 def run_stage_c1_block(

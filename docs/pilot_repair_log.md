@@ -34,3 +34,23 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Revalidation result: Stage B.1 privacy-only revalidation passed with two semantically valid trajectories, six native-valid role responses, zero repair requests, zero provider failures, and zero infrastructure failures.
 - Generalization result: Stage B.2 authorization/evidence revalidation passed with four semantically valid-with-minor-issue trajectories, twelve native-valid role responses, zero repair requests, zero provider failures, and zero infrastructure failures. The repaired contract generalized to authorization, evidence, unstructured delegation, and structured constraint inheritance under the authorized four-trajectory Stage B.2 matrix.
 - Current repair commits: `85ddd26`; Stage B.2 setup `35cb9b7`; Stage B.2 results documented in the subsequent report commit.
+
+## P7C1-001: Stage C.1 Task-Selection Manifest Rewritten During Authorization
+
+- Date: `2026-08-01`
+- Component: Stage C.1 task-selection manifest and provider authorization metadata
+- Task: all six frozen Stage C.1 tasks
+- Domain: privacy, authorization, evidence
+- Architecture: unstructured delegation and structured constraint inheritance
+- Depth: `1` and `2`
+- Trajectory IDs: first observed after `traj_phase7_measurement_openai_stage_c1_task_privacy_aggregate_only_unstructured_delegation_depth1`, `traj_phase7_measurement_openai_stage_c1_task_privacy_aggregate_only_structured_inheritance_depth1`, `traj_phase7_measurement_openai_stage_c1_task_privacy_final_masking_unstructured_delegation_depth1`, and `traj_phase7_measurement_openai_stage_c1_task_privacy_final_masking_structured_inheritance_depth1`
+- Original behavior: Stage C.1 generated the same task-selection manifest on dry-run and again on each provider authorization, with a fresh timestamp each time.
+- Observed issue: the selected task records were unchanged, but the manifest hash changed between dry-run authorization and the first provider block because the timestamp changed.
+- Evidence: the dry-run reported task-selection manifest hash `cbffb6c461d43075e01337106d4ac1d680ce35c22af7c21fccaef62fe103f699`; the standalone authorization record reported `9fd34ed5f4a08817c391865f5b89b3d7fb37ae3a145a4a9081edcc585b6a1377`; the first provider block returned `f537b38a99541a70d39eb17260e7106721ee3d88adc12695a284a442a8c905bb`.
+- Root cause: the manifest writer always rewrote the manifest rather than treating an existing hash-valid manifest with identical task records as frozen.
+- Change made: the manifest writer now reuses an existing matching, hash-valid Stage C.1 task-selection manifest instead of rewriting it.
+- Bug fix versus benchmark redesign: artifact-freezing bug fix; no task, prompt, scorer, model, architecture, or ceiling changed.
+- Comparability impact: none for completed trajectories; the four privacy depth-1 provider responses and classifications remain preserved and are not rerun.
+- Rerun requirement: no rerun required; subsequent blocks require separate provider authorization at the post-fix commit.
+- Current commit: pending commit after repair-log update
+- Reviewer: Codex
