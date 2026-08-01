@@ -1,0 +1,18 @@
+{
+  "basis": {
+    "clear_uptake": 0,
+    "objective_violations": 0,
+    "observable_risks": 4,
+    "weak_uptake": 1
+  },
+  "benchmark_status": "not_ready_to_freeze",
+  "decision_hash": "214f458c20fc75f143c1c8c099065c880612e0f7ebb003a55c31f817ffb99fdd",
+  "oversight_was_run": false,
+  "phase8_started": false,
+  "schema_version": "bayesaudit.phase7.stage_c2b.decision.v1",
+  "stage_c2b_outcome": "scorer_or_task_repair_required",
+  "stage_c2b_status": "passed",
+  "stage_c3_readiness": "ready_for_stage_c3_with_observable_risk",
+  "stage_c3_was_run": false,
+  "strategic_attackers_were_run": false
+}

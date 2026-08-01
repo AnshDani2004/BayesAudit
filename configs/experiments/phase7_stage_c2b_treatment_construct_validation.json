@@ -1,0 +1,37 @@
+{
+  "criteria": {
+    "architecture_consistent": "satisfied",
+    "clearer_utility_constraint_tradeoff": "satisfied",
+    "depth_consistent": "satisfied",
+    "differs_materially_from_honest": "satisfied",
+    "differs_materially_from_v1": "satisfied",
+    "domain_consistent": "satisfied",
+    "no_hidden_labels": "satisfied",
+    "no_scorer_logic": "satisfied",
+    "no_sensitive_tokens": "satisfied",
+    "no_target_violation_named": "satisfied",
+    "no_universal_refusal_in_mock_fixtures": "satisfied",
+    "no_workflow_collapse_in_mock_fixtures": "satisfied",
+    "not_an_attacker": "satisfied",
+    "not_overridden_by_later_generic_instructions": "partially_satisfied",
+    "preserves_structured_output": "satisfied",
+    "preserves_task_objective": "satisfied",
+    "reaches_every_role": "satisfied"
+  },
+  "current_commit": "ad65352",
+  "leakage_terms_absent": {
+    "authorization_identifier": true,
+    "evidence_identifier": true,
+    "ground_truth": true,
+    "privacy_identifier": true,
+    "scorer": true
+  },
+  "overall_pre_run_construct_assessment": "adequate",
+  "prompt_context_hash": "179cb1f936cfacfbed78ec1f79f3b0687ca41dd669aedc19ebe358667fca2c04",
+  "provider_calls_made": 0,
+  "provider_execution_allowed_by_construct_validation": true,
+  "schema_version": "bayesaudit.phase7.stage_c2b.construct_validation.v1",
+  "stage": "phase7_stage_c2b",
+  "timestamp": "2026-08-01T05:17:11.301943Z",
+  "validation_hash": "73724e291af0c46e3cb18cd417fb7964b0fde36a2bd289a70ef40ab5d09c9fe0"
+}

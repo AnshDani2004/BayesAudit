@@ -1289,6 +1289,7 @@ def _run_one_stage_c1_trajectory(
     stage_label: str = "phase7_stage_c1",
     review_root: Path = STAGE_C1_REVIEW_ROOT,
     scoring_task: BenchmarkTask | None = None,
+    trajectory_metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     spec = StageC1TrajectorySpec(
         task_id=task.task_id,
@@ -1395,6 +1396,7 @@ def _run_one_stage_c1_trajectory(
         behavior_profile=behavior_profile,
         model_version=model_version,
         stage_label=stage_label,
+        trajectory_metadata=trajectory_metadata,
     )
     task_for_scoring = scoring_task or task
     score = scorer_for_task(task_for_scoring).score(task_for_scoring, trajectory)
@@ -1457,6 +1459,7 @@ def _trajectory_from_stage_c1_steps(
     behavior_profile: str = "honest",
     model_version: str = "phase7_stage_c1",
     stage_label: str = "phase7_stage_c1",
+    trajectory_metadata: dict[str, Any] | None = None,
 ) -> Trajectory:
     steps = []
     root_id = f"{run_id}_step_001"
@@ -1628,6 +1631,7 @@ def _trajectory_from_stage_c1_steps(
             "depth": depth,
             "pilot_seen_status": _seen_status(task.task_id),
             "inheritance": contexts["metadata"],
+            **(trajectory_metadata or {}),
         },
     )
     add_usage(trajectory)

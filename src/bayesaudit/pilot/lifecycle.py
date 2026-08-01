@@ -36,6 +36,7 @@ from bayesaudit.pilot.providers import (
 )
 from bayesaudit.pilot.stage_b import (
     STAGE_B_REAL_PILOT_IDS,
+    STAGE_C2B_PILOT_ID,
     run_stage_b_domain_block,
     stage_b_request_plan,
     summarize_stage_b,
@@ -56,6 +57,14 @@ from bayesaudit.pilot.stage_c import (
     write_stage_c2_baseline_manifest,
     write_stage_c2_behavior_profile,
     write_stage_c2_treatment_isolation_report,
+)
+from bayesaudit.pilot.stage_c2b import (
+    run_stage_c2b_block,
+    stage_c2b_request_plan,
+    summarize_stage_c2b,
+    validate_stage_c2a_prerequisites,
+    validate_stage_c2b_config,
+    write_stage_c2b_setup_artifacts,
 )
 from bayesaudit.pilot.structured import parse_structured_output
 from bayesaudit.pilot.transfer import (
@@ -86,18 +95,10 @@ from bayesaudit.storage.jsonl import append_jsonl, read_json, read_jsonl, write_
 
 def estimate_pilot_cost(config_path: Path) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
-    if config.pilot_id in {STAGE_C1_PILOT_ID, STAGE_C2_PILOT_ID}:
+    if config.pilot_id in _stage_c_measurement_pilot_ids():
         plan = _stage_c1_adjusted_plan(config, provider, plan)
-        validation = (
-            validate_stage_c1_config(config)
-            if config.pilot_id == STAGE_C1_PILOT_ID
-            else validate_stage_c2_config(config)
-        )
-        request_plan = (
-            stage_c1_request_plan(config, provider, plan)
-            if config.pilot_id == STAGE_C1_PILOT_ID
-            else stage_c2_request_plan(config, provider, plan)
-        )
+        validation = _stage_c_validation(config)
+        request_plan = _stage_c_request_plan(config, provider, plan)
         return {
             **plan.model_dump(mode="json"),
             **request_plan,
@@ -112,6 +113,12 @@ def estimate_pilot_cost(config_path: Path) -> dict[str, Any]:
             else None,
             "stage_c2_config_errors": validation["errors"]
             if config.pilot_id == STAGE_C2_PILOT_ID
+            else [],
+            "stage_c2b_config_valid": validation["valid"]
+            if config.pilot_id == STAGE_C2B_PILOT_ID
+            else None,
+            "stage_c2b_config_errors": validation["errors"]
+            if config.pilot_id == STAGE_C2B_PILOT_ID
             else [],
             "cost_ceiling": config.cost_ceiling,
             "token_ceiling": config.token_ceiling,
@@ -148,19 +155,29 @@ def authorize_pilot_provider_run(
 ) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
     authorization_metadata: dict[str, Any] = {}
-    if config.pilot_id in {STAGE_C1_PILOT_ID, STAGE_C2_PILOT_ID}:
+    if config.pilot_id in _stage_c_measurement_pilot_ids():
         plan = _stage_c1_adjusted_plan(config, provider, plan)
         tasks = _selected_tasks(config)
-        task_manifest = write_stage_c1_task_selection_manifest(
-            tasks=tasks,
-            current_commit=_git("rev-parse", "--short", "HEAD"),
-            timestamp=datetime.utcnow().isoformat() + "Z",
-        )
-        request_plan = (
-            stage_c1_request_plan(config, provider, plan)
-            if config.pilot_id == STAGE_C1_PILOT_ID
-            else stage_c2_request_plan(config, provider, plan)
-        )
+        request_plan = _stage_c_request_plan(config, provider, plan)
+        if config.pilot_id == STAGE_C2B_PILOT_ID:
+            prerequisites = validate_stage_c2a_prerequisites()
+            if not prerequisites["valid"]:
+                raise ValueError(f"Stage C.2b prerequisites failed: {prerequisites['errors']}")
+            setup = write_stage_c2b_setup_artifacts(
+                config=config,
+                provider=provider,
+                plan=plan,
+                current_commit=_git("rev-parse", "--short", "HEAD"),
+                timestamp=datetime.utcnow().isoformat() + "Z",
+            )
+            task_selection_manifest_hash = str(setup["candidate_design"]["design_hash"])
+        else:
+            task_manifest = write_stage_c1_task_selection_manifest(
+                tasks=tasks,
+                current_commit=_git("rev-parse", "--short", "HEAD"),
+                timestamp=datetime.utcnow().isoformat() + "Z",
+            )
+            task_selection_manifest_hash = str(task_manifest["manifest_hash"])
         if config.pilot_id == STAGE_C2_PILOT_ID:
             write_stage_c2_baseline_manifest(
                 tasks=tasks,
@@ -178,7 +195,7 @@ def authorize_pilot_provider_run(
                 timestamp=datetime.utcnow().isoformat() + "Z",
             )
         authorization_metadata = {
-            "task_selection_manifest_hash": task_manifest["manifest_hash"],
+            "task_selection_manifest_hash": task_selection_manifest_hash,
             "prompt_template_versions": request_plan["prompt_template_versions"],
             "role_schema_versions": request_plan["schema_versions"],
             "maximum_repair_requests": int(request_plan["maximum_repair_requests"]),
@@ -509,28 +526,34 @@ def run_measurement_pilot(
     depth_block: int | None = None,
 ) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
-    if config.pilot_id in {STAGE_C1_PILOT_ID, STAGE_C2_PILOT_ID}:
+    if config.pilot_id in _stage_c_measurement_pilot_ids():
         plan = _stage_c1_adjusted_plan(config, provider, plan)
         output_dir = _output_dir(config)
         manifest = write_pilot_manifest(
             config, provider, plan, status="dry_run" if dry_run else "planned"
         )
         tasks = _selected_tasks(config)
-        validation = (
-            validate_stage_c1_config(config)
-            if config.pilot_id == STAGE_C1_PILOT_ID
-            else validate_stage_c2_config(config)
-        )
-        request_plan = (
-            stage_c1_request_plan(config, provider, plan)
-            if config.pilot_id == STAGE_C1_PILOT_ID
-            else stage_c2_request_plan(config, provider, plan)
-        )
-        task_manifest = write_stage_c1_task_selection_manifest(
-            tasks=tasks,
-            current_commit=_git("rev-parse", "--short", "HEAD"),
-            timestamp=datetime.utcnow().isoformat() + "Z",
-        )
+        validation = _stage_c_validation(config)
+        request_plan = _stage_c_request_plan(config, provider, plan)
+        if config.pilot_id == STAGE_C2B_PILOT_ID:
+            prerequisites = validate_stage_c2a_prerequisites()
+            if not prerequisites["valid"]:
+                raise ValueError(f"Stage C.2b prerequisites failed: {prerequisites['errors']}")
+            setup = write_stage_c2b_setup_artifacts(
+                config=config,
+                provider=provider,
+                plan=plan,
+                current_commit=_git("rev-parse", "--short", "HEAD"),
+                timestamp=datetime.utcnow().isoformat() + "Z",
+            )
+            task_manifest_hash = str(setup["candidate_design"]["design_hash"])
+        else:
+            task_manifest = write_stage_c1_task_selection_manifest(
+                tasks=tasks,
+                current_commit=_git("rev-parse", "--short", "HEAD"),
+                timestamp=datetime.utcnow().isoformat() + "Z",
+            )
+            task_manifest_hash = str(task_manifest["manifest_hash"])
         if config.pilot_id == STAGE_C2_PILOT_ID:
             write_stage_c2_baseline_manifest(
                 tasks=tasks,
@@ -548,7 +571,7 @@ def run_measurement_pilot(
                 timestamp=datetime.utcnow().isoformat() + "Z",
             )
         if not validation["valid"]:
-            stage_label = "Stage C.1" if config.pilot_id == STAGE_C1_PILOT_ID else "Stage C.2"
+            stage_label = _stage_c_label(config)
             raise ValueError(f"invalid {stage_label} config: {validation['errors']}")
         planned_tokens = int(request_plan["maximum_possible_total_tokens"])
         planned_cost = float(request_plan["maximum_possible_token_derived_cost_usd"])
@@ -566,7 +589,7 @@ def run_measurement_pilot(
                 **request_plan,
                 "dry_run": True,
                 "pilot_manifest_status": manifest.status,
-                "task_selection_manifest_hash": task_manifest["manifest_hash"],
+                "task_selection_manifest_hash": task_manifest_hash,
                 "provider_calls_performed": 0,
                 "output_dir": str(output_dir),
                 "cost_ceiling": max_cost if max_cost is not None else config.cost_ceiling,
@@ -608,7 +631,7 @@ def run_measurement_pilot(
                 max_cost=float(max_cost or config.cost_ceiling or 0.0),
             )
             final_summary = summarize_stage_c1(config, provider, plan, output_dir)
-        else:
+        elif config.pilot_id == STAGE_C2_PILOT_ID:
             payload = run_stage_c2_block(
                 config=config,
                 provider=provider,
@@ -622,6 +645,20 @@ def run_measurement_pilot(
                 max_cost=float(max_cost or config.cost_ceiling or 0.0),
             )
             final_summary = summarize_stage_c2(config, provider, plan, output_dir)
+        else:
+            payload = run_stage_c2b_block(
+                config=config,
+                provider=provider,
+                plan=plan,
+                tasks=tasks,
+                output_dir=output_dir,
+                domain_block=domain_block,
+                depth_block=depth_block,
+                max_requests=int(max_requests or config.request_ceiling or 0),
+                max_tokens=int(max_tokens or config.token_ceiling or 0),
+                max_cost=float(max_cost or config.cost_ceiling or 0.0),
+            )
+            final_summary = summarize_stage_c2b(config, provider, plan, output_dir)
         final_manifest = write_pilot_manifest(config, provider, plan, status="completed")
         final_manifest.completed_requests = int(final_summary["actual_requests"])
         final_manifest.cached_requests = int(final_summary["cached_executions"])
@@ -1044,6 +1081,42 @@ def _stage_c1_adjusted_plan(
             "configuration_hash": config_hash(config),
         }
     )
+
+
+def _stage_c_measurement_pilot_ids() -> set[str]:
+    return {STAGE_C1_PILOT_ID, STAGE_C2_PILOT_ID, STAGE_C2B_PILOT_ID}
+
+
+def _stage_c_validation(config: PilotExperimentConfig) -> dict[str, Any]:
+    if config.pilot_id == STAGE_C1_PILOT_ID:
+        return validate_stage_c1_config(config)
+    if config.pilot_id == STAGE_C2_PILOT_ID:
+        return validate_stage_c2_config(config)
+    if config.pilot_id == STAGE_C2B_PILOT_ID:
+        return validate_stage_c2b_config(config)
+    return {"valid": False, "errors": [f"unknown Stage C pilot_id: {config.pilot_id}"]}
+
+
+def _stage_c_request_plan(
+    config: PilotExperimentConfig,
+    provider: PilotProviderConfig,
+    plan: PilotPlan,
+) -> dict[str, Any]:
+    if config.pilot_id == STAGE_C1_PILOT_ID:
+        return stage_c1_request_plan(config, provider, plan)
+    if config.pilot_id == STAGE_C2_PILOT_ID:
+        return stage_c2_request_plan(config, provider, plan)
+    if config.pilot_id == STAGE_C2B_PILOT_ID:
+        return stage_c2b_request_plan(config, provider, plan)
+    raise ValueError(f"unknown Stage C pilot_id: {config.pilot_id}")
+
+
+def _stage_c_label(config: PilotExperimentConfig) -> str:
+    return {
+        STAGE_C1_PILOT_ID: "Stage C.1",
+        STAGE_C2_PILOT_ID: "Stage C.2",
+        STAGE_C2B_PILOT_ID: "Stage C.2b",
+    }.get(config.pilot_id, "Stage C")
 
 
 def _selected_tasks(config: PilotExperimentConfig) -> list[BenchmarkTask]:
