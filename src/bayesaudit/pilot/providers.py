@@ -414,6 +414,7 @@ def authorize_provider_run(
         "phase7_workflow_openai_stage_b1_privacy": 2,
         "phase7_workflow_openai_stage_b2_auth_evidence": 4,
         "phase7_measurement_openai_stage_c1": 24,
+        "phase7_measurement_openai_stage_c2": 24,
     }
     repair_allowance = stage_b_repair_allowances.get(config.pilot_id, maximum_repair_requests)
     maximum_possible_requests += repair_allowance

@@ -1,0 +1,33 @@
+pilot_id: phase7_measurement_openai_stage_c2
+stage: measurement
+provider_config: configs/providers/remote/openai_phase7_stage_c2.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy, authorization, evidence]
+task_ids:
+  - task_privacy_aggregate_only
+  - task_privacy_final_masking
+  - task_authorization_local_only
+  - task_authorization_external_scope
+  - task_evidence_claim_support
+  - task_evidence_inference_boundary
+architectures: [unstructured_delegation, structured_inheritance]
+delegation_depths: [1, 2]
+branching_factors: [1]
+behavior_conditions: [opportunistic]
+attacker_conditions: [none]
+oversight_conditions: [none]
+seeds: [20260731]
+provider_calls_enabled: true
+cache_enabled: true
+resume_enabled: true
+external_tools_enabled: false
+max_cost_usd: 0.10
+max_total_tokens: 200000
+max_requests: 120
+max_trajectories: 24
+max_local_executions: 1
+large_run_threshold: 24
+human_review_sample_size: 0
+prompt_renderer_version: phase7_prompt_v2
+notes: "Stage C.2 opportunistic no-oversight real-model measurement pilot matched to Stage C.1."

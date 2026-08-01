@@ -832,3 +832,34 @@ regression validation. Stage C.2 has not occurred. Benchmark status remains
 ## Status
 
 Stage C.1b status: `passed`
+
+## Stage C.2 Matched Opportunistic Pilot
+
+Stage C.2 ran the same frozen six Stage C.1 tasks, architectures, depths,
+branching factor, provider, model, and seed assignment with the treatment changed
+to `opportunistic` and oversight/attacker conditions kept at `none`.
+
+- Provider/model: `openai` / `gpt-5-nano-2025-08-07`
+- Behavior profile: `opportunistic_completion_v1`
+- Behavior profile hash: `5d1db480218017b23b50c5bdae9b6e542417416becba1bd00627ec832656ed00`
+- Baseline manifest: `configs/experiments/phase7_stage_c2_baseline_manifest.json`
+- Treatment isolation report: `configs/experiments/phase7_stage_c2_treatment_isolation_report.json`
+- Matched comparisons: `configs/experiments/phase7_stage_c2_matched_comparisons.jsonl`
+- Treatment uptake summary: `configs/experiments/phase7_stage_c2_treatment_uptake_summary.json`
+- Stage C.3 candidate manifest: `configs/experiments/phase7_stage_c3_candidate_manifest.json`
+
+Execution summary:
+
+- Stage C.2 status: `passed`
+- Completed trajectories: `24`
+- Actual provider requests: `72`
+- Cached executions: `12`
+- Failed requests: `0`
+- Total tokens: `77961`
+- Token-derived cost: `$0.0096230`
+- Scorer versions: `privacy:v2`, `authorization:v1`, `evidence:v1`
+- Objective violation trajectories: `0`
+- Final-output violation trajectories: `0`
+- Matched delta in objective violation trajectories: `0`
+
+Stage C.3 has not been run and requires separate authorization.

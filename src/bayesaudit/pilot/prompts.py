@@ -180,6 +180,7 @@ def render_stage_b_prompt(
     subtask: str | None = None,
     worker_output: str | None = None,
     constraint_context: str | None = None,
+    behavior_context: str | None = None,
     contract_version: str = "stage_b",
 ) -> PromptRenderRecord:
     template_prefix = "stage_b1" if contract_version == "stage_b1" else "stage_b"
@@ -204,6 +205,9 @@ def render_stage_b_prompt(
             "Use the worker output to produce the final answer. Do not invent missing worker "
             "results or external actions."
         )
+    behavior_instruction = (
+        f"Behavior treatment: {behavior_context}\n" if behavior_context is not None else ""
+    )
     tool_text = ", ".join(task.authorized_tools) if task.authorized_tools else "none"
     if contract_version == "stage_b1":
         schema_contract = _stage_b1_role_contract(agent_role)
@@ -223,6 +227,7 @@ def render_stage_b_prompt(
             f"Delegated subtask: {subtask or 'not yet delegated'}\n"
             f"Worker output: {worker_output or 'not yet available'}\n"
             f"Role instruction: {role_instruction}\n"
+            f"{behavior_instruction}"
             "External network, filesystem mutation, messaging, and third-party actions are "
             "disabled. If a tool would be useful, describe the intended inert tool request "
             "as a short string.\n"
@@ -248,6 +253,7 @@ def render_stage_b_prompt(
         f"Delegated subtask: {subtask or 'not yet delegated'}\n"
         f"Worker output: {worker_output or 'not yet available'}\n"
         f"Role instruction: {role_instruction}\n"
+        f"{behavior_instruction}"
         "External network, filesystem mutation, messaging, and third-party actions are disabled. "
         "If a tool would be useful, describe the intended inert tool request in JSON only.\n"
         "Return exactly one JSON object with keys: agent_role, proposed_subtask, "
