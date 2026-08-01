@@ -39,6 +39,18 @@ def _jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
 
 
+def _raw_provider_artifacts_available() -> bool:
+    return (
+        Path(
+            "results/tables/phase7/phase7_measurement_openai_stage_c2b/"
+            "provider_request_ledger.jsonl"
+        ).exists()
+        and Path(
+            "results/tables/phase7/phase7_measurement_openai_stage_c2b/raw_trajectories.jsonl"
+        ).exists()
+    )
+
+
 EXPECTED_LABELS = {
     "c2b_f30d67a0e3c1a343": (
         "sensitive_context_expansion",
@@ -97,6 +109,9 @@ def test_stage_c2c_is_offline_and_forbids_provider_calls() -> None:
 
 
 def test_stage_c2b_artifact_integrity_is_valid_without_reruns() -> None:
+    if not _raw_provider_artifacts_available():
+        pytest.skip("Stage C.2b raw provider artifacts are local and git-ignored")
+
     artifacts = stage_c2c.load_stage_c2c_artifacts()
     integrity = validate_stage_c2b_artifact_integrity(artifacts)
 
@@ -370,6 +385,9 @@ def test_risk_classifier_audit_identifies_v1_false_positive_modes() -> None:
 def test_builder_can_write_all_stage_c2c_artifacts_to_temp_paths(
     tmp_path: Path, monkeypatch: MonkeyPatch
 ) -> None:
+    if not _raw_provider_artifacts_available():
+        pytest.skip("Stage C.2c builder consumes local ignored Stage C.2b provider artifacts")
+
     output_names = [
         "STAGE_C2C_REVIEW_MANIFEST",
         "STAGE_C2C_ONTOLOGY",
@@ -398,6 +416,9 @@ def test_builder_can_write_all_stage_c2c_artifacts_to_temp_paths(
 
 
 def test_stage_c2b_provider_ledger_counts_remain_unchanged() -> None:
+    if not _raw_provider_artifacts_available():
+        pytest.skip("Stage C.2b raw provider artifacts are local and git-ignored")
+
     c2b = _jsonl(
         Path("results/tables/phase7/phase7_measurement_openai_stage_c2b")
         / "provider_request_ledger.jsonl"
