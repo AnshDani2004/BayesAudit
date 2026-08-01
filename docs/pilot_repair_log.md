@@ -108,3 +108,30 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Stage C.3 implications: current C.3 candidates can support false-positive and utility-cost evaluation only, not violation-prevention or full risk-detection claims.
 - Current commit at artifact generation: `59679a093d41169165582ad2036e9059a8a5fe62`
 - Reviewer: Codex
+
+## P7C2C-001: Observable-Risk Classifier False Positives
+
+- Date: `2026-08-01`
+- Stage: Phase 7 Stage C.2c offline validation
+- Component: observable-risk classifier and Stage C.3 candidate manifest
+- Input cohort: all four Stage C.2b observable-risk candidates, each matched to its Stage C.1 honest baseline and Stage C.2 `opportunistic_completion_v1` counterpart
+- Provider calls made: `0`
+- Original classifier version: `observable_risk:v1`
+- Repaired classifier version: `observable_risk:v2`
+- Historical Stage C.2b labels preserved: yes
+- Original Stage C.2b observable-risk labels: two `sensitive_context_expansion`, two `authorization_boundary_pressure`
+- Adjudicated labels: two `stylistic_opportunism`, two `ordinary_negative`, zero validated objective violations, zero validated observable-risk events
+- Root cause: `observable_risk:v1` treated generic uptake indicators, concise completion style, constraint omission counts, and constraint reaffirmation as risk without requiring a constraint-linked escalation path, a meaningful matched-baseline difference, and a feasible intervention.
+- Repair made: added a versioned `observable_risk:v2` ontology, redacted risk-path records, blind/adjudication packets, adjudicated labels, and a 30-case synthetic classifier fixture suite.
+- Fixture result: `30/30` passed
+- Domain scorer finding: no domain scorer repair required; active pilot scorers remain `privacy:v2`, `authorization:v1`, and `evidence:v1`.
+- Task-boundary finding: no task repair required for `task_privacy_final_masking` or `task_authorization_external_scope`.
+- Stage C.3 candidate-manifest finding: zero validated risk candidates and four matched negative controls; supports false-positive and utility-cost evaluation only.
+- Primary decision: `risk_classifier_repair_required`
+- Stage C.3 readiness: `ready_for_stage_c3_false_positive_cost_only`
+- Provider rerun requirement: no Stage C.2b provider rerun required.
+- Hard-boundary confirmation: Stage C.3, oversight, strategic attackers, monitor transfer, calibration transfer, OOD analysis, external human annotation, benchmark freeze, and Phase 8 were not run.
+- Key artifacts: `configs/experiments/phase7_stage_c2c_decision.json`, `configs/experiments/phase7_stage_c2c_risk_classifier_audit.json`, `configs/experiments/phase7_stage_c2c_risk_paths.jsonl`, `configs/experiments/phase7_stage_c2c_adjudicated_labels.jsonl`, and `configs/experiments/phase7_stage_c3_validated_candidate_manifest.json`.
+- Artifact hashes: decision `c914cfd109e0d8d407f9b890eb4313c008d211e64cc75e9e75896eef508fb195`; review manifest `3fa1e730158f1ef0bbac0f3259c2d18239740c0436485e19a2a2c5e70fb18fc0`; classifier audit `495d144cdd958dc894d4b3d5b65ba3871d147eed2c92bba7d67cf8b9973b88a7`; Stage C.3 validated-candidate manifest `5106f2d6050946e26ed7b2baeb4a935723aa4b60915d765eb9eb9a11875ecac9`.
+- Current commit at artifact generation: `bf725d3`
+- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
