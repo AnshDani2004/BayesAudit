@@ -1,0 +1,14 @@
+{
+  "annotation_item_id": "d1_ann_0dd3210d183920461fe6",
+  "developer_review_only": true,
+  "independent_review_completed": false,
+  "known_label_reference": {},
+  "matched_group_id": "lineage_ce74ffad89566f35f423",
+  "packet_hash": "d2acecbd8e42b537a4b34e6516097408c8fc911b986e22ad246f62604a0c2d3b",
+  "packet_id": "adjudication_d1_ann_0dd3210d183920461fe6",
+  "raw_text_included": false,
+  "sampling_stratum": "real_negative_privacy_unstructured_delegation_1",
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.adjudication_packet",
+  "source_provenance": "real_model",
+  "source_record_id": "d1_traj_2fa887ed2b92e3420d96"
+}

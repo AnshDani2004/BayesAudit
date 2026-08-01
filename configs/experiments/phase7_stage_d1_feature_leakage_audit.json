@@ -1,0 +1,407 @@
+{
+  "allowed_feature_count": 14,
+  "audit_hash": "3db484c1344330e502e3abc9337167ca594b650d3176ae4897c91a3934dd1f3f",
+  "current_commit": "144f479",
+  "denied_feature_count": 17,
+  "leakage_issues_found": 17,
+  "leakage_issues_repaired": 17,
+  "passes": true,
+  "records": [
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "current_role",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "5255ca9ec980176df3fc26be3f96f9e3e92cb7a940bbed5e0c91e36404fa64ef",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "checkpoint_type",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "1f16f6610570d19d1c5439cedbdf735ed179511d6a3518661515ec438efed8e6",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "current_depth",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "24316fd27969ed1a870389b86affb2056c1ad1ea08370b3cf9bfb30140872e25",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "branch_position",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "1af4d5ffd272c54951e2797fa7c11b155257c536af3bfb2562a5f1a2233dbf9a",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "observable_artifact_hash",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "8c9f0fc78c01b6734d7f89e673acbda906b51d921facc5336a5f1b2a0169d625",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "observable_tool_request_present",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "0a8bb11c0d5d4ac346a857373f8cd5cc134696ca477c9f4d8ca6666fe0dba67e",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "active_constraint_ids",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "53d549cf83f0f84df812b34fa4e664de2fd5f541d693f182d977aee683f67c9c",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "visible_constraint_count",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "e57cfe673a41e74dc5e267f9ad5f1e41b3c03d5bd6d8b958bb0c47b306ea7bf4",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "critical_constraint_count",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "3b60ff71cd26a5bf0d9480d80007079b929aca321c9a27c93e06435d1438134c",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "current_authorization_state_hash",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "eb1b32c28918b14f4c351eabcc09c75e0ca84809fb30098cb736f5dffae6c6c7",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "current_evidence_reference_count",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "41cd00f2423d37b06ed73b37883cd23392ce7641455aca7a9c33fddbc442994a",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "prior_observable_checkpoint_count",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "4c9282a1e0ffb52b15c841c04679380ef97e8d180bce1ca5bd909a8074f7b3f2",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "current_text_length_bucket",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "8f8b85e1bb42fb680e5854b01e5f86c0955acbb902211a43d9edc96bdf428cd9",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [],
+      "allowed": true,
+      "feature_name": "runtime_structural_features",
+      "leakage_type": null,
+      "reason": "available at current checkpoint without labels or future outputs",
+      "record_hash": "30c8430e3704293267dfeb3fa755ac68a524a88ed100774b64f41ea933b89ae8",
+      "repair_action": "none_required",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "future_trajectory_outputs",
+      "leakage_type": "future_information",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "3ba7b1357133d7bd87f47ab723933d4172a943a76789a295e2652af5d6a4eb4b",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "final_answer_before_available",
+      "leakage_type": "scorer_output",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "bbed30ca6107c6fb5a96c14c99ea07011d1f78ab837fb0d18617d7366aa67907",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "objective_scorer_results",
+      "leakage_type": "adjudication",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "5768dda5172db68b3afd05477933144202b1e95c4300950a3e39826ce06a9f6a",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "adjudicated_labels",
+      "leakage_type": "stage_label",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "b5fb57d50f1bd521fe0d77b0fbb94a6935176d1104ad2699d4b67d02916afc8d",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "historical_repair_decisions",
+      "leakage_type": "cohort_membership",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "f24c0bd26aee8a69d11e297d5d55e01b941dbb9102bc17405e9d1949dcf06eeb",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "source_stage",
+      "leakage_type": "split_membership",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "279bc95e424e26394839a536dab10dc289bf70e118a01c0903a2650bcbf4b4ca",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "stage_specific_identifier",
+      "leakage_type": "artifact_path",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "3c8ff23615aedc73b4111d65ad503000d5e9a2fb4ca820fa6063b9f30cb683d1",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "positive_or_negative_cohort_membership",
+      "leakage_type": "timestamp",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "d2a96167569619046769d83ef3aea15bb97dea487502f0c82c9b7e47a05ddca3",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "treatment_uptake_adjudication",
+      "leakage_type": "provider_run",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "513e976c835e3a117afca285067fca3242cd03d04c3a0401966de09dfcc30a5c",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "risk_adjudication",
+      "leakage_type": "attack_family",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "8a30080c2548a7f720fc5bc287458c1dd9901dbcae792aa4e64ec9d96293ab38",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "posthoc_violation_severity",
+      "leakage_type": "mutation_profile",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "dfec77a1dfec6027727424af41f5b182012f4f0230b656e892cf931fa3a90125",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "first_observable_or_last_preventable_from_future",
+      "leakage_type": "scenario_hash_memorization",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "dd96456f33528ed098f2a41b27d281caa1969e29aa81b3fc684d571a10b754c4",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "counterfactual_outcomes",
+      "leakage_type": "task_identity_memorization",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "f633e368f7b0077f876196c6219128c11051c6709e2e8578742b1e9232042ffc",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "other_policy_decisions",
+      "leakage_type": "duplicate_text",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "deb27aeabe4c27668befd6633ba036b4d032ddb26197f7145c19c18b46fe189f",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "provider_response_ids",
+      "leakage_type": "counterfactual_outcome",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "3fdbca2dca549ff48aac74944c5786633ea4cdc094303827d3d2e95f8ebb61ee",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "artifact_filename_or_path",
+      "leakage_type": "policy_decision",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "b06de40ec57c2b5f4787216e3837aaddad4f5d524cb45bd13702943fcc91da67",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    },
+    {
+      "affected_splits": [
+        "synthetic_train",
+        "synthetic_calibration",
+        "synthetic_id_test",
+        "real_negative_transfer_test"
+      ],
+      "allowed": false,
+      "feature_name": "split_membership",
+      "leakage_type": "filename",
+      "reason": "denied from runtime monitor view",
+      "record_hash": "78c5976d2a571af35d10b86015f2bebe844b4f6d560f919bb2e6c67629206ae3",
+      "repair_action": "exclude_from_runtime_observable_v1",
+      "test_coverage": "tests/test_stage_d1.py"
+    }
+  ],
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.feature_leakage_audit"
+}

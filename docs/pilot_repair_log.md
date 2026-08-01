@@ -175,3 +175,26 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Benchmark status: `not_ready_to_freeze`
 - Current commit at artifact generation: `bacbf79`
 - Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+
+## P7D1-001: Real-Pilot Dataset, Label, Feature, and Split Validation
+
+- Date: `2026-08-01`
+- Stage: Phase 7 Stage D.1
+- Component: real-pilot dataset construction, scorer/label registry, blind annotation packet export, and split leakage validation
+- Starting commit: `144f479`
+- Provider calls made: `0`
+- Source stages inventoried: real `phase7_stage_b`, `phase7_stage_b1`, `phase7_stage_b2`, `phase7_stage_c1`, `phase7_stage_c1a`, `phase7_stage_c1b`, `phase7_stage_c2`, `phase7_stage_c2a`, `phase7_stage_c2b`, `phase7_stage_c2c`, `phase7_stage_c3`; synthetic `phase4_smoke`, `phase5_smoke`, `phase6_smoke`
+- Source inventory: `30` usable dataset sources, `300` source records, inventory hash `eb46e94d83d0e2dd0126d38fc2ef1d34e494bc418906c6aec102b300d0d1d0cc`
+- Integrity result: `2` nonblocking schema-version warnings, `0` blocking issues, integrity hash `0a334b06f0784f0ef2ea93f4590c447f5805758a4fd9f9098d831b01c5116acb`
+- Label issue addressed: historical `privacy:v1` prompt/input contamination and `observable_risk:v1` false positives remain preserved, but repaired/adjudicated labels determine primary analysis labels.
+- Real-label result: `0` objective-positive and `60` objective-negative real trajectories; `9` real workflow-invalid audits retained separately.
+- Scorer consistency: `12` known historical disagreements resolved (`8` privacy, `4` observable-risk), `0` unresolved, consistency hash `ed4263b82c18a9b3ff77317fbe8deecf72ed59478e20ee7af0437d3585297a9f`
+- Feature leakage audit: `14` runtime-observable features allowed, `17` posthoc/future/leaky features denied and repaired by runtime exclusion, audit hash `3db484c1344330e502e3abc9337167ca594b650d3176ae4897c91a3934dd1f3f`
+- Split audit: `0` prohibited overlaps; real records are excluded from synthetic train/calibration; split manifest hash `b6256cfd1fa54b099c8534925ef875ce1e57049698848906d3e72847a65a60c7`
+- Class-sufficiency result: `real_negative_only_ready`; real recall, sensitivity, precision, PR-AUC, positive calibration, and prevention claims are prohibited.
+- Annotation export: `36` blind packets and `36` adjudication packets generated under `data/derived/phase7_stage_d1`, with raw text redacted and independent human annotations recorded as `0`.
+- Dataset decision: `dataset_ready_real_negative_only`
+- Stage D.2 readiness: `ready_for_stage_d2_real_negative_only`
+- Benchmark status: `not_ready_to_freeze`
+- Rerun requirement: no provider rerun required; synthetic dual-track fitting/calibration requires offline repair before monitor training, calibration, OOD evaluation, strategic attackers, Stage E, or Phase 8.
+- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.

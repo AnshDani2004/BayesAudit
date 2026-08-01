@@ -1,0 +1,73 @@
+{
+  "annotation_records_excluded_as_trajectories": 16,
+  "cached_execution_count_excluded": 24,
+  "checkpoint_record_count": 242,
+  "current_commit": "144f479",
+  "duplicate_execution_count": 4,
+  "duplicate_records": [
+    {
+      "dataset_record_id": "d1_traj_565bbcb27cefe9f209fc",
+      "duplicate_of": "d1_c3_control_negative_04",
+      "duplicate_type": "stage_c3_control_reference_or_rescoring_relation"
+    },
+    {
+      "dataset_record_id": "d1_traj_729c91690f59383092e1",
+      "duplicate_of": "d1_c3_control_negative_01",
+      "duplicate_type": "stage_c3_control_reference_or_rescoring_relation"
+    },
+    {
+      "dataset_record_id": "d1_traj_b01a50314e0dfa021313",
+      "duplicate_of": "d1_c3_control_negative_03",
+      "duplicate_type": "stage_c3_control_reference_or_rescoring_relation"
+    },
+    {
+      "dataset_record_id": "d1_traj_e1b0695133364bb5665c",
+      "duplicate_of": "d1_c3_control_negative_02",
+      "duplicate_type": "stage_c3_control_reference_or_rescoring_relation"
+    }
+  ],
+  "group_sizes": {
+    "lineage_00bd4987bd5e30594813": 2,
+    "lineage_0ad47e9446ac74ee6777": 2,
+    "lineage_0b08d3df4743fe5de869": 2,
+    "lineage_0e7e87c31997e21161ed": 2,
+    "lineage_13d33d9bab444ca6b6bf": 2,
+    "lineage_1717009991e9f847acf4": 2,
+    "lineage_261c6431fbc5e1216729": 4,
+    "lineage_28b290bc15d06bed7292": 2,
+    "lineage_322cc6257d49697b7dd1": 2,
+    "lineage_33008a290becd50235f8": 2,
+    "lineage_3fecb391cd60386572d2": 2,
+    "lineage_40dfd5121ca60e8255f4": 3,
+    "lineage_7e71c0ab420f42acfc18": 2,
+    "lineage_80b2af4b8ee68c98cd01": 5,
+    "lineage_87281b6119d79db110d5": 3,
+    "lineage_8c0d4415e3038daf666a": 2,
+    "lineage_96ce81852f11516d1ad7": 4,
+    "lineage_980b58dbcf55b871cce3": 4,
+    "lineage_ae5096249a87e461d44c": 4,
+    "lineage_bc76e876233087f76b16": 2,
+    "lineage_c3cd50e2feebedcd7622": 4,
+    "lineage_c664dcaac314f34df95f": 2,
+    "lineage_c8a06aaf9a2961df1645": 3,
+    "lineage_ce74ffad89566f35f423": 4,
+    "lineage_dcf62e7caf94730a9e57": 3
+  },
+  "lineage_group_count": 25,
+  "lineage_hash": "2b514440e7c286ba3f65431af918bbfc24b26fcea8a14078624e316efdd433ae",
+  "policy_evaluations_kept_separate": 16,
+  "protected_group_keys": [
+    "trajectory_lineage_id",
+    "scenario_family_group",
+    "task_family_group",
+    "seed_group",
+    "mutation_family_group",
+    "attack_family_group",
+    "provider_run_group",
+    "matched_condition_group",
+    "counterfactual_group"
+  ],
+  "rescoring_records_excluded_as_trajectories": 24,
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.lineage_manifest",
+  "trajectory_record_count": 69
+}

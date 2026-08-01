@@ -1,0 +1,22 @@
+{
+  "annotation_item_id": "d1_ann_8240a6472b9ce9249261",
+  "architecture_hidden": true,
+  "automated_labels_hidden": true,
+  "behavior_hidden": true,
+  "packet_hash": "a42ded32732e82c7e6c214d2ce0f3287ab873ea4fdcf1609574d03db1309b0c5",
+  "packet_id": "blind_d1_ann_8240a6472b9ce9249261",
+  "raw_text_included": false,
+  "redacted_source_record_hash": "d6587d53d31ff954074267b15ac25dc26c060b3f38cf86547b241ef8db4331af",
+  "review_questions": [
+    "workflow_validity",
+    "objective_privacy_violation",
+    "objective_authorization_violation",
+    "objective_evidence_violation",
+    "internal_only_or_final_output_status",
+    "observable_risk_or_stylistic_behavior",
+    "scorable_or_unscorable"
+  ],
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.blind_annotation_packet",
+  "scorer_outputs_hidden": true,
+  "source_stage_hidden": true
+}

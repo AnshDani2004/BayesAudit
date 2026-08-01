@@ -1388,3 +1388,118 @@ analysis, Phase 8, new human annotation, and benchmark freeze were not run.
   `configs/experiments/phase7_stage_d_readiness.json`
 - Stage D readiness hash:
   `3c2205ac9c7cfc9ac609f774e1f1c678ebb967e89ca7ba5845482ba7ac41d0bc`
+
+# Stage D.1: Real-Pilot Dataset, Scorer, Annotation, and Split Validation
+
+Status: `passed`
+
+Stage D.1 was run offline only from the existing Phase 7 artifacts. It made zero
+provider calls and did not run monitor training, monitor transfer, calibration,
+abstention analysis, OOD analysis, strategic attackers, Stage E, Phase 8, human
+annotation, benchmark freezing, or PR merge.
+
+## Inputs
+
+- Starting commit: `144f479`
+- Real source stages: `phase7_stage_b`, `phase7_stage_b1`, `phase7_stage_b2`, `phase7_stage_c1`, `phase7_stage_c1a`, `phase7_stage_c1b`, `phase7_stage_c2`, `phase7_stage_c2a`, `phase7_stage_c2b`, `phase7_stage_c2c`, `phase7_stage_c3`
+- Synthetic source stages: `phase4_smoke`, `phase5_smoke`, `phase6_smoke`
+- Sources inventoried: `30`
+- Source records inventoried: `300`
+- Usable dataset sources: `30`
+- Inventory hash: `eb46e94d83d0e2dd0126d38fc2ef1d34e494bc418906c6aec102b300d0d1d0cc`
+- Integrity issues: `2` nonblocking schema-version warnings, `0` blocking issues
+- Integrity hash: `0a334b06f0784f0ef2ea93f4590c447f5805758a4fd9f9098d831b01c5116acb`
+
+## Dataset Records
+
+- Trajectory records: `69`
+- Checkpoint records: `242`
+- Real trajectory records: `64`
+- Synthetic trajectory records: `5`
+- Real checkpoint records: `208`
+- Synthetic checkpoint records: `34`
+- Duplicate execution/control-reference records: `4`
+- Cached executions excluded from independent samples: `24`
+- Privacy rescoring records excluded as trajectories: `24`
+- Policy evaluations retained outside trajectory splits: `16`
+- Lineage hash: `2b514440e7c286ba3f65431af918bbfc24b26fcea8a14078624e316efdd433ae`
+
+## Labels and Scorers
+
+- Primary real objective positives: `0`
+- Primary real objective negatives: `60`
+- Primary synthetic objective positives: `0`
+- Primary synthetic objective negatives: `5`
+- Observable-risk adjudications: `2` `ordinary_negative`, `2` `stylistic_opportunism`
+- Known historical scorer disagreements: `12`
+- Privacy disagreements resolved: `8`
+- Observable-risk disagreements resolved: `4`
+- Unresolved scorer disagreements: `0`
+- Scorer-consistency hash: `ed4263b82c18a9b3ff77317fbe8deecf72ed59478e20ee7af0437d3585297a9f`
+
+Historical `privacy:v1` and `observable_risk:v1` labels remain preserved for
+reproducibility. Primary analysis labels use repaired or adjudicated evidence when
+available, and treatment-uptake diagnostics do not replace objective labels.
+
+## Features and Splits
+
+- Runtime-observable features allowed: `14`
+- Posthoc/future/leaky features denied: `17`
+- Leakage issues found and repaired: `17`
+- Feature-schema hash: `a8658bff3ca01a480025747a768022a303039e96465f53b473c169a22f0cb330`
+- Feature-leakage audit hash: `3db484c1344330e502e3abc9337167ca594b650d3176ae4897c91a3934dd1f3f`
+
+Split counts:
+
+| Split | Count |
+|---|---:|
+| `real_negative_transfer_test` | 51 |
+| `real_workflow_invalid_audit` | 9 |
+| `real_policy_negative_audit` | 16 |
+| `synthetic_id_test` | 27 |
+| `synthetic_ood_attack_test` | 12 |
+
+- Synthetic train status: `empty_pending_synthetic_repair`
+- Synthetic calibration status: `empty_pending_synthetic_repair`
+- Real records in synthetic train/calibration: `0`
+- Real labels used for threshold tuning: `false`
+- Prohibited split overlaps: `0`
+- Split manifest hash: `b6256cfd1fa54b099c8534925ef875ce1e57049698848906d3e72847a65a60c7`
+- Split-leakage matrix hash: `c974c1cda4c23d6ddaec1ec2ca1a23e88baa5c39b253dca19abba6b4c06842aa`
+
+## Metric Feasibility
+
+The real pilot supports descriptive real-negative diagnostics: specificity,
+false-positive rate, alert rate, abstention rate, negative log likelihood, and
+Brier score. It does not support real recall, sensitivity, precision, PR-AUC,
+AUROC, positive calibration, selective-risk, or prevention-effectiveness claims.
+Synthetic artifacts are smoke/anchor data and are insufficient for group-disjoint
+training plus calibration.
+
+- Class-sufficiency result: `real_negative_only_ready`
+- Class-sufficiency hash: `8301584bb98ded2c5ee50f7c4a330a9d0f71a566c8e85d430b10887f71e9bef2`
+- Metric-feasibility hash: `ace0d8b14709e12d4875c0218df6ec10de8b406c7c5d8bae9d8c78674181177e`
+
+## Annotation Packets
+
+- Blind annotation packets: `36`
+- Adjudication packets: `36`
+- Historical-disagreement items: `12`
+- Real-negative items: `12`
+- Synthetic-anchor items: `12`
+- Independent human annotations performed: `0`
+- Raw text included in packets: `false`
+- Annotation manifest hash: `c0014cef6a25bcadd876a487697a88c5bb55569ac8eeb8b72d102e3128aacbc4`
+
+## Decision
+
+- Dataset decision: `dataset_ready_real_negative_only`
+- Stage D.2 readiness: `ready_for_stage_d2_real_negative_only`
+- Benchmark status: `not_ready_to_freeze`
+- Stage D.2 protocol hash: `0eb7a4e202ce9e87cf5a1588a64ed8ff0e679dcf5bd3ff7266b638f7a30c6d92`
+- Decision hash: `60b0c86cc1264f5f0da8f8bc68e9266e4680d5515b2e793fcc114ce11e3282ff`
+- Stage D.2 readiness hash: `6d6946dc5560ccebe9c87279fb74588e4588c9964b8644fb5d756e4bf403ff29`
+
+Stage D.2 may proceed only as real-negative transfer evaluation unless synthetic
+training/calibration repair is separately completed and validated. Benchmark freeze
+remains explicitly blocked.

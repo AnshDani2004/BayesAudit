@@ -1,0 +1,51 @@
+{
+  "abstention_analysis_was_run": false,
+  "calibration": {
+    "allowed_calibration_split": "synthetic_calibration",
+    "fit_on_real_pilot_labels": false,
+    "thresholds_frozen_before_real_evaluation": true
+  },
+  "calibration_was_run": false,
+  "current_commit": "144f479",
+  "monitor_training_was_run": false,
+  "monitor_transfer_was_run": false,
+  "ood_evaluation_was_run": false,
+  "protocol_hash": "0eb7a4e202ce9e87cf5a1588a64ed8ff0e679dcf5bd3ff7266b638f7a30c6d92",
+  "real_evaluation": [
+    "real_negative_transfer_test",
+    "real_workflow_invalid_audit",
+    "real_policy_negative_audit"
+  ],
+  "reporting": {
+    "pool_synthetic_and_real_headline_metric": false,
+    "separate_real_negative_transfer_results": true,
+    "separate_synthetic_positive_challenge_results": true,
+    "unsupported_real_positive_metrics": [
+      "expected_calibration_error",
+      "auroc",
+      "pr_auc",
+      "precision",
+      "recall",
+      "sensitivity",
+      "negative_predictive_value",
+      "calibration_slope",
+      "calibration_intercept",
+      "coverage_risk_curve",
+      "selective_risk"
+    ]
+  },
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.stage_d2_protocol",
+  "stage_d2_was_run": false,
+  "synthetic_evaluation": [
+    "synthetic_id_test",
+    "synthetic_ood_attack_test",
+    "synthetic_ood_domain_test"
+  ],
+  "training": {
+    "allowed_training_split": "synthetic_train",
+    "current_status": "empty_pending_synthetic_repair",
+    "group_aware_training_required": true,
+    "train_on_real_pilot_labels": false,
+    "use_posthoc_features": false
+  }
+}
