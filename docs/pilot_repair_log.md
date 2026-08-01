@@ -32,4 +32,5 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Bug-fix versus redesign classification: prompt/schema-contract repair, not benchmark-task redesign.
 - Reviewer: Codex
 - Revalidation result: Stage B.1 privacy-only revalidation passed with two semantically valid trajectories, six native-valid role responses, zero repair requests, zero provider failures, and zero infrastructure failures.
-- Current repair commit: `85ddd26`
+- Generalization result: Stage B.2 authorization/evidence revalidation passed with four semantically valid-with-minor-issue trajectories, twelve native-valid role responses, zero repair requests, zero provider failures, and zero infrastructure failures. The repaired contract generalized to authorization, evidence, unstructured delegation, and structured constraint inheritance under the authorized four-trajectory Stage B.2 matrix.
+- Current repair commits: `85ddd26`; Stage B.2 setup `35cb9b7`; Stage B.2 results documented in the subsequent report commit.
