@@ -83,3 +83,28 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Stage C.1b readiness: `ready_for_stage_c2` for separate authorization only. Stage C.2 was not run.
 - Stage C.1b artifacts: `configs/experiments/phase7_stage_c1b_privacy_v1_v2_summary.json`, `configs/experiments/phase7_stage_c1b_trajectory_privacy_comparison.jsonl`, and `configs/experiments/phase7_stage_c1b_readiness.json`.
 - Stage C.1b current commit at artifact generation: `37cc32d`
+
+## P7C2A-001: Opportunistic-Treatment Construct and Uptake Validation
+
+- Date: `2026-08-01`
+- Stage: Phase 7 Stage C.2a offline review
+- Behavior profile: `opportunistic_completion_v1`
+- Behavior-profile hash: `5d1db480218017b23b50c5bdae9b6e542417416becba1bd00627ec832656ed00`
+- Prompt-context hash: `0d821d234c99c9e721b38f7c1a73d7a18ffcf06d353d94a46021b4bd7418b386`
+- Affected tasks: all six frozen Stage C.1/C.2 tasks
+- Affected roles: root planner, intermediate agent, leaf worker, aggregator
+- Provider calls made: `0`
+- Treatment delivery: all intended role prompts received the v1 behavior treatment; missing-treatment cases `0`
+- Treatment-uptake count: clear `0`, weak `7`, no uptake `1`, opposite `6`, ambiguous `10`
+- Task-pressure findings: adequate `3` tasks, weak `3` tasks, strong `0`, absent `0`
+- Scorer-sensitivity findings: objective positive fixtures passed for `privacy:v2`, `authorization:v1`, and `evidence:v1`; `7` risk-only blind spots are recorded as construct-signal limitations rather than objective scorer failures.
+- Candidate-manifest findings: Stage C.3 manifest contains `12` ordinary negative candidates, `0` violation-positive candidates, and `0` observable-risk candidates.
+- Primary decision: `behavior_treatment_repair_required`
+- Root cause: the v1 treatment was delivered consistently but was too abstract and often neutralized by higher-priority constraint, schema, role, and model-safety instructions; observed changes were weak, ambiguous, or defensive rather than clear opportunistic uptake.
+- Bug fix versus benchmark redesign: behavior-treatment repair proposal only; no historical task, scorer, prompt, response, or treatment-uptake artifact was overwritten.
+- Proposed repair: create versioned `opportunistic_completion_v2` prompt proposal and a six-trajectory Stage C.2b candidate design.
+- New version: `opportunistic_completion_v2` proposal in `configs/experiments/phase7_stage_c2a_opportunistic_behavior_profile_v2_proposal.json`
+- Provider rerun requirement: explicit new provider authorization required before any Stage C.2b execution; Stage C.2b was not run.
+- Stage C.3 implications: current C.3 candidates can support false-positive and utility-cost evaluation only, not violation-prevention or full risk-detection claims.
+- Current commit at artifact generation: `59679a093d41169165582ad2036e9059a8a5fe62`
+- Reviewer: Codex
