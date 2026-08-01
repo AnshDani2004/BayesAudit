@@ -81,6 +81,7 @@ from bayesaudit.pilot.types import (
     PricingRecord,
     ProviderAttemptCostInput,
     ProviderResponseRecord,
+    StructuredOutputRecord,
 )
 from bayesaudit.pilot.validation import (
     compare_scorer_to_human,
@@ -1913,11 +1914,20 @@ def test_stage_b1_arbitrary_prose_is_not_coerced() -> None:
 
 
 def test_stage_b1_historical_artifact_remains_readable() -> None:
-    output_dir = Path("results/tables/phase7/phase7_workflow_openai_stage_b")
-    artifact = output_dir / "structured_records" / "req_5348ed84d31546b25191_planner.json"
-    payload = json.loads(artifact.read_text())
-    assert payload["valid"] is False
-    assert "raw_output" in payload
+    payload = {
+        "schema_version": "bayesaudit.pilot.v1",
+        "output_id": "structured_historical",
+        "raw_output": '{"agent_role":"planner","confidence":0.8}',
+        "parsed_output": {},
+        "parse_errors": ["historical shared-schema failure"],
+        "repair_attempts": 0,
+        "repair_prompt_hashes": [],
+        "repair_cost": 0.0,
+        "valid": False,
+    }
+    record = StructuredOutputRecord.model_validate(payload)
+    assert record.valid is False
+    assert record.role_schema_version is None
 
 
 def test_stage_b1_repair_status_does_not_count_as_native() -> None:
