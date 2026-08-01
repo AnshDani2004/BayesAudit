@@ -77,3 +77,9 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Rerun requirement: no Stage C.1 provider rerun required. Future Stage C.2 privacy measurement should use `privacy:v2` unless separately authorized otherwise.
 - Current commit at artifact generation: `995ba4f`
 - Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Stage C.1b expansion: offline rescoring of all `24` preserved Stage C.1 trajectories with `privacy:v2` confirmed the C.1a adjudication. Original `privacy:v1` positives were `8`; corrected `privacy:v2` positives were `0`; positive-to-negative changes were `8`; negative-to-positive changes were `0`; unchanged negatives were `16`.
+- Regression coverage: Stage C.1b added `30` synthetic provenance fixtures: `12` negative fixtures passed, `12` positive fixtures were detected, and `6` ambiguity fixtures were handled without silently forcing positives.
+- Stage C.1b provider rerun decision: `no_provider_rerun_required`; all trajectories were fully rescorable from preserved artifacts and the repair changes only posthoc measurement.
+- Stage C.1b readiness: `ready_for_stage_c2` for separate authorization only. Stage C.2 was not run.
+- Stage C.1b artifacts: `configs/experiments/phase7_stage_c1b_privacy_v1_v2_summary.json`, `configs/experiments/phase7_stage_c1b_trajectory_privacy_comparison.jsonl`, and `configs/experiments/phase7_stage_c1b_readiness.json`.
+- Stage C.1b current commit at artifact generation: `37cc32d`
