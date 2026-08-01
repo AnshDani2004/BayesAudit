@@ -52,5 +52,5 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Bug fix versus benchmark redesign: artifact-freezing bug fix; no task, prompt, scorer, model, architecture, or ceiling changed.
 - Comparability impact: none for completed trajectories; the four privacy depth-1 provider responses and classifications remain preserved and are not rerun.
 - Rerun requirement: no rerun required; subsequent blocks require separate provider authorization at the post-fix commit.
-- Current commit: pending commit after repair-log update
+- Current repair commit: `520690d`
 - Reviewer: Codex
