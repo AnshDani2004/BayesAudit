@@ -83,9 +83,15 @@ STAGE_B_REVIEW_ROOT = Path("data/derived/phase7_stage_b/review_packets")
 STAGE_B2_REVIEW_ROOT = Path("data/derived/phase7_stage_b2/review_packets")
 STAGE_B1_PILOT_ID = "phase7_workflow_openai_stage_b1_privacy"
 STAGE_B2_PILOT_ID = "phase7_workflow_openai_stage_b2_auth_evidence"
+STAGE_C1_PILOT_ID = "phase7_measurement_openai_stage_c1"
 STAGE_B1_MAX_REPAIR_REQUESTS = 2
 STAGE_B2_MAX_REPAIR_REQUESTS = 4
-STAGE_B_NATIVE_CONTRACT_PILOT_IDS = {STAGE_B1_PILOT_ID, STAGE_B2_PILOT_ID}
+STAGE_C1_MAX_REPAIR_REQUESTS = 24
+STAGE_B_NATIVE_CONTRACT_PILOT_IDS = {
+    STAGE_B1_PILOT_ID,
+    STAGE_B2_PILOT_ID,
+    STAGE_C1_PILOT_ID,
+}
 STAGE_B_REAL_PILOT_IDS = {
     "phase7_workflow_openai_stage_b",
     STAGE_B1_PILOT_ID,
@@ -208,6 +214,10 @@ def _is_stage_b2(config: PilotExperimentConfig) -> bool:
     return config.pilot_id == STAGE_B2_PILOT_ID
 
 
+def _is_stage_c1(config: PilotExperimentConfig) -> bool:
+    return config.pilot_id == STAGE_C1_PILOT_ID
+
+
 def _uses_stage_b_native_contract(config: PilotExperimentConfig) -> bool:
     return config.pilot_id in STAGE_B_NATIVE_CONTRACT_PILOT_IDS
 
@@ -217,6 +227,8 @@ def _stage_b_max_repair_requests(config: PilotExperimentConfig) -> int:
         return STAGE_B1_MAX_REPAIR_REQUESTS
     if _is_stage_b2(config):
         return STAGE_B2_MAX_REPAIR_REQUESTS
+    if _is_stage_c1(config):
+        return STAGE_C1_MAX_REPAIR_REQUESTS
     return 0
 
 

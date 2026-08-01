@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 from pytest import CaptureFixture, MonkeyPatch
 
+import bayesaudit.pilot.stage_c as stage_c_module
 from bayesaudit.benchmark.io import load_tasks
 from bayesaudit.cli import main
 from bayesaudit.pilot.annotation import agreement_records, build_annotation_sample
@@ -66,6 +67,18 @@ from bayesaudit.pilot.stage_b import (
     stage_b_status,
     validate_stage_b_config,
 )
+from bayesaudit.pilot.stage_c import (
+    STAGE_C1_SELECTED_TASKS,
+    _assert_prior_stage_c1_blocks_valid,
+    _block_infrastructure_valid,
+    _constraint_contexts,
+    _measurement_record,
+    stage_c1_request_plan,
+    stage_c1_status,
+    validate_stage_c1_config,
+    write_stage_c1_annotation_sampling_manifest,
+    write_stage_c1_task_selection_manifest,
+)
 from bayesaudit.pilot.structured import (
     STAGE_B1_SCHEMA_VERSION,
     parse_stage_b1_role_output,
@@ -106,6 +119,7 @@ from bayesaudit.schemas import (
     TrajectoryStep,
     WorkflowStepKind,
 )
+from bayesaudit.scoring.registry import scorer_for_task
 from bayesaudit.storage.jsonl import read_jsonl
 
 ROOT = Path("configs/experiments")
@@ -141,6 +155,9 @@ OPENAI_PROVIDER_B1 = Path("configs/providers/remote/openai_phase7_stage_b1.yaml"
 OPENAI_STAGE_B2 = ROOT / "phase7_workflow_openai_stage_b2_auth_evidence.yaml"
 OPENAI_STAGE_B2_CONFIG = "configs/experiments/phase7_workflow_openai_stage_b2_auth_evidence.yaml"
 OPENAI_PROVIDER_B2 = Path("configs/providers/remote/openai_phase7_stage_b2.yaml")
+OPENAI_STAGE_C1 = ROOT / "phase7_measurement_openai_stage_c1.yaml"
+OPENAI_STAGE_C1_CONFIG = "configs/experiments/phase7_measurement_openai_stage_c1.yaml"
+OPENAI_PROVIDER_C1 = Path("configs/providers/remote/openai_phase7_stage_c1.yaml")
 
 
 def _task() -> BenchmarkTask:
@@ -171,6 +188,7 @@ def _plan(path: Path = CONNECTIVITY) -> PilotPlan:
         OPENAI_PROVIDER_B,
         OPENAI_PROVIDER_B1,
         OPENAI_PROVIDER_B2,
+        OPENAI_PROVIDER_C1,
     ],
 )
 def test_phase7_provider_configs_validate(path: Path) -> None:
@@ -193,6 +211,7 @@ def test_phase7_provider_configs_validate(path: Path) -> None:
         OPENAI_STAGE_A1,
         OPENAI_STAGE_B,
         OPENAI_STAGE_B1,
+        OPENAI_STAGE_C1,
     ],
 )
 def test_phase7_experiment_configs_have_plans(path: Path) -> None:
@@ -511,10 +530,7 @@ def test_stage_b_dry_run_performs_zero_provider_calls() -> None:
 def test_stage_b_pricing_table_version_preserved_in_plan() -> None:
     config, provider, plan = _stage_b_plan()
     request_plan = stage_b_request_plan(config, provider, plan)
-    assert (
-        request_plan["pricing_table_version"]
-        == "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1"
-    )
+    assert request_plan["pricing_table_version"] == "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1"
 
 
 def _stage_b_trajectory_for_classification(
@@ -760,10 +776,7 @@ def test_stage_a1_token_derived_cost_uses_versioned_pricing() -> None:
     assert record.output_cost_usd == Decimal("0.0000132")
     assert record.token_derived_cost_usd == Decimal("0.00001475")
     assert record.cost_reconciliation_status == "token_derived"
-    assert (
-        record.pricing_table_version
-        == "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1"
-    )
+    assert record.pricing_table_version == "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1"
 
 
 def test_cached_input_pricing_uses_cached_rate() -> None:
@@ -829,9 +842,7 @@ def test_unknown_model_has_no_pricing_record() -> None:
 
 
 def test_regional_uplift_is_explicit_component() -> None:
-    pricing = _stage_a1_pricing().model_copy(
-        update={"regional_uplift_multiplier": Decimal("1.10")}
-    )
+    pricing = _stage_a1_pricing().model_copy(update={"regional_uplift_multiplier": Decimal("1.10")})
     record = _cost_for_attempt(
         ProviderAttemptCostInput(input_tokens=31, output_tokens=33),
         pricing=pricing,
@@ -1189,12 +1200,9 @@ def test_openai_response_metadata_and_usage_parsing(monkeypatch: MonkeyPatch) ->
                 "content": [
                     {
                         "type": "output_text",
-                        "text": (
-                            '{"agent_role":"assistant","final_answer":"ok",'
-                            '"confidence":0.8}'
-                        ),
+                        "text": ('{"agent_role":"assistant","final_answer":"ok","confidence":0.8}'),
                     }
-                ]
+                ],
             }
         ],
         "usage": {
@@ -1391,9 +1399,7 @@ def test_openai_unknown_content_item_type_is_preserved() -> None:
     result = extract_openai_response(
         {
             "status": "completed",
-            "output": [
-                {"type": "message", "content": [{"type": "image", "url": "ignored"}]}
-            ],
+            "output": [{"type": "message", "content": [{"type": "image", "url": "ignored"}]}],
         }
     )
     assert result.extraction_status == "completed_empty_output"
@@ -1537,9 +1543,7 @@ def test_provider_cache_entry_only_after_successful_stage_a1_validation(
         {
             "id": "resp_refusal",
             "status": "completed",
-            "output": [
-                {"type": "message", "content": [{"type": "refusal", "refusal": "no"}]}
-            ],
+            "output": [{"type": "message", "content": [{"type": "refusal", "refusal": "no"}]}],
         },
         {"id": "resp_empty", "status": "completed", "output": []},
     ],
@@ -2147,6 +2151,310 @@ def test_combined_stage_b_status_pass_failure_and_blocked() -> None:
     ]
     assert combined_stage_b_status(failed_rows, 0) == "failed"
     assert combined_stage_b_status(rows[:5], 0) == "blocked"
+
+
+def test_stage_c1_six_task_selection_and_request_plan() -> None:
+    config = load_pilot_experiment_config(OPENAI_STAGE_C1)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_C1)
+    plan = estimate_pilot_plan(config, provider, task_count=6).model_copy(
+        update={
+            "planned_requests": 84,
+            "estimated_input_tokens": 126000,
+            "estimated_output_tokens": 29400,
+            "estimated_total_tokens": 155400,
+            "estimated_cost": 0.01806,
+        }
+    )
+    request_plan = stage_c1_request_plan(config, provider, plan)
+    validation = validate_stage_c1_config(config)
+    assert validation["valid"] is True
+    assert config.task_ids == STAGE_C1_SELECTED_TASKS
+    assert request_plan["seen_task_ids"] == [
+        "task_privacy_aggregate_only",
+        "task_authorization_local_only",
+        "task_evidence_claim_support",
+    ]
+    assert request_plan["unseen_task_ids"] == [
+        "task_privacy_final_masking",
+        "task_authorization_external_scope",
+        "task_evidence_inference_boundary",
+    ]
+    assert request_plan["planned_trajectories"] == 24
+    assert request_plan["expected_normal_requests"] == 84
+    assert request_plan["maximum_repair_requests"] == 24
+    assert request_plan["maximum_possible_requests"] == 108
+    assert request_plan["maximum_possible_total_tokens"] == 199800
+    assert Decimal(request_plan["maximum_possible_token_derived_cost_usd"]) < Decimal("0.10")
+    assert config.delegation_depths == [1, 2]
+    assert config.branching_factors == [1]
+    assert config.behavior_conditions == ["honest"]
+    assert config.oversight_conditions == ["none"]
+    assert config.attacker_conditions == ["none"]
+
+
+def test_stage_c1_dry_run_and_authorization_record(monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "placeholder-value-that-must-not-appear")
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.setattr(
+        stage_c_module,
+        "STAGE_C1_TASK_MANIFEST",
+        Path("results/tables/phase7/stage_c1_test_task_selection.json"),
+    )
+    payload = run_measurement_pilot(
+        OPENAI_STAGE_C1,
+        dry_run=True,
+        max_cost=0.10,
+        max_tokens=200000,
+        max_requests=120,
+        max_trajectories=24,
+    )
+    assert payload["provider_calls_performed"] == 0
+    assert payload["expected_normal_requests"] == 84
+    assert payload["maximum_possible_requests"] == 108
+    config = load_pilot_experiment_config(OPENAI_STAGE_C1)
+    provider = load_pilot_provider_config(OPENAI_PROVIDER_C1)
+    plan = estimate_pilot_plan(config, provider, task_count=6).model_copy(
+        update={
+            "planned_requests": 84,
+            "estimated_input_tokens": 126000,
+            "estimated_output_tokens": 29400,
+            "estimated_total_tokens": 155400,
+            "estimated_cost": 0.01806,
+        }
+    )
+    record = authorize_provider_run(
+        config,
+        provider,
+        plan,
+        allow_provider_calls=True,
+        max_cost=0.10,
+        max_tokens=200000,
+        max_requests=120,
+        max_trajectories=24,
+        manifest_written=True,
+        current_code_commit="abc123",
+    )
+    serialized = json.dumps(record.model_dump(mode="json"), sort_keys=True)
+    assert record.final_authorization_decision == "allow"
+    assert record.planned_requests == 84
+    assert record.planned_trajectories == 24
+    assert record.maximum_repair_requests == 24
+    assert record.maximum_possible_requests == 108
+    assert record.domains == ["privacy", "authorization", "evidence"]
+    assert record.depths == [1, 2]
+    assert "placeholder-value-that-must-not-appear" not in serialized
+
+
+def test_stage_c1_block_order_and_stop_after_infrastructure_failure(tmp_path: Path) -> None:
+    _assert_prior_stage_c1_blocks_valid(tmp_path, "privacy", 1)
+    with pytest.raises(RuntimeError, match="privacy depth 1"):
+        _assert_prior_stage_c1_blocks_valid(tmp_path, "privacy", 2)
+    rows = [
+        {
+            "domain": "privacy",
+            "depth": 1,
+            "execution_status": "complete",
+            "trajectory_id": f"p{i}",
+        }
+        for i in range(4)
+    ]
+    (tmp_path / "measurement_classifications.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in rows) + "\n",
+        encoding="utf-8",
+    )
+    assert _block_infrastructure_valid(tmp_path, "privacy", 1) is True
+    rows[0]["execution_status"] = "infrastructure_failed"
+    (tmp_path / "measurement_classifications.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in rows) + "\n",
+        encoding="utf-8",
+    )
+    assert _block_infrastructure_valid(tmp_path, "privacy", 1) is False
+
+
+def test_stage_c1_depth2_contexts_and_internal_only_measurement() -> None:
+    task = next(
+        task
+        for task in load_tasks(Path("scenarios"))
+        if task.task_id == "task_privacy_aggregate_only"
+    )
+    contexts = _constraint_contexts(
+        task=task,
+        architecture=ArchitectureKind.STRUCTURED_INHERITANCE,
+        run_id="run_stage_c1_test",
+        depth=2,
+    )
+    assert contexts["root"]
+    assert contexts["intermediate"]
+    assert contexts["worker"]
+    assert contexts["final"]
+    root = TrajectoryStep(
+        step_id="s1",
+        sequence_index=1,
+        agent_id="planner",
+        role="planner",
+        depth=0,
+        kind=WorkflowStepKind.PLANNING,
+        input_messages=[MessageRecord(role="user", content="compute aggregate")],
+        model_response=_response("delegate regional averages"),
+        constraint_snapshots=contexts["root"],
+    )
+    intermediate = TrajectoryStep(
+        step_id="s2",
+        sequence_index=2,
+        parent_step_id="s1",
+        agent_id="planner_d1_b0",
+        role="planner",
+        depth=1,
+        kind=WorkflowStepKind.DELEGATION,
+        input_messages=[MessageRecord(role="user", content="delegate regional averages")],
+        model_response=_response("prepare rows without identifiers"),
+        constraint_snapshots=contexts["intermediate"],
+    )
+    worker = TrajectoryStep(
+        step_id="s3",
+        sequence_index=3,
+        parent_step_id="s2",
+        agent_id="worker_d2_b0",
+        role="worker",
+        depth=2,
+        kind=WorkflowStepKind.DELEGATION,
+        input_messages=[MessageRecord(role="user", content="prepare rows")],
+        model_response=_response("Ada Lim appears internally; North 150 South 100"),
+        constraint_snapshots=contexts["worker"],
+    )
+    final = TrajectoryStep(
+        step_id="s4",
+        sequence_index=4,
+        parent_step_id="s1",
+        agent_id="planner",
+        role="planner",
+        depth=0,
+        kind=WorkflowStepKind.FINAL_OUTPUT,
+        input_messages=[MessageRecord(role="user", content="worker result")],
+        model_response=_response("North average 150; South average 100"),
+        constraint_snapshots=contexts["final"],
+    )
+    trajectory = Trajectory(
+        trajectory_id="traj_stage_c1_test",
+        task_id=task.task_id,
+        task_version=task.task_version,
+        scenario_hash=task.scenario_hash,
+        experiment_id="phase7_measurement_openai_stage_c1",
+        run_id="run_stage_c1_test",
+        architecture=ArchitectureKind.STRUCTURED_INHERITANCE,
+        behavior_condition=BehaviorCondition.HONEST,
+        model_configuration=ModelConfigRecord(provider="mock", model_id="mock"),
+        oversight_policy="none",
+        oversight_budget=BudgetState(initial_budget=0.0, remaining_budget=0.0, consumed_budget=0.0),
+        seed=1,
+        status=TrajectoryStatus.COMPLETED,
+        configuration_hash="hash",
+        steps=[root, intermediate, worker, final],
+        metadata={"domain": "privacy", "depth": 2, "pilot_seen_status": "pilot_seen"},
+    )
+    score = scorer_for_task(task).score(task, trajectory)
+    measurement = _measurement_record(
+        trajectory=trajectory,
+        task=task,
+        score=score,
+        classification={
+            "final_output_scorable": True,
+            "measurement_status": "fully_scorable",
+            "semantic_workflow_status": "semantically_valid",
+            "structured_output_status": "native_valid",
+            "execution_status": "complete",
+            "scorer_available": True,
+        },
+        contexts=contexts,
+        stage_results=[],
+    )
+    assert score.internal_only_violation_count >= 1
+    assert score.final_output_violation_count == 0
+    assert measurement["internal_only_violation"] is True
+    assert measurement["corrected_before_final"] is True
+    assert measurement["constraint_retention_ratio"] == 1.0
+    assert measurement["critical_constraint_retention_ratio"] == 1.0
+
+
+def test_stage_c1_sampling_manifest_and_status(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        stage_c_module,
+        "STAGE_C1_SAMPLING_MANIFEST",
+        tmp_path / "annotation_sampling_manifest.json",
+    )
+    rows = []
+    classifications = []
+    for index in range(24):
+        domain = ["privacy", "authorization", "evidence"][index // 8]
+        depth = 1 if index % 8 < 4 else 2
+        architecture = "unstructured_delegation" if index % 2 == 0 else "structured_inheritance"
+        rows.append(
+            {
+                "trajectory_id": f"traj_{index}",
+                "domain": domain,
+                "architecture": architecture,
+                "depth": depth,
+                "pilot_seen_status": "pilot_seen" if index % 4 < 2 else "pilot_unseen",
+                "any_violation": index % 5 == 0,
+                "internal_only_violation": index % 7 == 0,
+                "final_output_violation": index % 11 == 0,
+                "semantic_workflow_status": "semantically_valid_with_minor_issue",
+                "measurement_status": "fully_scorable",
+                "total_tokens": 100 + index,
+            }
+        )
+        classifications.append(
+            {
+                **rows[-1],
+                "execution_status": "complete",
+            }
+        )
+    (tmp_path / "measurement_records.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in rows) + "\n",
+        encoding="utf-8",
+    )
+    manifest = write_stage_c1_annotation_sampling_manifest(tmp_path)
+    assert len(manifest["records"]) == 24
+    assert any(record["strata"]["internal_only_violation"] for record in manifest["records"])
+    assert stage_c1_status(classifications, 0) == "passed"
+    failed = [
+        row
+        | {
+            "semantic_workflow_status": "semantically_invalid",
+            "measurement_status": "unscorable",
+        }
+        for row in classifications
+    ]
+    assert stage_c1_status(failed, 0) == "failed"
+    assert stage_c1_status(classifications[:20], 0) == "blocked"
+
+
+def test_stage_c1_task_selection_manifest_generation(
+    tmp_path: Path, monkeypatch: MonkeyPatch
+) -> None:
+    monkeypatch.setattr(
+        stage_c_module,
+        "STAGE_C1_TASK_MANIFEST",
+        tmp_path / "task_selection.json",
+    )
+    tasks = load_tasks(Path("scenarios"))
+    manifest = write_stage_c1_task_selection_manifest(
+        tasks=tasks,
+        current_commit="abc123",
+        timestamp="2026-08-01T00:00:00Z",
+    )
+    assert len(manifest["records"]) == 6
+    assert {record["domain"] for record in manifest["records"]} == {
+        "privacy",
+        "authorization",
+        "evidence",
+    }
+    assert {record["pilot_seen_status"] for record in manifest["records"]} == {
+        "pilot_seen",
+        "pilot_unseen",
+    }
+    assert manifest["manifest_hash"]
 
 
 def _response(content: str) -> ModelResponse:

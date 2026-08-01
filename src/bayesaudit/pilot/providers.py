@@ -315,6 +315,10 @@ def authorize_provider_run(
     output_writable: bool = True,
     manifest_written: bool = False,
     current_code_commit: str | None = None,
+    task_selection_manifest_hash: str | None = None,
+    prompt_template_versions: dict[str, str] | None = None,
+    role_schema_versions: dict[str, str] | None = None,
+    maximum_repair_requests: int = 0,
 ) -> ProviderPermissionRecord:
     gates = [
         _gate("provider_calls_enabled_in_config", provider.enabled, "provider config enabled"),
@@ -409,8 +413,10 @@ def authorize_provider_run(
     stage_b_repair_allowances = {
         "phase7_workflow_openai_stage_b1_privacy": 2,
         "phase7_workflow_openai_stage_b2_auth_evidence": 4,
+        "phase7_measurement_openai_stage_c1": 24,
     }
-    maximum_possible_requests += stage_b_repair_allowances.get(config.pilot_id, 0)
+    repair_allowance = stage_b_repair_allowances.get(config.pilot_id, maximum_repair_requests)
+    maximum_possible_requests += repair_allowance
     record = ProviderPermissionRecord(
         permission_id="perm_" + canonical_json_hash([gate.model_dump() for gate in gates])[:20],
         provider=provider.provider_name or provider.provider_class,
@@ -434,8 +440,15 @@ def authorize_provider_run(
         max_requests=max_requests,
         max_trajectories=max_trajectories,
         pricing_table_version=_pricing_table_version(provider),
+        task_selection_manifest_hash=task_selection_manifest_hash,
+        prompt_template_versions=prompt_template_versions
+        or {"default": config.prompt_renderer_version},
+        role_schema_versions=role_schema_versions or {},
+        domains=[str(domain) for domain in config.domains],
+        depths=[int(depth) for depth in config.delegation_depths],
         tasks=list(config.task_ids),
         architectures=[str(architecture) for architecture in config.architectures],
+        maximum_repair_requests=repair_allowance,
         maximum_possible_requests=maximum_possible_requests,
         environment_classification="ci" if _ci_environment() else "local",
         gates=gates,

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, cast
@@ -40,6 +41,14 @@ from bayesaudit.pilot.stage_b import (
     summarize_stage_b,
     validate_stage_b_config,
 )
+from bayesaudit.pilot.stage_c import (
+    STAGE_C1_PILOT_ID,
+    run_stage_c1_block,
+    stage_c1_request_plan,
+    summarize_stage_c1,
+    validate_stage_c1_config,
+    write_stage_c1_task_selection_manifest,
+)
 from bayesaudit.pilot.structured import parse_structured_output
 from bayesaudit.pilot.transfer import (
     calibration_transfer_metrics,
@@ -69,6 +78,21 @@ from bayesaudit.storage.jsonl import append_jsonl, read_json, read_jsonl, write_
 
 def estimate_pilot_cost(config_path: Path) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
+    if config.pilot_id == STAGE_C1_PILOT_ID:
+        plan = _stage_c1_adjusted_plan(config, provider, plan)
+        validation = validate_stage_c1_config(config)
+        request_plan = stage_c1_request_plan(config, provider, plan)
+        return {
+            **plan.model_dump(mode="json"),
+            **request_plan,
+            "stage_c1_config_valid": validation["valid"],
+            "stage_c1_config_errors": validation["errors"],
+            "cost_ceiling": config.cost_ceiling,
+            "token_ceiling": config.token_ceiling,
+            "request_ceiling": config.request_ceiling,
+            "trajectory_ceiling": config.trajectory_ceiling,
+            "output_dir": str(_output_dir(config)),
+        }
     if config.pilot_id in STAGE_B_REAL_PILOT_IDS:
         validation = validate_stage_b_config(config)
         request_plan = stage_b_request_plan(config, provider, plan)
@@ -97,6 +121,22 @@ def authorize_pilot_provider_run(
     allow_large_run: bool = False,
 ) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
+    authorization_metadata: dict[str, Any] = {}
+    if config.pilot_id == STAGE_C1_PILOT_ID:
+        plan = _stage_c1_adjusted_plan(config, provider, plan)
+        tasks = _selected_tasks(config)
+        task_manifest = write_stage_c1_task_selection_manifest(
+            tasks=tasks,
+            current_commit=_git("rev-parse", "--short", "HEAD"),
+            timestamp=datetime.utcnow().isoformat() + "Z",
+        )
+        request_plan = stage_c1_request_plan(config, provider, plan)
+        authorization_metadata = {
+            "task_selection_manifest_hash": task_manifest["manifest_hash"],
+            "prompt_template_versions": request_plan["prompt_template_versions"],
+            "role_schema_versions": request_plan["schema_versions"],
+            "maximum_repair_requests": int(request_plan["maximum_repair_requests"]),
+        }
     output_dir = _output_dir(config)
     manifest = write_pilot_manifest(config, provider, plan, status="planned")
     record = authorize_provider_run(
@@ -112,6 +152,7 @@ def authorize_pilot_provider_run(
         output_writable=_writable(output_dir),
         manifest_written=True,
         current_code_commit=_git("rev-parse", "--short", "HEAD"),
+        **authorization_metadata,
     )
     path = write_permission_record(output_dir, record)
     return {
@@ -408,8 +449,118 @@ def run_real_workflow_pilot(
     }
 
 
-def run_measurement_pilot(config_path: Path, *, dry_run: bool) -> dict[str, Any]:
+def run_measurement_pilot(
+    config_path: Path,
+    *,
+    dry_run: bool,
+    allow_provider_calls: bool = False,
+    max_cost: float | None = None,
+    max_tokens: int | None = None,
+    max_requests: int | None = None,
+    max_trajectories: int | None = None,
+    allow_large_run: bool = False,
+    domain_block: str | None = None,
+    depth_block: int | None = None,
+) -> dict[str, Any]:
     config, provider, plan = _config_provider_plan(config_path)
+    if config.pilot_id == STAGE_C1_PILOT_ID:
+        plan = _stage_c1_adjusted_plan(config, provider, plan)
+        output_dir = _output_dir(config)
+        manifest = write_pilot_manifest(
+            config, provider, plan, status="dry_run" if dry_run else "planned"
+        )
+        tasks = _selected_tasks(config)
+        validation = validate_stage_c1_config(config)
+        request_plan = stage_c1_request_plan(config, provider, plan)
+        task_manifest = write_stage_c1_task_selection_manifest(
+            tasks=tasks,
+            current_commit=_git("rev-parse", "--short", "HEAD"),
+            timestamp=datetime.utcnow().isoformat() + "Z",
+        )
+        if not validation["valid"]:
+            raise ValueError(f"invalid Stage C.1 config: {validation['errors']}")
+        planned_tokens = int(request_plan["maximum_possible_total_tokens"])
+        planned_cost = float(request_plan["maximum_possible_token_derived_cost_usd"])
+        if request_plan["maximum_possible_requests"] > int(
+            max_requests or config.request_ceiling or 0
+        ):
+            raise PermissionError("Stage C.1 maximum possible requests exceed ceiling")
+        if planned_tokens > int(max_tokens or config.token_ceiling or 0):
+            raise PermissionError("Stage C.1 estimated tokens exceed ceiling")
+        if planned_cost > float(max_cost or config.cost_ceiling or 0.0):
+            raise PermissionError("Stage C.1 estimated cost exceeds ceiling")
+        if dry_run:
+            return {
+                **plan.model_dump(mode="json"),
+                **request_plan,
+                "dry_run": True,
+                "pilot_manifest_status": manifest.status,
+                "task_selection_manifest_hash": task_manifest["manifest_hash"],
+                "provider_calls_performed": 0,
+                "output_dir": str(output_dir),
+                "cost_ceiling": max_cost if max_cost is not None else config.cost_ceiling,
+                "token_ceiling": max_tokens if max_tokens is not None else config.token_ceiling,
+                "request_ceiling": max_requests
+                if max_requests is not None
+                else config.request_ceiling,
+                "trajectory_ceiling": max_trajectories
+                if max_trajectories is not None
+                else config.trajectory_ceiling,
+            }
+        permission_payload = authorize_pilot_provider_run(
+            config_path,
+            allow_provider_calls=allow_provider_calls,
+            max_cost=max_cost,
+            max_tokens=max_tokens,
+            max_requests=max_requests,
+            max_trajectories=max_trajectories,
+            allow_large_run=allow_large_run,
+        )
+        if not permission_payload["allowed"]:
+            raise PermissionError("Stage C.1 provider run blocked by Phase 7 safety gates")
+        task_manifest_hash = str(
+            permission_payload["authorization"]["task_selection_manifest_hash"]
+        )
+        if domain_block is None or depth_block is None:
+            raise ValueError("Stage C.1 real execution requires --domain-block and --depth-block")
+        payload = run_stage_c1_block(
+            config=config,
+            provider=provider,
+            plan=plan,
+            tasks=tasks,
+            output_dir=output_dir,
+            domain_block=domain_block,
+            depth_block=depth_block,
+            max_requests=int(max_requests or config.request_ceiling or 0),
+            max_tokens=int(max_tokens or config.token_ceiling or 0),
+            max_cost=float(max_cost or config.cost_ceiling or 0.0),
+        )
+        final_summary = summarize_stage_c1(config, provider, plan, output_dir)
+        final_manifest = write_pilot_manifest(config, provider, plan, status="completed")
+        final_manifest.completed_requests = int(final_summary["actual_requests"])
+        final_manifest.cached_requests = int(final_summary["cached_executions"])
+        final_manifest.failed_requests = int(final_summary["failed_requests"])
+        final_manifest.actual_tokens = int(final_summary["total_tokens"])
+        final_manifest.token_derived_cost_usd = Decimal(
+            str(final_summary["token_derived_cost_usd"])
+        )
+        final_manifest.provider_reported_cost_usd = None
+        final_manifest.billed_cost_usd = None
+        final_manifest.cost_reconciliation_status = cast(
+            CostReconciliationStatus,
+            str(final_summary["cost_reconciliation_status"]),
+        )
+        final_manifest.pricing_table_version = str(final_summary["pricing_table_version"])
+        write_json_atomic(
+            output_dir / "pilot_manifest.json", final_manifest.model_dump(mode="json")
+        )
+        return {
+            **payload,
+            "task_selection_manifest_hash": task_manifest_hash,
+            "final_summary": final_summary,
+            "provider_calls_performed": int(final_summary["actual_requests"]),
+            "output_dir": str(output_dir),
+        }
     output_dir = _output_dir(config)
     manifest = write_pilot_manifest(
         config, provider, plan, status="dry_run" if dry_run else "planned"
@@ -773,6 +924,40 @@ def _config_provider_plan(
     provider = load_pilot_provider_config(config.provider_config)
     plan = estimate_pilot_plan(config, provider, task_count=len(_selected_tasks(config)))
     return config, provider, plan
+
+
+def _stage_c1_adjusted_plan(
+    config: PilotExperimentConfig,
+    provider: PilotProviderConfig,
+    plan: PilotPlan,
+) -> PilotPlan:
+    request_count = (
+        len(config.task_ids)
+        * len(config.architectures)
+        * len(config.behavior_conditions)
+        * len(config.attacker_conditions)
+        * len(config.oversight_conditions)
+        * len(config.seeds)
+        * sum(3 if int(depth) == 1 else 4 for depth in config.delegation_depths)
+    )
+    estimated_input_tokens = request_count * provider.estimated_input_tokens_per_request
+    estimated_output_tokens = request_count * provider.estimated_output_tokens_per_request
+    estimated_cost = (
+        estimated_input_tokens / 1000.0 * provider.estimated_cost_per_1k_input_tokens
+        + estimated_output_tokens / 1000.0 * provider.estimated_cost_per_1k_output_tokens
+    )
+    return plan.model_copy(
+        update={
+            "planned_requests": request_count,
+            "estimated_input_tokens": estimated_input_tokens,
+            "estimated_output_tokens": estimated_output_tokens,
+            "estimated_total_tokens": estimated_input_tokens + estimated_output_tokens,
+            "estimated_cost": estimated_cost,
+            "maximum_possible_cost": estimated_cost * (1.0 + float(provider.max_retries)),
+            "storage_estimate_mb": round(max(0.01, request_count * 0.02), 4),
+            "configuration_hash": config_hash(config),
+        }
+    )
 
 
 def _selected_tasks(config: PilotExperimentConfig) -> list[BenchmarkTask]:

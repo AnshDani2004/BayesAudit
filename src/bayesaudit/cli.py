@@ -316,6 +316,11 @@ def main() -> None:
     measurement_pilot = subparsers.add_parser("run-measurement-pilot")
     measurement_pilot.add_argument("--config", type=Path, required=True)
     measurement_pilot.add_argument("--dry-run", action="store_true")
+    measurement_pilot.add_argument(
+        "--domain-block", choices=["privacy", "authorization", "evidence"]
+    )
+    measurement_pilot.add_argument("--depth-block", type=int, choices=[1, 2])
+    _add_provider_ceiling_args(measurement_pilot)
 
     scorer_validation = subparsers.add_parser("evaluate-real-scorers")
     scorer_validation.add_argument("--config", type=Path, required=True)
@@ -692,7 +697,18 @@ def main() -> None:
             architecture_block=args.architecture_block,
         )
     elif args.command == "run-measurement-pilot" or args.command == "evaluate-real-scorers":
-        payload = run_measurement_pilot(args.config, dry_run=getattr(args, "dry_run", True))
+        payload = run_measurement_pilot(
+            args.config,
+            dry_run=getattr(args, "dry_run", True),
+            allow_provider_calls=getattr(args, "allow_provider_calls", False),
+            max_cost=getattr(args, "max_cost", None),
+            max_tokens=getattr(args, "max_tokens", None),
+            max_requests=getattr(args, "max_requests", None),
+            max_trajectories=getattr(args, "max_trajectories", None),
+            allow_large_run=getattr(args, "allow_large_run", False),
+            domain_block=getattr(args, "domain_block", None),
+            depth_block=getattr(args, "depth_block", None),
+        )
     elif args.command == "build-real-annotation-sample":
         payload = build_real_annotation_sample(args.config)
     elif (
