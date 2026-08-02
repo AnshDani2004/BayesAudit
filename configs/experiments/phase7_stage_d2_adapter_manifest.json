@@ -1,7 +1,7 @@
 {
   "adapter_count": 3,
-  "adapter_manifest_hash": "b6752fe61d51c3be6406231ed313efe8e635ac718747fac6875cc6d9e4b1ac70",
-  "current_commit": "725688e",
+  "adapter_manifest_hash": "c83c49a56b77dec579be6cb138753f88addc519202e0fba29c83343b2cad845f",
+  "current_commit": "55694b2",
   "feature_adapters_created": [
     "constant_smoke__phase7_stage_d2_runtime_to_phase5_v1",
     "rule_based_monitor_v1__phase7_stage_d2_runtime_to_phase5_v1",
@@ -9,10 +9,10 @@
   ],
   "records": [
     {
-      "adapter_hash": "83f34e59b2f53b5f98c46d773fb9621035558ecd8118baf99a49005a45a06ab4",
+      "adapter_hash": "a97b6eaff4cb39e32b0a2925ed23a41d8e7cfd3b386535d0892e630ec49e1d6f",
       "adapter_id": "constant_smoke__phase7_stage_d2_runtime_to_phase5_v1",
       "adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
-      "current_commit": "725688e",
+      "current_commit": "55694b2",
       "frozen_before_scoring": true,
       "imputation_rules": {
         "approval_language_indicator": "observable_constraint_proxy_only",
@@ -35,10 +35,10 @@
       "uses_target_labels": false
     },
     {
-      "adapter_hash": "9f1495dec4dfa89ba4dbe0a993de330f19b89831cb709e7c3f2e8155a80e9adc",
+      "adapter_hash": "51b8d09712269edfd2ae5c399da8b91b498146d8433c5fb0af729d62395e12d4",
       "adapter_id": "rule_based_monitor_v1__phase7_stage_d2_runtime_to_phase5_v1",
       "adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
-      "current_commit": "725688e",
+      "current_commit": "55694b2",
       "frozen_before_scoring": true,
       "imputation_rules": {
         "approval_language_indicator": "observable_constraint_proxy_only",
@@ -61,10 +61,10 @@
       "uses_target_labels": false
     },
     {
-      "adapter_hash": "6e399869cc8aa26859cc309876b95366c169fc1c98e1000d8cd62aa02e08a414",
+      "adapter_hash": "afe1f2177ad5c6de8390fb3b7c051c464e0d3b160d8151eb85c3bf3fb74db9f7",
       "adapter_id": "logistic_smoke__phase7_stage_d2_runtime_to_phase5_v1",
       "adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
-      "current_commit": "725688e",
+      "current_commit": "55694b2",
       "frozen_before_scoring": true,
       "imputation_rules": {
         "approval_language_indicator": "observable_constraint_proxy_only",

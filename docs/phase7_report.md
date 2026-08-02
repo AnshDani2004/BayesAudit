@@ -1621,20 +1621,20 @@ Final artifact hashes:
 
 | Artifact | Hash |
 |---|---|
-| Monitor inventory | `2b1c13c4c8b71514ea5e614eaa82f1c6ee8c0b1c52f802018c06296f3ca589af` |
-| Monitor manifest | `1bd33d425a4a8749c37419288f71fa70e7bf89fdfc21f27303b739df07721d69` |
-| Feature compatibility | `26382ba3e880e8e616e70bed5d632f850667c4b489e41218ba618ec9b15ccae4` |
-| Adapter manifest | `b6752fe61d51c3be6406231ed313efe8e635ac718747fac6875cc6d9e4b1ac70` |
-| Cohort manifest | `246ea591bd0917c4920c93b7e5aab4224f986f13bb6f7efb53164c71d00834a8` |
-| Real-negative metrics | `dbad31519fc17538e454bc482d9ad6ddd8334c6139bc9130721c383c6abcb292` |
-| Abstention metrics | `f98d80e9f9b352f9bb4de7a9778d99222cd9c18b2a03a956a788273c53f9a586` |
-| Negative calibration | `f76892e738d9b591dfc002807b176bb5605f31a245844f76f0070984571f3620` |
-| Score shift | `fc2503fb98a458e0a3f2b0abf40458f192c313db31b5dd6dc4f3f9e38a3eeaa4` |
-| Feature drift | `fba2f382db1c78c83b8ed13b41f33d45ff146496484f7881f66c2c7c106bc99a` |
-| Monitor comparison | `0ef4abe82ba442d8053dad36a119a7efa04d9067fadfd7c42c98a45bad8d22fd` |
-| Stage E recommendation | `d7c3284c9d62fc6538139a16f8f5054caddb441402879a866a9ee7cbac354859` |
-| Stage D.2 decision | `6d9c9bfd5aa1ae84425b8cde5bc8d1977c8875439b61f583dba720e82da0b842` |
-| Stage E readiness | `fbe0db0dfd1e3baa810037b909aea145f3759abc5e20c5f8aa5534f0285b7c46` |
+| Monitor inventory | `494a3cef8d82a7e8c91298bcb2857d8d499cab53d5988d3ed0c1c637fe7b21ce` |
+| Monitor manifest | `17c13f7011761cf1d81c4f71a7e04eb8efd4c0706a7390d2a59531dbe3973420` |
+| Feature compatibility | `cabf5c0dcf866fc265ae47624f408c2e819909be83280955fb0a9c913e77d708` |
+| Adapter manifest | `c83c49a56b77dec579be6cb138753f88addc519202e0fba29c83343b2cad845f` |
+| Cohort manifest | `30a998b56dc8cf1100a93a0c7e03c5299c4d5736ba6ef7e50ee6f7338b6f15c9` |
+| Real-negative metrics | `9fb3231e0a4b545e4ef90ea5a15dcbac907fa408889818b17e47c4e6cae0f7df` |
+| Abstention metrics | `301c8667e120edff2c3517466cda77d3c71d3f8c4d2b335d95b4d1284d7e3c72` |
+| Negative calibration | `83707462b7e7ee4bd0b4a53b02f758e867ef375a4f60f38d0380cba4f18e743c` |
+| Score shift | `d6a8620118e2aecffa01e4c172c1248d6d9b3bdc05f196ab1605597f2f2e6150` |
+| Feature drift | `fc69f1c6ead76de698671b2c507d57383ef27172fd3f4c1feda53cd4c4ba01b6` |
+| Monitor comparison | `f1cfcb1ce26c9ebcd28740b4f04f96161b294380954a76043d9ab728224ac0fb` |
+| Stage E recommendation | `f0b47a750244b88e20c37c92a5c41dad5bf8154d7c3dd698c6a43d408cb3e5bb` |
+| Stage D.2 decision | `2cdef0c27b3b1d6416afc320a5f58189e08e69a1248c53c7e5aeb89eb0db31df` |
+| Stage E readiness | `235e30a6920af0aaf164d08f87e5b59b686ab95fb9e53e81ae176ec874ba9654` |
 
 Stage D.2 stops here. Stage E, strategic attackers, benchmark freeze, and Phase 8
 remain outside this run.

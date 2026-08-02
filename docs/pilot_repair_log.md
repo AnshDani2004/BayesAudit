@@ -221,13 +221,13 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Abstention on the primary real-negative cohort: coverage `1.0` and abstention rate `0.0` for all four evaluated monitors.
 - Calibration interpretation: negative-outcome diagnostic only; full calibration, calibration slope, positive-class calibration, recall, precision, AUROC, PR-AUC, and prevention claims remain unsupported.
 - Feature drift: `27` Phase 5 features audited; `12` negligible, `5` mild, `7` moderate, `3` severe, `0` unscorable, `0` unseen categories, `887` range violations. Drift is carried as a Stage E limitation and does not invalidate D.2 scores.
-- Monitor inventory hash: `2b1c13c4c8b71514ea5e614eaa82f1c6ee8c0b1c52f802018c06296f3ca589af`
-- Monitor manifest hash: `1bd33d425a4a8749c37419288f71fa70e7bf89fdfc21f27303b739df07721d69`
-- Feature compatibility hash: `26382ba3e880e8e616e70bed5d632f850667c4b489e41218ba618ec9b15ccae4`
-- Score shift hash: `fc2503fb98a458e0a3f2b0abf40458f192c313db31b5dd6dc4f3f9e38a3eeaa4`
-- Feature drift hash: `fba2f382db1c78c83b8ed13b41f33d45ff146496484f7881f66c2c7c106bc99a`
-- Decision hash: `6d9c9bfd5aa1ae84425b8cde5bc8d1977c8875439b61f583dba720e82da0b842`
-- Stage E readiness hash: `fbe0db0dfd1e3baa810037b909aea145f3759abc5e20c5f8aa5534f0285b7c46`
+- Monitor inventory hash: `494a3cef8d82a7e8c91298bcb2857d8d499cab53d5988d3ed0c1c637fe7b21ce`
+- Monitor manifest hash: `17c13f7011761cf1d81c4f71a7e04eb8efd4c0706a7390d2a59531dbe3973420`
+- Feature compatibility hash: `cabf5c0dcf866fc265ae47624f408c2e819909be83280955fb0a9c913e77d708`
+- Score shift hash: `d6a8620118e2aecffa01e4c172c1248d6d9b3bdc05f196ab1605597f2f2e6150`
+- Feature drift hash: `fc69f1c6ead76de698671b2c507d57383ef27172fd3f4c1feda53cd4c4ba01b6`
+- Decision hash: `2cdef0c27b3b1d6416afc320a5f58189e08e69a1248c53c7e5aeb89eb0db31df`
+- Stage E readiness hash: `235e30a6920af0aaf164d08f87e5b59b686ab95fb9e53e81ae176ec874ba9654`
 - Monitor stack decision: `monitor_stack_ready_for_stage_e`
 - Stage E readiness decision: `ready_for_stage_e_with_monitor_limitations`
 - Benchmark status: `not_ready_to_freeze`

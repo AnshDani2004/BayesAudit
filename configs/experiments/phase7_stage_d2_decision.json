@@ -25,8 +25,8 @@
     "thresholds_frozen": true,
     "workflow_invalid_behavior_characterized": true
   },
-  "current_commit": "725688e",
-  "decision_hash": "6d9c9bfd5aa1ae84425b8cde5bc8d1977c8875439b61f583dba720e82da0b842",
+  "current_commit": "55694b2",
+  "decision_hash": "2cdef0c27b3b1d6416afc320a5f58189e08e69a1248c53c7e5aeb89eb0db31df",
   "monitor_stack_decision": "monitor_stack_ready_for_stage_e",
   "monitor_training_was_run": false,
   "phase8_started": false,

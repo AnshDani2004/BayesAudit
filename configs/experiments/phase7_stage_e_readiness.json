@@ -1,11 +1,11 @@
 {
   "benchmark_status": "not_ready_to_freeze",
-  "current_commit": "725688e",
+  "current_commit": "55694b2",
   "monitor_stack_decision": "monitor_stack_ready_for_stage_e",
   "new_external_human_annotation_occurred": false,
   "new_oversight_provider_experiments_were_run": false,
   "phase8_started": false,
-  "readiness_hash": "fbe0db0dfd1e3baa810037b909aea145f3759abc5e20c5f8aa5534f0285b7c46",
+  "readiness_hash": "235e30a6920af0aaf164d08f87e5b59b686ab95fb9e53e81ae176ec874ba9654",
   "schema_version": "bayesaudit.phase7.stage_d2.v1.stage_e_readiness",
   "stage_e_readiness": "ready_for_stage_e_with_monitor_limitations",
   "stage_e_was_run": false,

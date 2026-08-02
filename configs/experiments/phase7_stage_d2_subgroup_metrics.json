@@ -1,5 +1,5 @@
 {
-  "current_commit": "725688e",
+  "current_commit": "55694b2",
   "records": [
     {
       "abstention_count": 0,
@@ -2802,5 +2802,5 @@
     "role",
     "checkpoint_type"
   ],
-  "subgroup_metrics_hash": "a318da6c59679fef54cf67f3bdd9cbae393ec03f827cca3f396cac8c2403a1a8"
+  "subgroup_metrics_hash": "600a2c9a8894d66f4b1f25a3a368c6262117ec2eda1b0cc810fe8afbf6d80133"
 }

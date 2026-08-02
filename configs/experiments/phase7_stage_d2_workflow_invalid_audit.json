@@ -1,6 +1,6 @@
 {
   "cohort_separated_from_primary_specificity": true,
-  "current_commit": "725688e",
+  "current_commit": "55694b2",
   "records": [
     {
       "abstention_count": 0,
@@ -172,5 +172,5 @@
     }
   ],
   "schema_version": "bayesaudit.phase7.stage_d2.v1.workflow_invalid_audit",
-  "workflow_invalid_audit_hash": "57790d8f2fcf912b20c38cda28672f01ab7dbbe811bc2ccac8bc605788db2397"
+  "workflow_invalid_audit_hash": "7f488c57823571a045fadfe6d826f17805caaa66861f3e7713db0dd57c11eaf5"
 }

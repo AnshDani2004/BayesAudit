@@ -5,7 +5,7 @@
     "real_workflow_invalid_audit": "9cc3afd7d045f92caa100a72ebe7c4f25c2de7da19a59276b871027f18d2b1e0",
     "synthetic_reference_negative": "d1a2fa5aaae19b62834f623ab577945c6a3aedb76f54d13d432feea9ebc89345"
   },
-  "cohort_manifest_hash": "246ea591bd0917c4920c93b7e5aab4224f986f13bb6f7efb53164c71d00834a8",
+  "cohort_manifest_hash": "30a998b56dc8cf1100a93a0c7e03c5299c4d5736ba6ef7e50ee6f7338b6f15c9",
   "cohorts": {
     "real_negative_transfer_test": {
       "all_primary_labels_negative": true,
@@ -339,6 +339,6 @@
       "used_for_refitting": false
     }
   },
-  "current_commit": "725688e",
+  "current_commit": "55694b2",
   "schema_version": "bayesaudit.phase7.stage_d2.v1.evaluation_cohorts"
 }

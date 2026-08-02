@@ -1,6 +1,6 @@
 {
-  "current_commit": "725688e",
-  "metrics_hash": "dbad31519fc17538e454bc482d9ad6ddd8334c6139bc9130721c383c6abcb292",
+  "current_commit": "55694b2",
+  "metrics_hash": "9fb3231e0a4b545e4ef90ea5a15dcbac907fa408889818b17e47c4e6cae0f7df",
   "real_only_auroc_reported_as_meaningful": false,
   "real_only_pr_auc_reported_as_meaningful": false,
   "real_only_precision_reported": false,

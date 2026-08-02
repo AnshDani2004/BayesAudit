@@ -599,6 +599,8 @@ def build_monitor_manifest(
             "monitor_version": monitor["monitor_version"],
             "monitor_family": monitor["monitor_family"],
             "parameter_hash": monitor["fitted_parameter_hash"],
+            "frozen_parameters": monitor["frozen_parameters"],
+            "expected_feature_names": monitor["expected_feature_names"],
             "feature_view_version": RUNTIME_FEATURE_VIEW_VERSION,
             "feature_adapter_version": adapter["adapter_version"] if adapter else "none",
             "feature_adapter_hash": adapter["adapter_hash"] if adapter else None,
@@ -1495,6 +1497,7 @@ def _monitor_inventory_row(
     current_commit: str,
     feature_names: list[str] | None = None,
     calibration_hash: str | None = None,
+    frozen_parameters: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     row = {
         "monitor_id": monitor_id,
@@ -1520,6 +1523,7 @@ def _monitor_inventory_row(
         "real_evaluation_eligibility": eligible,
         "exclusion_reason": exclusion_reason,
         "expected_feature_names": feature_names or [],
+        "frozen_parameters": frozen_parameters or {},
         "current_commit": current_commit,
     }
     row["inventory_record_hash"] = canonical_json_hash(row)
@@ -1573,6 +1577,7 @@ def _artifact_monitor_row(
         current_commit=current_commit,
         feature_names=[str(name) for name in artifact.get("feature_names", [])],
         calibration_hash=calibration_hash,
+        frozen_parameters=artifact.get("parameters", {}),
     )
 
 
@@ -1654,16 +1659,16 @@ def score_monitor(
         if monitor_id == "constant_negative_v1":
             return 0.0, None, 0.0, None
         if monitor_id == "constant_smoke":
-            artifact = read_json(CONSTANT_MONITOR_ARTIFACT)
-            return _clip(float(artifact["parameters"].get("prevalence", 0.0))), None, 0.0, None
+            parameters = _monitor_parameters(monitor, CONSTANT_MONITOR_ARTIFACT)
+            return _clip(float(parameters.get("prevalence", 0.0))), None, 0.0, None
         if monitor_id == "rule_based_monitor_v1":
             score = _sigmoid(_rule_score(features))
             return score, None, _ood_score(features), None
         if monitor_id == "logistic_smoke":
-            artifact = read_json(LOGISTIC_MONITOR_ARTIFACT)
-            weights = [float(value) for value in artifact["parameters"].get("weights", [])]
-            bias = float(artifact["parameters"].get("bias", 0.0))
-            feature_names = [str(name) for name in artifact.get("feature_names", [])]
+            parameters = _monitor_parameters(monitor, LOGISTIC_MONITOR_ARTIFACT)
+            weights = [float(value) for value in parameters.get("weights", [])]
+            bias = float(parameters.get("bias", 0.0))
+            feature_names = [str(name) for name in monitor.get("expected_feature_names", [])]
             value = bias + sum(
                 weight * float(features.get(name, 0.0) or 0.0)
                 for weight, name in zip(weights, feature_names, strict=False)
@@ -1680,8 +1685,11 @@ def score_synthetic_reference(
     *, cohorts: dict[str, Any], monitor_manifest: dict[str, Any]
 ) -> list[dict[str, Any]]:
     monitor_records = monitor_manifest.get("records", [])
+    synthetic_examples = load_synthetic_reference_examples()
+    if not synthetic_examples:
+        synthetic_examples = _fallback_synthetic_reference_examples(cohorts)
     rows = []
-    for example in load_synthetic_reference_examples():
+    for example in synthetic_examples:
         features = example["feature_payload"]
         for monitor in monitor_records:
             score, uncertainty, ood_score, runtime_error = score_monitor(monitor, features)
@@ -1721,6 +1729,32 @@ def load_synthetic_reference_examples() -> list[dict[str, Any]]:
             }
         )
     return records
+
+
+def _fallback_synthetic_reference_examples(cohorts: dict[str, Any]) -> list[dict[str, Any]]:
+    example_ids = cohorts.get("cohorts", {}).get("synthetic_reference_negative", {}).get(
+        "example_ids",
+        [],
+    )
+    return [
+        {
+            "example_id": str(example_id),
+            "feature_payload": {name: 0.0 for name in PHASE5_FEATURE_NAMES},
+        }
+        for example_id in example_ids
+    ]
+
+
+def _monitor_parameters(monitor: dict[str, Any], artifact_path: Path) -> dict[str, Any]:
+    parameters = monitor.get("frozen_parameters", {})
+    if isinstance(parameters, dict) and parameters:
+        return parameters
+    if artifact_path.exists():
+        artifact = read_json(artifact_path)
+        artifact_parameters = artifact.get("parameters", {})
+        if isinstance(artifact_parameters, dict):
+            return artifact_parameters
+    return {}
 
 
 def real_negative_feature_payloads(cohorts: dict[str, Any]) -> list[dict[str, float | int | bool]]:

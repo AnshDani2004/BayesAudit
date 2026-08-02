@@ -3,11 +3,11 @@
     "constant_negative_v1",
     "constant_smoke"
   ],
-  "current_commit": "725688e",
+  "current_commit": "55694b2",
   "primary_candidates": [
     "logistic_smoke"
   ],
-  "recommendation_hash": "d7c3284c9d62fc6538139a16f8f5054caddb441402879a866a9ee7cbac354859",
+  "recommendation_hash": "f0b47a750244b88e20c37c92a5c41dad5bf8154d7c3dd698c6a43d408cb3e5bb",
   "records": [
     {
       "abstention_rate": 0.0,

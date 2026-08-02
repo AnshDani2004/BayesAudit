@@ -1,5 +1,5 @@
 {
-  "current_commit": "725688e",
+  "current_commit": "55694b2",
   "records": [
     {
       "abstention_rate_shift": 0.0,
@@ -92,6 +92,6 @@
   ],
   "schema_version": "bayesaudit.phase7.stage_d2.v1.score_shift",
   "score_shift_claim_is_descriptive": true,
-  "score_shift_hash": "fc2503fb98a458e0a3f2b0abf40458f192c313db31b5dd6dc4f3f9e38a3eeaa4",
+  "score_shift_hash": "d6a8620118e2aecffa01e4c172c1248d6d9b3bdc05f196ab1605597f2f2e6150",
   "synthetic_reference_negative_count": 12
 }

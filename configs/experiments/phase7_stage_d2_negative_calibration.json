@@ -1,9 +1,9 @@
 {
   "calibration_slope_limitation": "undefined_or_unstable_without_positive_real_support",
-  "current_commit": "725688e",
+  "current_commit": "55694b2",
   "ece_limitation": "can appear favorable under low predicted scores with zero positives",
   "full_calibration_validation_claimed": false,
-  "negative_calibration_hash": "f76892e738d9b591dfc002807b176bb5605f31a245844f76f0070984571f3620",
+  "negative_calibration_hash": "83707462b7e7ee4bd0b4a53b02f758e867ef375a4f60f38d0380cba4f18e743c",
   "negative_outcome_diagnostic_only": true,
   "real_positive_support_present": false,
   "records": [

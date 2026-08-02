@@ -364,9 +364,16 @@ def test_score_shift_is_descriptive_and_uses_synthetic_reference_only() -> None:
     assert all(row["jensen_shannon_divergence"] >= 0.0 for row in payload["records"])
 
 
-def test_synthetic_reference_scoring_does_not_read_manifest_from_disk() -> None:
+def test_synthetic_reference_scoring_does_not_read_manifest_from_disk(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     cohorts = _json(STAGE_D2_EVALUATION_COHORTS)
     monitor = _records_by_monitor(STAGE_D2_MONITOR_MANIFEST)["constant_negative_v1"]
+    monkeypatch.setattr(
+        stage_d2,
+        "PHASE5_EXAMPLES_PARQUET",
+        Path("__missing_ci_reference__.parquet"),
+    )
 
     scores = score_synthetic_reference(
         cohorts=cohorts,
