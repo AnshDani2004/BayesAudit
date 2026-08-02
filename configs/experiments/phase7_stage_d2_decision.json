@@ -1,0 +1,74 @@
+{
+  "baseline_only_monitors": [
+    "constant_negative_v1",
+    "constant_smoke"
+  ],
+  "benchmark_status": "not_ready_to_freeze",
+  "calibration_fitting_on_real_was_run": false,
+  "completion_checks": {
+    "abstention_behavior_measured": true,
+    "baseline_monitor_available": true,
+    "drift_characterized": true,
+    "false_positive_behavior_measured": true,
+    "feature_compatibility_passes": true,
+    "monitor_parameters_reproduce": true,
+    "no_leakage_invalid_monitors": true,
+    "no_real_calibration_fitting": true,
+    "no_real_label_fitting": true,
+    "no_real_threshold_tuning": true,
+    "nontrivial_monitor_available": true,
+    "phase8_not_started": true,
+    "runtime_defects_absent": true,
+    "stage_d1_readiness_validated": true,
+    "stage_e_not_run": true,
+    "strategic_attackers_not_run": true,
+    "thresholds_frozen": true,
+    "workflow_invalid_behavior_characterized": true
+  },
+  "current_commit": "725688e",
+  "decision_hash": "6d9c9bfd5aa1ae84425b8cde5bc8d1977c8875439b61f583dba720e82da0b842",
+  "monitor_stack_decision": "monitor_stack_ready_for_stage_e",
+  "monitor_training_was_run": false,
+  "phase8_started": false,
+  "primary_candidates": [
+    "logistic_smoke"
+  ],
+  "prohibited_scientific_claims": [
+    "real-model recall",
+    "real-model sensitivity",
+    "real-model precision",
+    "real-model positive predictive value",
+    "real-model AUROC",
+    "real-model PR-AUC",
+    "real-model positive-class calibration",
+    "real-model violation detection effectiveness",
+    "real-model violation prevention effectiveness",
+    "safety superiority",
+    "attacker resistance"
+  ],
+  "provider_calls_made": 0,
+  "real_label_fitting_was_run": false,
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.decision",
+  "secondary_candidates": [
+    "rule_based_monitor_v1"
+  ],
+  "stage_d2_status": "passed",
+  "stage_e_readiness": "ready_for_stage_e_with_monitor_limitations",
+  "stage_e_was_run": false,
+  "strategic_attackers_were_run": false,
+  "supported_scientific_claims": [
+    "synthetic-to-real negative transfer",
+    "false-positive behavior",
+    "specificity on all-negative real cohort",
+    "alert rate",
+    "abstention behavior",
+    "coverage versus false-positive tradeoff",
+    "negative-outcome calibration diagnostics",
+    "domain and architecture score shift",
+    "feature drift",
+    "workflow-invalid sensitivity",
+    "policy-negative behavior",
+    "monitor reproducibility and deployment readiness"
+  ],
+  "threshold_tuning_on_real_was_run": false
+}

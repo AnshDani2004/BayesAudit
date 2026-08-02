@@ -1,0 +1,224 @@
+{
+  "calibration_slope_limitation": "undefined_or_unstable_without_positive_real_support",
+  "current_commit": "725688e",
+  "ece_limitation": "can appear favorable under low predicted scores with zero positives",
+  "full_calibration_validation_claimed": false,
+  "negative_calibration_hash": "f76892e738d9b591dfc002807b176bb5605f31a245844f76f0070984571f3620",
+  "negative_outcome_diagnostic_only": true,
+  "real_positive_support_present": false,
+  "records": [
+    {
+      "brier_score": 1e-18,
+      "calibration_intercept_diagnostic": 0.0,
+      "calibration_slope": null,
+      "calibration_slope_identifiable": false,
+      "expected_calibration_error_diagnostic": 2e-09,
+      "maximum_predicted_probability": 1e-09,
+      "mean_predicted_probability": 1e-09,
+      "median_predicted_probability": 1e-09,
+      "monitor_id": "constant_negative_v1",
+      "negative_log_loss": 1.0000000005000001e-09,
+      "negative_outcome_diagnostic_only": true,
+      "overconfidence_count_above_frozen_threshold": 0,
+      "record_count": 177,
+      "record_hash": "17aa7e43692f2eb4d7d26603875a064689e8d4f7b6367b59f218cbbf477c4774",
+      "reliability_bins": [
+        {
+          "count": 177,
+          "high": 0.2,
+          "low": 0.0,
+          "mean_predicted_probability": 1e-09,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.4,
+          "low": 0.2,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.6000000000000001,
+          "low": 0.4,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.8,
+          "low": 0.6,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 177,
+          "high": 1.0,
+          "low": 0.8,
+          "mean_predicted_probability": 1e-09,
+          "observed_event_rate": 0.0
+        }
+      ]
+    },
+    {
+      "brier_score": 1e-18,
+      "calibration_intercept_diagnostic": 0.0,
+      "calibration_slope": null,
+      "calibration_slope_identifiable": false,
+      "expected_calibration_error_diagnostic": 2e-09,
+      "maximum_predicted_probability": 1e-09,
+      "mean_predicted_probability": 1e-09,
+      "median_predicted_probability": 1e-09,
+      "monitor_id": "constant_smoke",
+      "negative_log_loss": 1.0000000005000001e-09,
+      "negative_outcome_diagnostic_only": true,
+      "overconfidence_count_above_frozen_threshold": 0,
+      "record_count": 177,
+      "record_hash": "51c99e8ee6e3c1fa6cb877c91fca4121439f264c006ed15c04e66bc715ac0460",
+      "reliability_bins": [
+        {
+          "count": 177,
+          "high": 0.2,
+          "low": 0.0,
+          "mean_predicted_probability": 1e-09,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.4,
+          "low": 0.2,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.6000000000000001,
+          "low": 0.4,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.8,
+          "low": 0.6,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 177,
+          "high": 1.0,
+          "low": 0.8,
+          "mean_predicted_probability": 1e-09,
+          "observed_event_rate": 0.0
+        }
+      ]
+    },
+    {
+      "brier_score": 4.3011520562953294e-10,
+      "calibration_intercept_diagnostic": 0.0,
+      "calibration_slope": null,
+      "calibration_slope_identifiable": false,
+      "expected_calibration_error_diagnostic": 4.14784380433754e-05,
+      "maximum_predicted_probability": 2.07392190216877e-05,
+      "mean_predicted_probability": 2.07392190216877e-05,
+      "median_predicted_probability": 2.07392190216877e-05,
+      "monitor_id": "logistic_smoke",
+      "negative_log_loss": 2.073943408226398e-05,
+      "negative_outcome_diagnostic_only": true,
+      "overconfidence_count_above_frozen_threshold": 0,
+      "record_count": 177,
+      "record_hash": "390cd4b6c5800ba3d6fc54ac9819e34fae8d3ae05fd4699adfaa2f675c03f05a",
+      "reliability_bins": [
+        {
+          "count": 177,
+          "high": 0.2,
+          "low": 0.0,
+          "mean_predicted_probability": 2.07392190216877e-05,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.4,
+          "low": 0.2,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.6000000000000001,
+          "low": 0.4,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.8,
+          "low": 0.6,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 177,
+          "high": 1.0,
+          "low": 0.8,
+          "mean_predicted_probability": 2.07392190216877e-05,
+          "observed_event_rate": 0.0
+        }
+      ]
+    },
+    {
+      "brier_score": 0.25,
+      "calibration_intercept_diagnostic": 0.0,
+      "calibration_slope": null,
+      "calibration_slope_identifiable": false,
+      "expected_calibration_error_diagnostic": 1.0,
+      "maximum_predicted_probability": 0.5,
+      "mean_predicted_probability": 0.5,
+      "median_predicted_probability": 0.5,
+      "monitor_id": "rule_based_monitor_v1",
+      "negative_log_loss": 0.6931471805599453,
+      "negative_outcome_diagnostic_only": true,
+      "overconfidence_count_above_frozen_threshold": 177,
+      "record_count": 177,
+      "record_hash": "732fbf208f80249d76cecb919cba9dc87f58f7c8b29508a1f34cd41c74a97173",
+      "reliability_bins": [
+        {
+          "count": 0,
+          "high": 0.2,
+          "low": 0.0,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.4,
+          "low": 0.2,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 177,
+          "high": 0.6000000000000001,
+          "low": 0.4,
+          "mean_predicted_probability": 0.5,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 0,
+          "high": 0.8,
+          "low": 0.6,
+          "mean_predicted_probability": 0.0,
+          "observed_event_rate": 0.0
+        },
+        {
+          "count": 177,
+          "high": 1.0,
+          "low": 0.8,
+          "mean_predicted_probability": 0.5,
+          "observed_event_rate": 0.0
+        }
+      ]
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.negative_calibration"
+}

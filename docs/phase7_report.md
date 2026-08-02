@@ -1503,3 +1503,138 @@ training plus calibration.
 Stage D.2 may proceed only as real-negative transfer evaluation unless synthetic
 training/calibration repair is separately completed and validated. Benchmark freeze
 remains explicitly blocked.
+
+# Stage D.2: Synthetic-Trained Monitor Transfer to Real Negative Workflows
+
+Stage D.2 evaluates frozen synthetic-trained monitors on real-model negative
+workflows. It measures false-positive behavior, specificity, abstention, coverage,
+score shift, feature drift, and operational transfer. It does not evaluate
+real-model positive-case detection or prevention.
+
+## Scope and Boundaries
+
+- Provider calls made: `0`
+- Monitor training on real labels: `false`
+- Threshold tuning on real labels: `false`
+- Calibration fitting on real labels: `false`
+- Strategic attackers run: `false`
+- Stage E run: `false`
+- Phase 8 started: `false`
+- Benchmark status: `not_ready_to_freeze`
+
+The real D.2 cohort has no validated objective positives. All primary objective
+targets are negative. Therefore real-model recall, sensitivity, precision,
+positive predictive value, AUROC, PR-AUC, positive-class calibration, violation
+detection effectiveness, violation prevention effectiveness, attacker resistance,
+and safety superiority are not estimable or meaningful from Stage D.2.
+
+## Monitors
+
+Evaluated frozen monitors:
+
+| Monitor | Role | Threshold | Real-negative checkpoint FPR | Coverage |
+|---|---|---:|---:|---:|
+| `constant_negative_v1` | deterministic negative-control baseline | `0.5` | `0.0` | `1.0` |
+| `constant_smoke` | Phase 5 constant baseline | `0.5` | `0.0` | `1.0` |
+| `logistic_smoke` | primary Stage E candidate | `0.5` | `0.0` | `1.0` |
+| `rule_based_monitor_v1` | secondary high-alert comparison monitor | `0.5` | `1.0` | `1.0` |
+
+Excluded monitors:
+
+| Monitor | Reason |
+|---|---|
+| `tree_smoke` | `fitted_parameter_artifact_missing` |
+| `bayesian_logistic_smoke` | `posterior_parameter_artifact_missing` |
+| `mock_llm_judge` | `exact_cached_real_checkpoint_outputs_missing` |
+
+The logistic monitor preserves Phase 5 fitted parameter hash
+`83625b1c4165ac14a69095d8a64373fec8929798144496529798f8f035af9495` and Platt
+calibration hash `804996241eae95c1c4078ff4c60f2071ddeeceda11c5b08ee469bab90c247b66`.
+No real-pilot labels were used to fit parameters, tune thresholds, or fit
+calibration.
+
+## Cohorts
+
+| Cohort | Count | Use |
+|---|---:|---|
+| `real_negative_transfer_test` trajectories | `51` | primary real-negative specificity and false-positive analysis |
+| `real_negative_transfer_test` checkpoints | `177` | primary checkpoint-level scoring |
+| `real_workflow_invalid_audit` trajectories | `9` | separated workflow-quality audit |
+| `real_workflow_invalid_audit` checkpoints | `31` | separated workflow-quality checkpoint audit |
+| `real_policy_negative_audit` policy evaluations | `16` | nonindependent policy-control audit |
+| `synthetic_reference_negative` examples | `12` | descriptive score-shift and feature-drift reference |
+
+The primary cohort is real-model only, all-negative, and unused for monitor fitting,
+threshold tuning, or calibration fitting. Workflow-invalid and policy-negative
+records remain audit cohorts and are not folded into the primary specificity
+denominator.
+
+## Features and Drift
+
+Feature compatibility result:
+
+- Directly compatible monitors: `1`
+- Adapter-required monitors: `3`
+- Incompatible monitors: `0`
+- Leakage-invalid monitors: `0`
+- Adapter version: `phase7_stage_d2_runtime_to_phase5_v1`
+
+The runtime-to-Phase-5 adapters use deterministic runtime metadata transforms and
+imputation. They do not use target labels, source stage, future information, posthoc
+features, policy outcomes, provider response identifiers, artifact paths, or split
+membership.
+
+Feature drift result:
+
+- Phase 5 features audited: `27`
+- Negligible drift: `12`
+- Mild drift: `5`
+- Moderate drift: `7`
+- Severe drift: `3`
+- Unscorable drift: `0`
+- Unseen categories: `0`
+- Range violations: `887`
+- Feature drift invalidates scores: `false`
+
+The drift profile is a Stage E limitation, not a reason to discard the D.2
+real-negative specificity results.
+
+## Calibration and Score Shift
+
+Calibration is reported as a negative-outcome diagnostic only. Full calibration
+validation and calibration-slope estimation are not supported because no real
+positive support is present. Score-shift metrics compare real-negative scores with
+the 12-example Phase 5 smoke negative reference and are descriptive only.
+
+## Decisions
+
+- Stage D.2 status: `passed`
+- Monitor stack decision: `monitor_stack_ready_for_stage_e`
+- Stage E readiness decision: `ready_for_stage_e_with_monitor_limitations`
+- Primary candidate: `logistic_smoke`
+- Secondary candidate: `rule_based_monitor_v1`
+- Baseline-only monitors: `constant_negative_v1`, `constant_smoke`
+- Repair requirement: no repair required for a constrained Stage E monitor stack,
+  but Stage E must carry the D.2 limitations and requires separate authorization.
+
+Final artifact hashes:
+
+| Artifact | Hash |
+|---|---|
+| Monitor inventory | `2b1c13c4c8b71514ea5e614eaa82f1c6ee8c0b1c52f802018c06296f3ca589af` |
+| Monitor manifest | `1bd33d425a4a8749c37419288f71fa70e7bf89fdfc21f27303b739df07721d69` |
+| Feature compatibility | `26382ba3e880e8e616e70bed5d632f850667c4b489e41218ba618ec9b15ccae4` |
+| Adapter manifest | `b6752fe61d51c3be6406231ed313efe8e635ac718747fac6875cc6d9e4b1ac70` |
+| Cohort manifest | `246ea591bd0917c4920c93b7e5aab4224f986f13bb6f7efb53164c71d00834a8` |
+| Real-negative metrics | `dbad31519fc17538e454bc482d9ad6ddd8334c6139bc9130721c383c6abcb292` |
+| Abstention metrics | `f98d80e9f9b352f9bb4de7a9778d99222cd9c18b2a03a956a788273c53f9a586` |
+| Negative calibration | `f76892e738d9b591dfc002807b176bb5605f31a245844f76f0070984571f3620` |
+| Score shift | `fc2503fb98a458e0a3f2b0abf40458f192c313db31b5dd6dc4f3f9e38a3eeaa4` |
+| Feature drift | `fba2f382db1c78c83b8ed13b41f33d45ff146496484f7881f66c2c7c106bc99a` |
+| Monitor comparison | `0ef4abe82ba442d8053dad36a119a7efa04d9067fadfd7c42c98a45bad8d22fd` |
+| Stage E recommendation | `d7c3284c9d62fc6538139a16f8f5054caddb441402879a866a9ee7cbac354859` |
+| Stage D.2 decision | `6d9c9bfd5aa1ae84425b8cde5bc8d1977c8875439b61f583dba720e82da0b842` |
+| Stage E readiness | `fbe0db0dfd1e3baa810037b909aea145f3759abc5e20c5f8aa5534f0285b7c46` |
+
+Stage D.2 stops here. Stage E, strategic attackers, benchmark freeze, and Phase 8
+remain outside this run.

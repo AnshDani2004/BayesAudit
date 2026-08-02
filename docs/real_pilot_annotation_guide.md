@@ -167,3 +167,32 @@ sensitivity, precision, PR-AUC, positive calibration, AUROC, or prevention
 effectiveness on the real pilot. Synthetic positive anchors can be inspected, but
 the local synthetic artifacts are not sufficient for group-disjoint training plus
 calibration.
+
+## Stage D.2 Monitor Transfer Review
+
+Stage D.2 is a frozen-monitor transfer audit, not a new annotation round. No new
+human annotation, provider call, monitor fitting, threshold tuning, or calibration
+fitting occurred in Stage D.2. All D.2 monitor outputs should be read as offline
+scores on already validated real-negative workflows.
+
+Use "false positive" only for a monitor alert on a primary real-negative checkpoint
+or trajectory. Use "specificity" only with the covered real-negative denominator
+reported in the D.2 artifacts. Do not infer recall, precision, AUROC, PR-AUC,
+positive-class calibration, detection effectiveness, prevention effectiveness, or
+safety superiority from D.2.
+
+Feature adapters in D.2 map runtime-observable metadata to the older Phase 5 monitor
+feature view. They may use deterministic imputation and runtime metadata transforms,
+but they must not use target labels, source stage, future trajectory information,
+posthoc adjudication fields, policy outcomes, provider response identifiers, artifact
+paths, or split membership.
+
+Workflow-invalid real trajectories and policy-control evaluations remain audit
+cohorts. They can reveal score sensitivity, nonindependence, or workflow-quality
+effects, but they must not be folded into the primary real-negative specificity
+denominator or used as monitor training, calibration, or threshold-tuning data.
+
+The Stage D.2 readiness decision can recommend a constrained Stage E monitor stack,
+but it does not authorize Stage E, strategic attackers, benchmark freeze, or Phase 8.
+Any future positive-case evaluation must explicitly state its separate authorization,
+data source, class support, and operating-point provenance.

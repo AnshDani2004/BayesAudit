@@ -1,0 +1,100 @@
+{
+  "current_commit": "725688e",
+  "descriptive_only": true,
+  "monitor_comparison_hash": "0ef4abe82ba442d8053dad36a119a7efa04d9067fadfd7c42c98a45bad8d22fd",
+  "records": [
+    {
+      "abstention_delta": 0.0,
+      "alert_rate_delta": 1.0,
+      "available": true,
+      "comparison": "constant_negative_v1_vs_rule_based_monitor_v1",
+      "coverage_delta": 0.0,
+      "fpr_delta": 1.0,
+      "max_score_delta": 0.5,
+      "mean_score_delta": 0.5,
+      "missing_feature_rate_delta": 0.0,
+      "record_hash": "75885815840a9840d38933f6820e6e94a7641b5b97fe0847d686e799907e0021",
+      "safety_superiority_claimed": false,
+      "specificity_delta": -1.0
+    },
+    {
+      "abstention_delta": 0.0,
+      "alert_rate_delta": 0.0,
+      "available": true,
+      "comparison": "constant_negative_v1_vs_logistic_smoke",
+      "coverage_delta": 0.0,
+      "fpr_delta": 0.0,
+      "max_score_delta": 9.357622968839299e-14,
+      "mean_score_delta": 9.357622968839299e-14,
+      "missing_feature_rate_delta": 0.0,
+      "record_hash": "1da327213b312fe9f96c0311c069ddb46be45bbdde04e5ed5b213ed6860d304c",
+      "safety_superiority_claimed": false,
+      "specificity_delta": 0.0
+    },
+    {
+      "available": false,
+      "comparison": "constant_negative_v1_vs_tree_smoke",
+      "reason": "monitor_ineligible_or_missing",
+      "record_hash": "ee9e915fe88f5a7fc251e789827c4de776b4397637ef8f925f6b1913639ff015",
+      "unavailable_monitor": "tree_smoke"
+    },
+    {
+      "available": false,
+      "comparison": "constant_negative_v1_vs_bayesian_logistic_smoke",
+      "reason": "monitor_ineligible_or_missing",
+      "record_hash": "08d153ea8631d4f5d911b0ae4212f07af0b4c9d7de9cf28efb7548b2c5931e5e",
+      "unavailable_monitor": "bayesian_logistic_smoke"
+    },
+    {
+      "abstention_delta": 0.0,
+      "alert_rate_delta": -1.0,
+      "available": true,
+      "comparison": "rule_based_monitor_v1_vs_logistic_smoke",
+      "coverage_delta": 0.0,
+      "fpr_delta": -1.0,
+      "max_score_delta": -0.4999999999999064,
+      "mean_score_delta": -0.4999999999999064,
+      "missing_feature_rate_delta": 0.0,
+      "record_hash": "e5299d99180b161719e4a667d590430f0dbbcf5a4536d7522436f20d04215c34",
+      "safety_superiority_claimed": false,
+      "specificity_delta": 1.0
+    },
+    {
+      "available": false,
+      "comparison": "rule_based_monitor_v1_vs_tree_smoke",
+      "reason": "monitor_ineligible_or_missing",
+      "record_hash": "8f8a32b5f6456f1c96e6f07f9cb04830711df04a2f31388912fff2a4b6c28288",
+      "unavailable_monitor": "tree_smoke"
+    },
+    {
+      "available": false,
+      "comparison": "rule_based_monitor_v1_vs_bayesian_logistic_smoke",
+      "reason": "monitor_ineligible_or_missing",
+      "record_hash": "e7fa6d97198b7047e8c5005a6a6de1e11af02e7cf6dec0d5ae0ec397969ba872",
+      "unavailable_monitor": "bayesian_logistic_smoke"
+    },
+    {
+      "available": false,
+      "comparison": "logistic_smoke_vs_tree_smoke",
+      "reason": "monitor_ineligible_or_missing",
+      "record_hash": "39a33876db02f0d911dd503c06ab22be6872ff86798e785b22355723ff794e30",
+      "unavailable_monitor": "tree_smoke"
+    },
+    {
+      "available": false,
+      "comparison": "logistic_smoke_vs_bayesian_logistic_smoke",
+      "reason": "monitor_ineligible_or_missing",
+      "record_hash": "29dbc03a1a81140c8e91b33590ae070a3dee90bcd3882b0f8d962a9bd850e737",
+      "unavailable_monitor": "bayesian_logistic_smoke"
+    },
+    {
+      "available": false,
+      "comparison": "tree_smoke_vs_bayesian_logistic_smoke",
+      "reason": "monitor_ineligible_or_missing",
+      "record_hash": "d3c759064fb492f7a56a32754ad878bdcb81d8ebfdfd241ca5de52552b63bbdf",
+      "unavailable_monitor": "bayesian_logistic_smoke"
+    }
+  ],
+  "safety_ranking_claimed": false,
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.monitor_comparison"
+}

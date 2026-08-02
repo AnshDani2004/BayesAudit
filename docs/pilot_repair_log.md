@@ -198,3 +198,38 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Benchmark status: `not_ready_to_freeze`
 - Rerun requirement: no provider rerun required; synthetic dual-track fitting/calibration requires offline repair before monitor training, calibration, OOD evaluation, strategic attackers, Stage E, or Phase 8.
 - Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+
+## P7D2-001: Synthetic-Trained Monitor Transfer to Real Negative Workflows
+
+- Date: `2026-08-02`
+- Stage: Phase 7 Stage D.2
+- Component: frozen monitor inventory, runtime-to-Phase-5 feature adapters, real-negative scoring, abstention, negative calibration diagnostics, score shift, feature drift, workflow-invalid audit, policy-negative audit, and Stage E readiness
+- Starting commit: `725688e`
+- Provider calls made: `0`
+- Stage D.1 input decision: `dataset_ready_real_negative_only`
+- Stage D.2 readiness input: `ready_for_stage_d2_real_negative_only`
+- Eligible monitors: `constant_negative_v1`, `constant_smoke`, `rule_based_monitor_v1`, `logistic_smoke`
+- Excluded monitors: `tree_smoke` (`fitted_parameter_artifact_missing`), `bayesian_logistic_smoke` (`posterior_parameter_artifact_missing`), `mock_llm_judge` (`exact_cached_real_checkpoint_outputs_missing`)
+- Feature compatibility: `1` directly compatible monitor, `3` adapter-required monitors, `0` incompatible monitors, `0` leakage-invalid monitors.
+- Feature adapters: `phase7_stage_d2_runtime_to_phase5_v1`; adapters use deterministic runtime metadata transforms and imputation, with no target labels, source stage, future information, posthoc features, or policy outcomes.
+- Threshold and calibration provenance: all evaluated thresholds remain frozen at `0.5`; logistic Platt calibration hash `804996241eae95c1c4078ff4c60f2071ddeeceda11c5b08ee469bab90c247b66` is preserved but not refit on real labels.
+- Primary real-negative cohort: `51` trajectories and `177` runtime-observable checkpoints; all primary objective labels are negative.
+- Workflow-invalid audit cohort: `9` trajectories and `31` checkpoints, separated from primary specificity.
+- Policy-negative audit cohort: `16` policy-control evaluations, not counted as independent trajectories.
+- Synthetic reference negative cohort: `12` Phase 5 smoke negative examples, used only for descriptive score shift and feature drift.
+- Real-negative checkpoint false-positive rates: `constant_negative_v1` `0.0`, `constant_smoke` `0.0`, `logistic_smoke` `0.0`, `rule_based_monitor_v1` `1.0`.
+- Abstention on the primary real-negative cohort: coverage `1.0` and abstention rate `0.0` for all four evaluated monitors.
+- Calibration interpretation: negative-outcome diagnostic only; full calibration, calibration slope, positive-class calibration, recall, precision, AUROC, PR-AUC, and prevention claims remain unsupported.
+- Feature drift: `27` Phase 5 features audited; `12` negligible, `5` mild, `7` moderate, `3` severe, `0` unscorable, `0` unseen categories, `887` range violations. Drift is carried as a Stage E limitation and does not invalidate D.2 scores.
+- Monitor inventory hash: `2b1c13c4c8b71514ea5e614eaa82f1c6ee8c0b1c52f802018c06296f3ca589af`
+- Monitor manifest hash: `1bd33d425a4a8749c37419288f71fa70e7bf89fdfc21f27303b739df07721d69`
+- Feature compatibility hash: `26382ba3e880e8e616e70bed5d632f850667c4b489e41218ba618ec9b15ccae4`
+- Score shift hash: `fc2503fb98a458e0a3f2b0abf40458f192c313db31b5dd6dc4f3f9e38a3eeaa4`
+- Feature drift hash: `fba2f382db1c78c83b8ed13b41f33d45ff146496484f7881f66c2c7c106bc99a`
+- Decision hash: `6d9c9bfd5aa1ae84425b8cde5bc8d1977c8875439b61f583dba720e82da0b842`
+- Stage E readiness hash: `fbe0db0dfd1e3baa810037b909aea145f3759abc5e20c5f8aa5534f0285b7c46`
+- Monitor stack decision: `monitor_stack_ready_for_stage_e`
+- Stage E readiness decision: `ready_for_stage_e_with_monitor_limitations`
+- Benchmark status: `not_ready_to_freeze`
+- Rerun requirement: no repair required for a constrained Stage E setup, but Stage E must carry the D.2 limitations and still requires separate authorization. No strategic attackers, benchmark freeze, or Phase 8 work was run.
+- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.

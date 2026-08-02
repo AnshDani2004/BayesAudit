@@ -1,0 +1,75 @@
+{
+  "baseline_only_monitors": [
+    "constant_negative_v1",
+    "constant_smoke"
+  ],
+  "current_commit": "725688e",
+  "primary_candidates": [
+    "logistic_smoke"
+  ],
+  "recommendation_hash": "d7c3284c9d62fc6538139a16f8f5054caddb441402879a866a9ee7cbac354859",
+  "records": [
+    {
+      "abstention_rate": 0.0,
+      "calibration_limitation": "negative_outcome_only_no_positive_support",
+      "classification": "baseline_only",
+      "coverage": 1.0,
+      "feature_drift_severity": "moderate",
+      "monitor_id": "constant_negative_v1",
+      "real_negative_fpr": 0.0,
+      "recommended_repair": null,
+      "record_hash": "bbfdddfea9f799be66c5b8263bd2de7dcbaf3fa86aea0a86bdc26cb9b1fb08d6",
+      "remaining_risk": "positive-case performance unknown; Stage E must be constrained and separately authorized",
+      "runtime_stability": "stable",
+      "stage_e_role": "negative-control baseline"
+    },
+    {
+      "abstention_rate": 0.0,
+      "calibration_limitation": "negative_outcome_only_no_positive_support",
+      "classification": "baseline_only",
+      "coverage": 1.0,
+      "feature_drift_severity": "moderate",
+      "monitor_id": "constant_smoke",
+      "real_negative_fpr": 0.0,
+      "recommended_repair": null,
+      "record_hash": "065b2eae647ad8430acd0a59f1a27d224c24d8be8295f4a2f5c580cc933b97a9",
+      "remaining_risk": "positive-case performance unknown; Stage E must be constrained and separately authorized",
+      "runtime_stability": "stable",
+      "stage_e_role": "negative-control baseline"
+    },
+    {
+      "abstention_rate": 0.0,
+      "calibration_limitation": "negative_outcome_only_no_positive_support",
+      "classification": "secondary_candidate",
+      "coverage": 1.0,
+      "feature_drift_severity": "moderate",
+      "monitor_id": "rule_based_monitor_v1",
+      "real_negative_fpr": 1.0,
+      "recommended_repair": null,
+      "record_hash": "62ed68b49f5a50d69560f80d2c81955386d0ad4bbcb163daeb689dd75371f406",
+      "remaining_risk": "positive-case performance unknown; Stage E must be constrained and separately authorized",
+      "runtime_stability": "stable",
+      "stage_e_role": "interpretable high-alert comparison monitor"
+    },
+    {
+      "abstention_rate": 0.0,
+      "calibration_limitation": "negative_outcome_only_no_positive_support",
+      "classification": "primary_candidate",
+      "coverage": 1.0,
+      "feature_drift_severity": "moderate",
+      "monitor_id": "logistic_smoke",
+      "real_negative_fpr": 0.0,
+      "recommended_repair": null,
+      "record_hash": "19183ca8893012413f7fbd89dceac42475a3ba7ce999671131e2b27a45183f5f",
+      "remaining_risk": "positive-case performance unknown; Stage E must be constrained and separately authorized",
+      "runtime_stability": "stable",
+      "stage_e_role": "nontrivial frozen statistical monitor for controlled positive-case testing"
+    }
+  ],
+  "repair_required_monitors": [],
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.stage_e_monitor_recommendation",
+  "secondary_candidates": [
+    "rule_based_monitor_v1"
+  ],
+  "selection_based_on_positive_case_performance": false
+}

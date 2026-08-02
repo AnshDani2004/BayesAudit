@@ -1,0 +1,406 @@
+{
+  "adapter_required_monitor_count": 3,
+  "adjudication_feature_rejection_passed": true,
+  "compatibility_hash": "26382ba3e880e8e616e70bed5d632f850667c4b489e41218ba618ec9b15ccae4",
+  "compatible_monitor_count": 1,
+  "current_commit": "725688e",
+  "future_information_rejection_passed": true,
+  "incompatible_monitor_count": 0,
+  "leakage_invalid_monitor_count": 0,
+  "policy_outcome_feature_rejection_passed": true,
+  "posthoc_feature_rejection_passed": true,
+  "records": [
+    {
+      "adapter_required": false,
+      "compatibility_status": "compatible",
+      "constant_or_degenerate_fields": [],
+      "current_commit": "725688e",
+      "disallowed_feature_intersection": [],
+      "disallowed_posthoc_features": [],
+      "exact_match_features": [],
+      "extra_features": [],
+      "feature_view_version": "runtime_observable_v1",
+      "leakage_status": "passed",
+      "mapped_or_transformed_features": [],
+      "missing_features": [],
+      "monitor_expected_feature_count": 0,
+      "monitor_id": "constant_negative_v1",
+      "out_of_range_numerical_features": [],
+      "record_hash": "3a4ed33087c0a5d85e4edd60d5e960ef5348725a6c7ada4781bac27290c5e9c6",
+      "unseen_categories": []
+    },
+    {
+      "adapter_required": true,
+      "compatibility_status": "compatible_with_adapter",
+      "constant_or_degenerate_fields": [],
+      "current_commit": "725688e",
+      "disallowed_feature_intersection": [],
+      "disallowed_posthoc_features": [],
+      "exact_match_features": [],
+      "extra_features": [],
+      "feature_view_version": "runtime_observable_v1",
+      "leakage_status": "passed",
+      "mapped_or_transformed_features": [
+        {
+          "monitor_feature": "depth",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.depth"
+        },
+        {
+          "monitor_feature": "branch_present",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.branch_id"
+        },
+        {
+          "monitor_feature": "prior_audit_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "remaining_budget",
+          "rule": "frozen no-oversight budget proxy 1.0",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "constraint_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.visible_constraint_count"
+        },
+        {
+          "monitor_feature": "critical_constraint_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.critical_constraint_count"
+        },
+        {
+          "monitor_feature": "tool_call_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.tool_request_present"
+        },
+        {
+          "monitor_feature": "missing_required_constraints",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "weakened_constraints",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "contradicted_constraints",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "privilege_demotions",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "verification_failures",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "tool_requested",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.tool_request_present"
+        },
+        {
+          "monitor_feature": "approval_required",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "runtime_domain_constraint_proxy"
+        },
+        {
+          "monitor_feature": "approval_present",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_false_no_raw_text"
+        },
+        {
+          "monitor_feature": "prohibited_tool_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "sensitive_token_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "irreversible_action_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "external_tool_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "text_length",
+          "rule": "checkpoint-type bucket; raw text never read",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "identifier_count",
+          "rule": "domain and role bucket; no sensitive strings used",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "citation_count",
+          "rule": "evidence final-output indicator only",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "unknown_citation_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "budget_numeric_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "approval_language_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "constraint_reference_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.visible_constraint_count"
+        },
+        {
+          "monitor_feature": "uncertainty_language_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        }
+      ],
+      "missing_features": [
+        "prior_audit_count",
+        "remaining_budget",
+        "missing_required_constraints",
+        "weakened_constraints",
+        "contradicted_constraints",
+        "privilege_demotions",
+        "verification_failures",
+        "approval_present",
+        "prohibited_tool_indicator",
+        "sensitive_token_indicator",
+        "irreversible_action_indicator",
+        "external_tool_indicator",
+        "text_length",
+        "identifier_count",
+        "citation_count",
+        "unknown_citation_count",
+        "budget_numeric_count",
+        "approval_language_indicator",
+        "uncertainty_language_indicator"
+      ],
+      "monitor_expected_feature_count": 27,
+      "monitor_id": "constant_smoke",
+      "out_of_range_numerical_features": [],
+      "record_hash": "55ae626267e411489a516459e1efbefec71a25c6442ef6c6cea43f228ff2f78e",
+      "unseen_categories": []
+    },
+    {
+      "adapter_required": true,
+      "compatibility_status": "compatible_with_adapter",
+      "constant_or_degenerate_fields": [],
+      "current_commit": "725688e",
+      "disallowed_feature_intersection": [],
+      "disallowed_posthoc_features": [],
+      "exact_match_features": [],
+      "extra_features": [],
+      "feature_view_version": "runtime_observable_v1",
+      "leakage_status": "passed",
+      "mapped_or_transformed_features": [],
+      "missing_features": [],
+      "monitor_expected_feature_count": 0,
+      "monitor_id": "rule_based_monitor_v1",
+      "out_of_range_numerical_features": [],
+      "record_hash": "43dae8e148a99d17647fad66560037fe48d3f72f652b9309d0d943c798dd7d39",
+      "unseen_categories": []
+    },
+    {
+      "adapter_required": true,
+      "compatibility_status": "compatible_with_adapter",
+      "constant_or_degenerate_fields": [],
+      "current_commit": "725688e",
+      "disallowed_feature_intersection": [],
+      "disallowed_posthoc_features": [],
+      "exact_match_features": [],
+      "extra_features": [],
+      "feature_view_version": "runtime_observable_v1",
+      "leakage_status": "passed",
+      "mapped_or_transformed_features": [
+        {
+          "monitor_feature": "depth",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.depth"
+        },
+        {
+          "monitor_feature": "branch_present",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.branch_id"
+        },
+        {
+          "monitor_feature": "prior_audit_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "remaining_budget",
+          "rule": "frozen no-oversight budget proxy 1.0",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "constraint_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.visible_constraint_count"
+        },
+        {
+          "monitor_feature": "critical_constraint_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.critical_constraint_count"
+        },
+        {
+          "monitor_feature": "tool_call_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.tool_request_present"
+        },
+        {
+          "monitor_feature": "missing_required_constraints",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "weakened_constraints",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "contradicted_constraints",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "privilege_demotions",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "verification_failures",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "tool_requested",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.tool_request_present"
+        },
+        {
+          "monitor_feature": "approval_required",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "runtime_domain_constraint_proxy"
+        },
+        {
+          "monitor_feature": "approval_present",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_false_no_raw_text"
+        },
+        {
+          "monitor_feature": "prohibited_tool_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "sensitive_token_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "irreversible_action_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "external_tool_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "text_length",
+          "rule": "checkpoint-type bucket; raw text never read",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "identifier_count",
+          "rule": "domain and role bucket; no sensitive strings used",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "citation_count",
+          "rule": "evidence final-output indicator only",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "unknown_citation_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "budget_numeric_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "approval_language_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        },
+        {
+          "monitor_feature": "constraint_reference_count",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "checkpoint.visible_constraint_count"
+        },
+        {
+          "monitor_feature": "uncertainty_language_indicator",
+          "rule": "deterministic runtime metadata transform or conservative zero",
+          "source": "deterministic_imputation_from_runtime_metadata"
+        }
+      ],
+      "missing_features": [
+        "prior_audit_count",
+        "remaining_budget",
+        "missing_required_constraints",
+        "weakened_constraints",
+        "contradicted_constraints",
+        "privilege_demotions",
+        "verification_failures",
+        "approval_present",
+        "prohibited_tool_indicator",
+        "sensitive_token_indicator",
+        "irreversible_action_indicator",
+        "external_tool_indicator",
+        "text_length",
+        "identifier_count",
+        "citation_count",
+        "unknown_citation_count",
+        "budget_numeric_count",
+        "approval_language_indicator",
+        "uncertainty_language_indicator"
+      ],
+      "monitor_expected_feature_count": 27,
+      "monitor_id": "logistic_smoke",
+      "out_of_range_numerical_features": [],
+      "record_hash": "7c952ff9415c177df3cf45d645c07cac03783893c2a083ae523f8facf1635002",
+      "unseen_categories": []
+    }
+  ],
+  "runtime_feature_view_version": "runtime_observable_v1",
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.feature_compatibility",
+  "source_stage_feature_rejection_passed": true,
+  "stage_d1_feature_schema_hash": "a8658bff3ca01a480025747a768022a303039e96465f53b473c169a22f0cb330"
+}

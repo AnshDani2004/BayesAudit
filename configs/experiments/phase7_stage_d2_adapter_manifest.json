@@ -1,0 +1,91 @@
+{
+  "adapter_count": 3,
+  "adapter_manifest_hash": "b6752fe61d51c3be6406231ed313efe8e635ac718747fac6875cc6d9e4b1ac70",
+  "current_commit": "725688e",
+  "feature_adapters_created": [
+    "constant_smoke__phase7_stage_d2_runtime_to_phase5_v1",
+    "rule_based_monitor_v1__phase7_stage_d2_runtime_to_phase5_v1",
+    "logistic_smoke__phase7_stage_d2_runtime_to_phase5_v1"
+  ],
+  "records": [
+    {
+      "adapter_hash": "83f34e59b2f53b5f98c46d773fb9621035558ecd8118baf99a49005a45a06ab4",
+      "adapter_id": "constant_smoke__phase7_stage_d2_runtime_to_phase5_v1",
+      "adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
+      "current_commit": "725688e",
+      "frozen_before_scoring": true,
+      "imputation_rules": {
+        "approval_language_indicator": "observable_constraint_proxy_only",
+        "budget_numeric_count": "zero_without_raw_text",
+        "citation_count": "zero_without_raw_text",
+        "constraint_reference_count": "visible_constraint_count",
+        "identifier_count": "deterministic_bucket_from_domain_and_role",
+        "remaining_budget": 1.0,
+        "text_length": "deterministic_bucket_from_checkpoint_type",
+        "uncertainty_language_indicator": "false_without_raw_text"
+      },
+      "input_view": "runtime_observable_v1",
+      "missingness_indicators_recorded": true,
+      "monitor_id": "constant_smoke",
+      "output_view": "bayesaudit.features.interpretable.v1",
+      "uses_future_information": false,
+      "uses_policy_outcomes": false,
+      "uses_posthoc_features": false,
+      "uses_source_stage": false,
+      "uses_target_labels": false
+    },
+    {
+      "adapter_hash": "9f1495dec4dfa89ba4dbe0a993de330f19b89831cb709e7c3f2e8155a80e9adc",
+      "adapter_id": "rule_based_monitor_v1__phase7_stage_d2_runtime_to_phase5_v1",
+      "adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
+      "current_commit": "725688e",
+      "frozen_before_scoring": true,
+      "imputation_rules": {
+        "approval_language_indicator": "observable_constraint_proxy_only",
+        "budget_numeric_count": "zero_without_raw_text",
+        "citation_count": "zero_without_raw_text",
+        "constraint_reference_count": "visible_constraint_count",
+        "identifier_count": "deterministic_bucket_from_domain_and_role",
+        "remaining_budget": 1.0,
+        "text_length": "deterministic_bucket_from_checkpoint_type",
+        "uncertainty_language_indicator": "false_without_raw_text"
+      },
+      "input_view": "runtime_observable_v1",
+      "missingness_indicators_recorded": true,
+      "monitor_id": "rule_based_monitor_v1",
+      "output_view": "bayesaudit.features.interpretable.v1",
+      "uses_future_information": false,
+      "uses_policy_outcomes": false,
+      "uses_posthoc_features": false,
+      "uses_source_stage": false,
+      "uses_target_labels": false
+    },
+    {
+      "adapter_hash": "6e399869cc8aa26859cc309876b95366c169fc1c98e1000d8cd62aa02e08a414",
+      "adapter_id": "logistic_smoke__phase7_stage_d2_runtime_to_phase5_v1",
+      "adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
+      "current_commit": "725688e",
+      "frozen_before_scoring": true,
+      "imputation_rules": {
+        "approval_language_indicator": "observable_constraint_proxy_only",
+        "budget_numeric_count": "zero_without_raw_text",
+        "citation_count": "zero_without_raw_text",
+        "constraint_reference_count": "visible_constraint_count",
+        "identifier_count": "deterministic_bucket_from_domain_and_role",
+        "remaining_budget": 1.0,
+        "text_length": "deterministic_bucket_from_checkpoint_type",
+        "uncertainty_language_indicator": "false_without_raw_text"
+      },
+      "input_view": "runtime_observable_v1",
+      "missingness_indicators_recorded": true,
+      "monitor_id": "logistic_smoke",
+      "output_view": "bayesaudit.features.interpretable.v1",
+      "uses_future_information": false,
+      "uses_policy_outcomes": false,
+      "uses_posthoc_features": false,
+      "uses_source_stage": false,
+      "uses_target_labels": false
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.adapter_manifest"
+}

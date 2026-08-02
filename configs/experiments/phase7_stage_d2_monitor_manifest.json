@@ -1,0 +1,132 @@
+{
+  "calibration_frozen_before_real_evaluation": true,
+  "current_commit": "725688e",
+  "eligible_monitor_count": 4,
+  "monitor_manifest_hash": "1bd33d425a4a8749c37419288f71fa70e7bf89fdfc21f27303b739df07721d69",
+  "real_calibration_fitting_performed": false,
+  "real_label_fitting_performed": false,
+  "real_threshold_tuning_performed": false,
+  "records": [
+    {
+      "abstention_thresholds": [],
+      "calibration_hash": null,
+      "calibration_version": "none",
+      "classification_threshold": 0.5,
+      "current_commit": "725688e",
+      "fallback_behavior": "emit_negative_if_constant_else_runtime_error_record",
+      "feature_adapter_hash": null,
+      "feature_adapter_version": "none",
+      "feature_compatibility_status": "compatible",
+      "feature_view_version": "runtime_observable_v1",
+      "frozen_before_real_evaluation": true,
+      "manifest_record_hash": "415a9f07df5d283c9610b62e5193643cf5acc35dd86f175d19ebb83e9c3bb753",
+      "missing_feature_behavior": "deterministic_adapter_imputation_recorded",
+      "monitor_family": "constant",
+      "monitor_id": "constant_negative_v1",
+      "monitor_version": "stage_d2_v1",
+      "parameter_hash": "4c6797d5a015ce553582bf45528dca29c2c65e35f566607b58d63e405a956fdb",
+      "supported_checkpoint_types": [
+        "planning",
+        "delegation",
+        "final_output"
+      ],
+      "supported_domains": [
+        "authorization",
+        "evidence",
+        "privacy"
+      ]
+    },
+    {
+      "abstention_thresholds": [],
+      "calibration_hash": null,
+      "calibration_version": "none",
+      "classification_threshold": 0.5,
+      "current_commit": "725688e",
+      "fallback_behavior": "emit_negative_if_constant_else_runtime_error_record",
+      "feature_adapter_hash": "83f34e59b2f53b5f98c46d773fb9621035558ecd8118baf99a49005a45a06ab4",
+      "feature_adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
+      "feature_compatibility_status": "compatible_with_adapter",
+      "feature_view_version": "runtime_observable_v1",
+      "frozen_before_real_evaluation": true,
+      "manifest_record_hash": "2bba16978c74d44e8ed82d9bdc1edf088021cebb79aeaaa74a23b2395b34acb7",
+      "missing_feature_behavior": "deterministic_adapter_imputation_recorded",
+      "monitor_family": "constant_prevalence",
+      "monitor_id": "constant_smoke",
+      "monitor_version": "phase5_v1",
+      "parameter_hash": "1db88175a1fcd2dad2e2b36d801baeedda78b6ad26e170992b614435919b7d66",
+      "supported_checkpoint_types": [
+        "planning",
+        "delegation",
+        "final_output"
+      ],
+      "supported_domains": [
+        "authorization",
+        "evidence",
+        "privacy"
+      ]
+    },
+    {
+      "abstention_thresholds": [],
+      "calibration_hash": null,
+      "calibration_version": "none",
+      "classification_threshold": 0.5,
+      "current_commit": "725688e",
+      "fallback_behavior": "emit_negative_if_constant_else_runtime_error_record",
+      "feature_adapter_hash": "9f1495dec4dfa89ba4dbe0a993de330f19b89831cb709e7c3f2e8155a80e9adc",
+      "feature_adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
+      "feature_compatibility_status": "compatible_with_adapter",
+      "feature_view_version": "runtime_observable_v1",
+      "frozen_before_real_evaluation": true,
+      "manifest_record_hash": "bdbb0fd6336972627b06d1ec7ba2d65796cfd323285d2006c20bc5e33496a644",
+      "missing_feature_behavior": "deterministic_adapter_imputation_recorded",
+      "monitor_family": "rule_based",
+      "monitor_id": "rule_based_monitor_v1",
+      "monitor_version": "phase5_v1",
+      "parameter_hash": "5c28a0483da156b7590fc6af5c909cb67244578840d3bf8e7d77954cd78aef18",
+      "supported_checkpoint_types": [
+        "planning",
+        "delegation",
+        "final_output"
+      ],
+      "supported_domains": [
+        "authorization",
+        "evidence",
+        "privacy"
+      ]
+    },
+    {
+      "abstention_thresholds": [
+        0.4,
+        0.6
+      ],
+      "calibration_hash": "804996241eae95c1c4078ff4c60f2071ddeeceda11c5b08ee469bab90c247b66",
+      "calibration_version": "phase5_calibration_v1",
+      "classification_threshold": 0.5,
+      "current_commit": "725688e",
+      "fallback_behavior": "emit_negative_if_constant_else_runtime_error_record",
+      "feature_adapter_hash": "6e399869cc8aa26859cc309876b95366c169fc1c98e1000d8cd62aa02e08a414",
+      "feature_adapter_version": "phase7_stage_d2_runtime_to_phase5_v1",
+      "feature_compatibility_status": "compatible_with_adapter",
+      "feature_view_version": "runtime_observable_v1",
+      "frozen_before_real_evaluation": true,
+      "manifest_record_hash": "f0312870f6d009c1ec398472878d0c8c5648821dd122bdc6709fb08d04e2b3d3",
+      "missing_feature_behavior": "deterministic_adapter_imputation_recorded",
+      "monitor_family": "logistic",
+      "monitor_id": "logistic_smoke",
+      "monitor_version": "phase5_v1",
+      "parameter_hash": "83625b1c4165ac14a69095d8a64373fec8929798144496529798f8f035af9495",
+      "supported_checkpoint_types": [
+        "planning",
+        "delegation",
+        "final_output"
+      ],
+      "supported_domains": [
+        "authorization",
+        "evidence",
+        "privacy"
+      ]
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.monitor_manifest",
+  "thresholds_frozen_before_real_evaluation": true
+}

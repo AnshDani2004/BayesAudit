@@ -1,0 +1,209 @@
+{
+  "abstention_hash": "f98d80e9f9b352f9bb4de7a9778d99222cd9c18b2a03a956a788273c53f9a586",
+  "current_commit": "725688e",
+  "new_operating_point_selected": false,
+  "records": [
+    {
+      "abstention_count": 0,
+      "abstention_rate": 0.0,
+      "alert_rate_among_covered": 0.0,
+      "architecture_composition_abstained": {},
+      "behavior_composition_abstained": {},
+      "coverage": 1.0,
+      "depth_composition_abstained": {},
+      "domain_composition_abstained": {},
+      "false_positive_rate_among_covered": 0.0,
+      "monitor_id": "constant_negative_v1",
+      "ood_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "record_count": 177,
+      "record_hash": "5d2e6ef5ee971007cee7ff4d16b5e9ad0005ab7d5dad8b7495eab413271abd64",
+      "score_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "score_distribution_covered": {
+        "count": 177.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "uncertainty_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    },
+    {
+      "abstention_count": 0,
+      "abstention_rate": 0.0,
+      "alert_rate_among_covered": 0.0,
+      "architecture_composition_abstained": {},
+      "behavior_composition_abstained": {},
+      "coverage": 1.0,
+      "depth_composition_abstained": {},
+      "domain_composition_abstained": {},
+      "false_positive_rate_among_covered": 0.0,
+      "monitor_id": "constant_smoke",
+      "ood_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "record_count": 177,
+      "record_hash": "c2f8f832bd0faafbe98df28603c7756d0922461ef1e1376a19aa217a8dd15c28",
+      "score_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "score_distribution_covered": {
+        "count": 177.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "uncertainty_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    },
+    {
+      "abstention_count": 0,
+      "abstention_rate": 0.0,
+      "alert_rate_among_covered": 0.0,
+      "architecture_composition_abstained": {},
+      "behavior_composition_abstained": {},
+      "coverage": 1.0,
+      "depth_composition_abstained": {},
+      "domain_composition_abstained": {},
+      "false_positive_rate_among_covered": 0.0,
+      "monitor_id": "logistic_smoke",
+      "ood_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "record_count": 177,
+      "record_hash": "18544c3af8bc4716f7b9ab82a1f8375cee820e1b802d0a050a01af9831bac50e",
+      "score_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "score_distribution_covered": {
+        "count": 177.0,
+        "maximum": 9.357622968839299e-14,
+        "mean": 9.357622968839299e-14,
+        "median": 9.357622968839299e-14,
+        "minimum": 9.357622968839299e-14,
+        "q25": 9.357622968839299e-14,
+        "q75": 9.357622968839299e-14
+      },
+      "uncertainty_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    },
+    {
+      "abstention_count": 0,
+      "abstention_rate": 0.0,
+      "alert_rate_among_covered": 1.0,
+      "architecture_composition_abstained": {},
+      "behavior_composition_abstained": {},
+      "coverage": 1.0,
+      "depth_composition_abstained": {},
+      "domain_composition_abstained": {},
+      "false_positive_rate_among_covered": 1.0,
+      "monitor_id": "rule_based_monitor_v1",
+      "ood_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "record_count": 177,
+      "record_hash": "7c266b59d2d2f88d91ce5517945d30f533fb9cdb0121baa8bb4428528f2336ff",
+      "score_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      },
+      "score_distribution_covered": {
+        "count": 177.0,
+        "maximum": 0.5,
+        "mean": 0.5,
+        "median": 0.5,
+        "minimum": 0.5,
+        "q25": 0.5,
+        "q75": 0.5
+      },
+      "uncertainty_distribution_abstained": {
+        "count": 0.0,
+        "maximum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "q25": 0.0,
+        "q75": 0.0
+      }
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.abstention_metrics",
+  "threshold_sweep_is_posthoc_diagnostic_only": true
+}
