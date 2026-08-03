@@ -1,0 +1,41 @@
+{
+  "artifact": "final_tables_manifest",
+  "artifact_hash": "588b1fb485de405d07f089409bfb47aeb1dae5cc19e937c23c37cfb8efd4cb98",
+  "current_commit": "ab5be701ac4aa99498fbc31bded080946c68b564",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false,
+  "table_manifest_version": "bayesaudit_v1_tables",
+  "tables": [
+    {
+      "source_hash": "0119cd58cdfde6ad575740a12635fbca79c98166baac0c8e82988c7abac9a9cf",
+      "source_path": "configs/experiments/phase8_validated_metrics.json",
+      "table_id": "phase8_validated_metrics"
+    },
+    {
+      "source_hash": "6446aedc6643c7304b7926e9fe931878f9f55e68a80ad34636c41d44855e5819",
+      "source_path": "configs/experiments/phase8_matched_confirmatory_analysis.json",
+      "table_id": "phase8_matched_confirmatory_analysis"
+    },
+    {
+      "source_hash": "12e7cd7c763c9f4007e0dbfac37922ef836c52fbaa52755c5b0e0118239de3c9",
+      "source_path": "configs/experiments/phase9_primary_analysis.json",
+      "table_id": "phase9_primary_analysis"
+    },
+    {
+      "source_hash": "8e7ff46355ee11c8a731c90c563e3b184808fb5e5b4fe8cd7752591033924cca",
+      "source_path": "configs/experiments/phase9_secondary_analysis.json",
+      "table_id": "phase9_secondary_analysis"
+    },
+    {
+      "source_hash": "a8c7ee5d33216f1145f6fd8956e1485a6ce4d3fcdd1a98deaf6b4e7e8d196d8b",
+      "source_path": "configs/experiments/phase9_provider_summary.json",
+      "table_id": "phase9_provider_summary"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "artifact": "phase9_claim_support",
+  "artifact_hash": "d74558c99bba56df8f35da733d74b507e4a106826e6b3e72a58383b3ad0b974f",
+  "claims": [
+    {
+      "claim_id": "heldout_attack_directional_robustness",
+      "evidence_hash": "1b49e1304f3f36668084d4efdd9a50ded42b59cfdaf73fa9b3f4262f80567f3e",
+      "support_status": "not_supported_or_null_preserved"
+    },
+    {
+      "claim_id": "phase8_findings_directionally_stable_under_fresh_seeds",
+      "evidence_hash": "29731a6739ffd8b47904bb92921f78cb01bb3b790a658a14b370554848e0e0e9",
+      "support_status": "not_replicated_preserved"
+    },
+    {
+      "claim_id": "broad_cross_model_generalization",
+      "evidence_hash": "29731a6739ffd8b47904bb92921f78cb01bb3b790a658a14b370554848e0e0e9",
+      "support_status": "unsupported"
+    }
+  ],
+  "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase10_started": false,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

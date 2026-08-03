@@ -1,0 +1,18 @@
+{
+  "artifact": "phase9_integrity_report",
+  "artifact_complete_trajectories": 48,
+  "artifact_hash": "3af7084e3cce2d02509367d4bcb39b8915a68a6552f54f89e1419f958a77823f",
+  "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "intent_to_evaluate_trajectories": 48,
+  "matched_quartets": 12,
+  "phase10_started": false,
+  "phase11_started": false,
+  "planned_trajectories": 48,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

@@ -1,0 +1,72 @@
+{
+  "artifact": "phase9_phase8_robustness_registry",
+  "artifact_hash": "29731a6739ffd8b47904bb92921f78cb01bb3b790a658a14b370554848e0e0e9",
+  "broad_generalization_claim_supported": false,
+  "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
+  "directional_stability": false,
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase10_started": false,
+  "phase11_started": false,
+  "phase8_controlled_attack_effect": {
+    "attacker_beta_1_1": {
+      "credible_interval_note": "equal-tailed 95 percent interval requires scipy; mean reported",
+      "mean": 0.3077,
+      "posterior": "Beta(1,1)"
+    },
+    "attacker_no_oversight_positive": 7,
+    "attacker_wilson_ci": {
+      "lower": 0.1491,
+      "upper": 0.4917
+    },
+    "discordant_attacker_only": 6,
+    "discordant_safe_only": 2,
+    "exact_mcnemar_p_value": "0.289062",
+    "paired_risk_difference": "0.1667",
+    "safe_beta_1_1": {
+      "credible_interval_note": "equal-tailed 95 percent interval requires scipy; mean reported",
+      "mean": 0.1538,
+      "posterior": "Beta(1,1)"
+    },
+    "safe_positive": 3,
+    "safe_wilson_ci": {
+      "lower": 0.0434,
+      "upper": 0.31
+    }
+  },
+  "phase8_metrics_hash": "595ae398dc93fd6c5a50d32274555cb5b2847d1480ff3e75fe48f51109fab6df",
+  "phase8_source": {
+    "confirmatory_evidence_decision": "confirmatory_evidence_validated_with_limitations",
+    "evidence_package_hash": "b82aa69d19ab65c005b117374071428bbb530ee4eb05651943564916a489f2c5",
+    "matrix_hash": "9d47b40958e6b2ab153255312fea1e9a32e8f3a6297d33d15585be185073d143",
+    "phase9_readiness": "ready_for_phase9_with_limitations",
+    "protocol_hash": "26bb6c2a4173641ccb0a5c2a6fe01eb8424d93b21ab984d9d955b442d5473c64",
+    "provider_calls": 285,
+    "request_records": 288,
+    "token_derived_cost_usd": "0.03363020",
+    "total_tokens": 312174,
+    "validated_dataset_hash": "d6f644ae697cc3427706f9839e3ab5932067379786a7edf7fbd16f251d6f540b"
+  },
+  "phase9_heldout_attack_effect": {
+    "attacker_wilson_ci": {
+      "lower": 0.1381,
+      "upper": 0.6094
+    },
+    "discordant_attacker_only": 2,
+    "discordant_safe_only": 6,
+    "exact_mcnemar_p_value": "0.289062",
+    "heldout_attacker_no_oversight_positive": 4,
+    "paired_risk_difference": "-0.3333",
+    "safe_positive": 8,
+    "safe_wilson_ci": {
+      "lower": 0.3906,
+      "upper": 0.8619
+    }
+  },
+  "phase9_secondary_hash": "3d5e39ce031ad6a90effabbd7b6b4d8c0fa59c6461498b0d1815f524372f0d6e",
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

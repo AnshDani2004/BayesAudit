@@ -1,0 +1,86 @@
+{
+  "artifact": "phase9_authorization",
+  "artifact_hash": "a87117c2b67e69e15bc7a44f0d98499563704195da8617b6bdd7655e1bc63916",
+  "attacker_manifest_hash": "59955ca002f091e8e6cf3a7d057db521f157f673863ecbe367db50b057c2655c",
+  "authorization_decision": "allow",
+  "authorization_version": "phase9_authorization_v1",
+  "ci_environment": false,
+  "credential_env_var": "OPENAI_API_KEY",
+  "credential_present": true,
+  "current_commit": "805ebb938fc2ff9caf238292785a3a3645d3f069",
+  "estimated_input_tokens": 86400,
+  "estimated_output_tokens": 37440,
+  "estimated_token_derived_cost_usd": "0.019296",
+  "estimated_total_tokens": 123840,
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "execution_protocol_hash": "6d781df6e49614ce7914d1576fac93b5bf9c0a55800f95191a63df0cb8cb7c99",
+  "gate_results": [
+    {
+      "gate_name": "phase8_artifacts_validate",
+      "status": "passed"
+    },
+    {
+      "gate_name": "planned_trajectories_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "planned_requests_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "estimated_tokens_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "estimated_cost_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "credential_present",
+      "status": "passed"
+    },
+    {
+      "gate_name": "ci_environment_false",
+      "status": "passed"
+    }
+  ],
+  "matrix_hash": "f74387d7fde17561dd9e26854704f19e087862110ebf445d327df0a42d6214ec",
+  "maximum_actual_provider_requests": 300,
+  "maximum_token_derived_cost_usd": "0.12",
+  "maximum_total_tokens": 300000,
+  "phase10_started": false,
+  "phase11_started": false,
+  "planned_provider_requests": 144,
+  "planned_trajectories": 48,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "prompt_hashes": {
+    "p9_privacy_unstructured_seed5_attack_bayesian:attacker_checkpoint": "2cd62d6981419d2147ff8a5b11608d48456ed0e78dd5cb40ab713ce54775786a",
+    "p9_privacy_unstructured_seed5_attack_bayesian:final_output": "5fd46570a87aa4da23d6f122f2c7f34135af83f2520f7d032c8301d52a1de8b8",
+    "p9_privacy_unstructured_seed5_attack_bayesian:oversight_checkpoint": "dd6536b53f48ea453d55e52b95cacd29a9b97f59041429f381d09a9f048de96d",
+    "p9_privacy_unstructured_seed5_attack_none:attacker_checkpoint": "324410ae314166a79fc6456f93a442bfc2f53ea01c3d46e99cbe22a6749a3a10",
+    "p9_privacy_unstructured_seed5_attack_none:final_output": "1c1b3cd3ac91ff8bb9fe6cbc3a3e4668020e50f5416138b07d21de04e01b4ab3",
+    "p9_privacy_unstructured_seed5_attack_none:oversight_checkpoint": "e956813de1bfe408faa3d7d076eaa84a33c7494cef26c695898f687912b76f3d",
+    "p9_privacy_unstructured_seed5_attack_rule:attacker_checkpoint": "7aee98d80f42c420537b7d65940521d3b8c6b868c12d97e73a2d48ca9fd6d800",
+    "p9_privacy_unstructured_seed5_attack_rule:final_output": "e80f3e416ed45e95046b359694304e12fee039658d7cf1e64ec6c886ede293f2",
+    "p9_privacy_unstructured_seed5_attack_rule:oversight_checkpoint": "2840db3eb93393a2d9176aa3fd68c7d878d61e6153c5476542531f51cfbca634",
+    "p9_privacy_unstructured_seed5_safe:attacker_checkpoint": "1fc8af70f3fe38354e1426180bec6901b2b594aee91e361216a8ee20272de83f",
+    "p9_privacy_unstructured_seed5_safe:final_output": "6bf857c5f1a95e5d76def77c10b363a1d78187d5f5afc142758463d3f7ed27bd",
+    "p9_privacy_unstructured_seed5_safe:oversight_checkpoint": "e60235446c163c4e2de4a01764eba979bc21d2ffcf88e839d476f192e6a1018d"
+  },
+  "protocol_hash": "1c8e1200c5c516e9aeb9da1bccc0b1cfbfab8f6db10c10ff1f70ff3ecb718a69",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_hashes": {
+    "phase9_response_schema": "0daaf47da3f068b5cebda9dd1ebfaff4a838555d6d4747be03384755ab9b14e2"
+  },
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "scorer_hashes": {
+    "authorization:v1": "12fb001176dfc74b921497bd26d7a91b5696e85d09a9c557ef5238eef66100df",
+    "evidence:v1": "13a185b2457f2519f677889419dc0da1fac61fcbea764cb94c1ceb06f1e5074c",
+    "privacy:v2": "ca0e67869e2d14d7807219d7c9ff5e051b947656aa23474aa64208d6e711ecd8"
+  },
+  "secret_exposed": false,
+  "seed_manifest_hash": "c1cc03077b98795e0c19b5af3f1d6b5c8039d2c57e8e6061b2eb43e5073ff060",
+  "statistical_analysis_plan_hash": "7594b22a89d7c1df6a06c8989a20c294f55980dc3857b4f8baaa8b9ab7267e0b"
+}

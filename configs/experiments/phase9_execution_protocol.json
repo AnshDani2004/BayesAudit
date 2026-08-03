@@ -1,0 +1,49 @@
+{
+  "artifact": "phase9_execution_protocol",
+  "artifact_hash": "6d781df6e49614ce7914d1576fac93b5bf9c0a55800f95191a63df0cb8cb7c99",
+  "current_commit": "805ebb938fc2ff9caf238292785a3a3645d3f069",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "execution_order_hash": "bf2fff74b67aac2e7f931aee419b35867aa2af36a345e32c8699ea5c323db975",
+  "execution_protocol_version": "phase9_execution_protocol_v1",
+  "non_stop_conditions": [
+    "weak results",
+    "monitor misses",
+    "nonreplication"
+  ],
+  "phase10_started": false,
+  "phase11_started": false,
+  "planned_requests": 144,
+  "planned_trajectories": 48,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false,
+  "stop_conditions": [
+    "ceiling risk",
+    "hash mismatch",
+    "secret exposure",
+    "raw persistence failure"
+  ],
+  "waves": [
+    {
+      "cumulative": 4,
+      "seed": 5,
+      "trajectory_count": 4,
+      "wave_id": "wave_0"
+    },
+    {
+      "cumulative": 24,
+      "seed": 5,
+      "trajectory_count": 20,
+      "wave_id": "wave_1"
+    },
+    {
+      "cumulative": 48,
+      "seed": 6,
+      "trajectory_count": 24,
+      "wave_id": "wave_2"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "artifact": "phase9_protocol",
+  "artifact_hash": "1c8e1200c5c516e9aeb9da1bccc0b1cfbfab8f6db10c10ff1f70ff3ecb718a69",
+  "attacker_manifest_hash": "59955ca002f091e8e6cf3a7d057db521f157f673863ecbe367db50b057c2655c",
+  "current_commit": "805ebb938fc2ff9caf238292785a3a3645d3f069",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "hard_ceilings": {
+    "maximum_actual_provider_requests": 300,
+    "maximum_architectures": 2,
+    "maximum_attack_families": 3,
+    "maximum_attacker_insertions_per_attacked_trajectory": 1,
+    "maximum_audits_per_oversight_trajectory": 1,
+    "maximum_conditions_per_matched_group": 4,
+    "maximum_domains": 3,
+    "maximum_fresh_seeds": 2,
+    "maximum_heldout_attacker_selections_per_domain": 1,
+    "maximum_interventions_per_oversight_trajectory": 1,
+    "maximum_planned_trajectories": 48,
+    "maximum_schema_repair_attempt_per_provider_request": 1,
+    "maximum_tasks": 3,
+    "maximum_token_derived_cost_usd": "0.12",
+    "maximum_total_tokens": 300000,
+    "maximum_transient_retry_per_provider_request": 1
+  },
+  "matrix_hash": "f74387d7fde17561dd9e26854704f19e087862110ebf445d327df0a42d6214ec",
+  "phase10_started": false,
+  "phase11_started": false,
+  "phase8_inputs": {
+    "confirmatory_evidence_decision": "confirmatory_evidence_validated_with_limitations",
+    "evidence_package_hash": "b82aa69d19ab65c005b117374071428bbb530ee4eb05651943564916a489f2c5",
+    "matrix_hash": "9d47b40958e6b2ab153255312fea1e9a32e8f3a6297d33d15585be185073d143",
+    "phase9_readiness": "ready_for_phase9_with_limitations",
+    "protocol_hash": "26bb6c2a4173641ccb0a5c2a6fe01eb8424d93b21ab984d9d955b442d5473c64",
+    "provider_calls": 285,
+    "request_records": 288,
+    "token_derived_cost_usd": "0.03363020",
+    "total_tokens": 312174,
+    "validated_dataset_hash": "d6f644ae697cc3427706f9839e3ab5932067379786a7edf7fbd16f251d6f540b"
+  },
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "primary_questions": [
+    "heldout_attack_effect",
+    "monitor_robustness",
+    "containment_robustness",
+    "phase8_claim_robustness"
+  ],
+  "prohibited_actions": [
+    "do not merge the pull request",
+    "do not create release tag before merge",
+    "do not begin Phase 11"
+  ],
+  "protocol_version": "phase9_protocol_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "scientific_framing": "Phase 9 tests held-out attacker generalization, fresh-seed stability, offline threshold sensitivity, and offline audit-policy sensitivity.",
+  "secret_exposed": false,
+  "seed_manifest_hash": "c1cc03077b98795e0c19b5af3f1d6b5c8039d2c57e8e6061b2eb43e5073ff060"
+}

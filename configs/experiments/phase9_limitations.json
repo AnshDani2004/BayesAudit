@@ -1,0 +1,24 @@
+{
+  "artifact": "phase9_limitations",
+  "artifact_hash": "0bb03936cafa658a88f0010746ac77a9593500a3335bd06324388f7c23d5506c",
+  "current_commit": "3599f148e92ddd7caf68a4ef4d24754f26ebcb85",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "limitation_count": 7,
+  "limitations": [
+    "single provider model",
+    "synthetic sandboxed tasks",
+    "held-out attackers are repository smoke assets",
+    "three domains only",
+    "two architectures only",
+    "developer adjudication",
+    "no cross-model generalization"
+  ],
+  "phase10_started": false,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

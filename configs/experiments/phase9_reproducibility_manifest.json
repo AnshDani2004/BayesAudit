@@ -1,0 +1,19 @@
+{
+  "artifact": "phase9_reproducibility_manifest",
+  "artifact_hash": "12138d6dce1cc9badf379537fdcf28d7c5cfaa8e043271731333373b3f0aa47c",
+  "current_commit": "3599f148e92ddd7caf68a4ef4d24754f26ebcb85",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase10_started": false,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "provider_rerun_required": false,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false,
+  "validation_commands": [
+    "python -m bayesaudit.cli validate-phase9",
+    "python -m pytest tests/test_phase9_10.py -q"
+  ]
+}
