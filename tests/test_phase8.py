@@ -19,21 +19,25 @@ from bayesaudit.pilot.phase8 import (
     MAX_TRAJECTORIES,
     PHASE8_ATTACKER_ADJUDICATION,
     PHASE8_AUTHORIZATION,
+    PHASE8_CLOSEOUT_DECISION,
     PHASE8_CONFIRMATORY_DECISION,
     PHASE8_COST_SUMMARY,
     PHASE8_DATASET_MANIFEST,
+    PHASE8_EVIDENCE_PACKAGE,
     PHASE8_EXECUTION_DECISION,
     PHASE8_EXECUTION_PROTOCOL,
     PHASE8_INTEGRITY_REPORT,
     PHASE8_JSON_ARTIFACTS_A,
     PHASE8_MATCHED_ANALYSIS,
     PHASE8_MATRIX,
+    PHASE8_MERGE_READINESS,
     PHASE8_MONITOR_ADJUDICATION,
     PHASE8_OBJECTIVE_ADJUDICATION,
     PHASE8_POLICY_ADJUDICATION,
     PHASE8_PREVENTION_ADJUDICATION,
     PHASE8_PROTOCOL,
     PHASE8_PROTOCOL_DECISION,
+    PHASE8_REPRODUCIBILITY_MANIFEST,
     PHASE8_REQUEST_SUMMARIES,
     PHASE8_REVIEW_MANIFEST,
     PHASE8_SAP,
@@ -43,6 +47,7 @@ from bayesaudit.pilot.phase8 import (
     PHASE8_WAVE_SUMMARIES,
     PROVIDER,
     validate_phase8_analysis_artifacts,
+    validate_phase8_closeout_artifacts,
     validate_phase8_execution_artifacts,
     validate_phase8_protocol_artifacts,
 )
@@ -258,3 +263,34 @@ def test_phase8_confirmatory_analysis_records_predeclared_outputs() -> None:
         "additional_phase8_provider_run_required",
     }
     assert decision["phase9_started"] is False
+
+
+def test_phase8_closeout_artifacts_validate_when_present() -> None:
+    assert validate_phase8_closeout_artifacts() == {"valid": True, "errors": []}
+
+
+def test_phase8_evidence_package_and_reproducibility_are_frozen() -> None:
+    evidence = _json(PHASE8_EVIDENCE_PACKAGE)
+    repro = _json(PHASE8_REPRODUCIBILITY_MANIFEST)
+    assert evidence["evidence_package_version"] == "phase8_confirmatory_evidence_package_v1"
+    assert evidence["artifact_count"] == len(evidence["artifacts"])
+    assert evidence["artifact_count"] >= 24
+    assert evidence["phase7_evidence_package_hash"] == phase8.PHASE7_EVIDENCE_HASH
+    assert repro["provider_rerun_required"] is False
+    assert repro["phase9_started"] is False
+    assert "python -m bayesaudit.cli validate-phase8" in repro["validation_commands"]
+
+
+def test_phase8_closeout_and_merge_readiness_decisions() -> None:
+    closeout = _json(PHASE8_CLOSEOUT_DECISION)
+    merge = _json(PHASE8_MERGE_READINESS)
+    assert (
+        closeout["closeout_decision"]
+        == "phase8_complete_with_documented_limitations_merge_ready"
+    )
+    assert closeout["remaining_blockers"] == []
+    assert closeout["do_not_merge_by_codex"] is True
+    assert merge["recommended_manual_merge_method"] == "Create a merge commit"
+    assert "Squash and merge" in merge["disallowed_manual_merge_methods"]
+    assert "Rebase and merge" in merge["disallowed_manual_merge_methods"]
+    assert merge["phase9_started"] is False

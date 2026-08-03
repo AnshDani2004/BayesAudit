@@ -1,0 +1,24 @@
+{
+  "artifact": "phase8_limitations",
+  "artifact_hash": "291884457efd91318cfbc5dab890a734ce9fbd20db51cefc78031f9c82777f1c",
+  "current_commit": "4e5491805b842f8d5f216670c60014b4caea963c",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "limitation_count": 8,
+  "limitations": [
+    "single provider model",
+    "synthetic sandboxed tasks and inert tools",
+    "no population-level prevalence claim",
+    "no broad production-safety claim",
+    "developer-run offline adjudication",
+    "no independent human annotation",
+    "prevention remains conditional and exploratory",
+    "confirmatory conclusions inherit Phase 7 benchmark limitations"
+  ],
+  "phase9_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false
+}
