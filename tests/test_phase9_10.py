@@ -12,10 +12,14 @@ from bayesaudit.pilot.phase9_10 import (
     ARCHITECTURES,
     CONDITIONS,
     DOMAINS,
+    FINAL_CLAIM_REGISTRY,
+    FINAL_REPORT,
+    FINAL_SYNTHESIS,
     MAX_COST_USD,
     MAX_REQUESTS,
     MAX_TOKENS,
     MAX_TRAJECTORIES,
+    PAPER_TEX,
     PHASE9_A_JSON,
     PHASE9_ATTACKER_MANIFEST,
     PHASE9_AUTHORIZATION,
@@ -56,6 +60,7 @@ from bayesaudit.pilot.phase9_10 import (
     validate_phase9_closeout_artifacts,
     validate_phase9_execution_artifacts,
     validate_phase9_protocol_artifacts,
+    validate_phase10_artifacts,
 )
 
 
@@ -317,3 +322,27 @@ def test_phase9_closeout_decision_and_report_are_merge_ready() -> None:
     assert closeout["phase11_started"] is False
     assert "Phase 9 Held-Out Robustness Study" in report_text
     assert "unsuitable for production-safety claims" in report_text
+
+
+def test_phase10a_artifacts_validate_when_present() -> None:
+    assert validate_phase10_artifacts(stage="10A") == {"valid": True, "errors": []}
+
+
+def test_phase10a_final_claim_registry_preserves_limitations() -> None:
+    registry = _json(FINAL_CLAIM_REGISTRY)
+    synthesis = _json(FINAL_SYNTHESIS)
+    claim_statuses = {row["claim_id"]: row["status"] for row in registry["final_claims"]}
+    assert claim_statuses["phase9_heldout_robustness"].endswith("with_limitations")
+    assert claim_statuses["production_or_cross_model_safety"] == "unsupported"
+    assert synthesis["claim_registry_hash"] == registry["artifact_hash"]
+    assert synthesis["provider_calls_performed"] == 0
+    assert synthesis["phase11_started"] is False
+
+
+def test_phase10a_report_and_paper_sources_exist() -> None:
+    report = FINAL_REPORT.read_text(encoding="utf-8")
+    paper = PAPER_TEX.read_text(encoding="utf-8")
+    assert "BayesAudit Final Report" in report
+    assert "unsuitable for production-safety claims" in report
+    assert r"\title{BayesAudit:" in paper
+    assert "Phase 10 performs no provider calls" in paper
