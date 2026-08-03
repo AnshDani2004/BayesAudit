@@ -1,0 +1,19 @@
+{
+  "all_planned_trajectories_included": true,
+  "artifact": "phase9_review_manifest",
+  "artifact_hash": "c60bddfbe6f5ee6bcdf814c4258680d7c74e7e84f1cdedb83cf26519482709b8",
+  "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase10_started": false,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "provider_execution_guard": "phase9c_offline_only",
+  "provider_ledger_count_after": 144,
+  "provider_ledger_count_before": 144,
+  "real_external_tools_enabled": false,
+  "review_packet_count": 48,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

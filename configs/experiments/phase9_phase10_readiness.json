@@ -1,0 +1,17 @@
+{
+  "artifact": "phase9_phase10_readiness",
+  "artifact_hash": "9e00951d161bc271a80bfb8e7890cbed78ad8ae35955891af396aab048d2de21",
+  "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
+  "evidence_decision": "phase9_null_or_nonreplication_preserved_with_limitations",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase10_readiness": "ready_for_phase10_with_documented_limitations",
+  "phase10_started": false,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "provider_rerun_required": false,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

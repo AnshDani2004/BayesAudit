@@ -482,8 +482,9 @@ def validate_phase9_analysis_artifacts() -> dict[str, Any]:
     for path in PHASE9_C_JSONL:
         if path in {PHASE9_POSITIVE_DATASET, PHASE9_NEGATIVE_DATASET}:
             continue
-        if path.exists() and len(read_jsonl(path)) != MAX_TRAJECTORIES:
-            errors.append(f"expected {MAX_TRAJECTORIES} rows in {path}")
+        expected_rows = 12 if path == PHASE9_MATCHED_QUARTET_AUDIT else MAX_TRAJECTORIES
+        if path.exists() and len(read_jsonl(path)) != expected_rows:
+            errors.append(f"expected {expected_rows} rows in {path}")
     readiness = read_json(PHASE9_PHASE10_READINESS) if PHASE9_PHASE10_READINESS.exists() else {}
     if readiness.get("phase10_readiness") not in {
         "ready_for_phase10_finalization",

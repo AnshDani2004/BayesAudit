@@ -19,19 +19,34 @@ from bayesaudit.pilot.phase9_10 import (
     PHASE9_A_JSON,
     PHASE9_ATTACKER_MANIFEST,
     PHASE9_AUTHORIZATION,
+    PHASE9_CLAIM_SUPPORT,
     PHASE9_COST_SUMMARY,
+    PHASE9_DATASET_MANIFEST,
+    PHASE9_EVIDENCE_DECISION,
     PHASE9_EXECUTION_DECISION,
     PHASE9_EXECUTION_PROTOCOL,
+    PHASE9_MATCHED_QUARTET_AUDIT,
     PHASE9_MATRIX,
+    PHASE9_MONITOR_ADJUDICATION,
+    PHASE9_NEGATIVE_DATASET,
+    PHASE9_OBJECTIVE_ADJUDICATION,
+    PHASE9_PHASE10_READINESS,
+    PHASE9_POLICY_REPLAY,
+    PHASE9_POSITIVE_DATASET,
+    PHASE9_PREVENTION_ADJUDICATION,
+    PHASE9_PRIMARY_ANALYSIS,
     PHASE9_PROTOCOL,
     PHASE9_PROTOCOL_DECISION,
     PHASE9_PROVIDER_SUMMARY,
     PHASE9_REQUEST_SUMMARIES,
     PHASE9_SAP,
+    PHASE9_SECONDARY_ANALYSIS,
     PHASE9_SEED_MANIFEST,
+    PHASE9_THRESHOLD_SENSITIVITY,
     PHASE9_TOKEN_SUMMARY,
     PHASE9_TRAJECTORY_SUMMARIES,
     PHASE9_WAVE_SUMMARIES,
+    validate_phase9_analysis_artifacts,
     validate_phase9_execution_artifacts,
     validate_phase9_protocol_artifacts,
 )
@@ -201,3 +216,65 @@ def test_phase9_execution_summaries_stay_within_authorized_ceilings() -> None:
     assert decision["execution_decision"] == "phase9_execution_complete"
     assert decision["phase10_started"] is False
     assert decision["phase11_started"] is False
+
+
+def test_phase9_analysis_artifacts_validate_when_present() -> None:
+    assert validate_phase9_analysis_artifacts() == {"valid": True, "errors": []}
+
+
+def test_phase9_offline_adjudication_includes_all_execution_records() -> None:
+    assert len(_jsonl(PHASE9_OBJECTIVE_ADJUDICATION)) == 48
+    assert len(_jsonl(PHASE9_MONITOR_ADJUDICATION)) == 48
+    assert len(_jsonl(PHASE9_PREVENTION_ADJUDICATION)) == 48
+    assert len(_jsonl(PHASE9_MATCHED_QUARTET_AUDIT)) == 12
+    assert len(_jsonl(PHASE9_POSITIVE_DATASET)) == 24
+    assert len(_jsonl(PHASE9_NEGATIVE_DATASET)) == 24
+
+
+def test_phase9_primary_analysis_preserves_heldout_nonreplication() -> None:
+    primary = _json(PHASE9_PRIMARY_ANALYSIS)
+    effect = primary["heldout_attack_effect"]
+    monitor = primary["monitor_robustness"]
+    assert primary["pair_count"] == 12
+    assert effect["safe_positive"] == 8
+    assert effect["heldout_attacker_no_oversight_positive"] == 4
+    assert effect["paired_risk_difference"] == "-0.3333"
+    assert effect["exact_mcnemar_p_value"] == "0.289062"
+    assert monitor["objective_positive_pair_count"] == 4
+    assert monitor["rule_based_alerts"] == 4
+    assert monitor["bayesian_alerts"] == 0
+
+
+def test_phase9_secondary_dataset_and_readiness_are_frozen() -> None:
+    secondary = _json(PHASE9_SECONDARY_ANALYSIS)
+    dataset = _json(PHASE9_DATASET_MANIFEST)
+    evidence = _json(PHASE9_EVIDENCE_DECISION)
+    readiness = _json(PHASE9_PHASE10_READINESS)
+    claims = _json(PHASE9_CLAIM_SUPPORT)
+    assert secondary["positive_by_domain"] == {
+        "authorization": 9,
+        "evidence": 3,
+        "privacy": 12,
+    }
+    assert dataset["positive_row_count"] == 24
+    assert dataset["negative_row_count"] == 24
+    assert (
+        evidence["phase9_evidence_decision"]
+        == "phase9_null_or_nonreplication_preserved_with_limitations"
+    )
+    assert readiness["phase10_readiness"] == "ready_for_phase10_with_documented_limitations"
+    assert readiness["provider_rerun_required"] is False
+    assert claims["claims"][-1]["support_status"] == "unsupported"
+
+
+def test_phase9_sensitivity_and_policy_replay_are_offline_only() -> None:
+    threshold = _json(PHASE9_THRESHOLD_SENSITIVITY)
+    replay = _json(PHASE9_POLICY_REPLAY)
+    assert threshold["provider_calls_performed"] == 0
+    assert replay["provider_calls_performed"] == 0
+    assert len(threshold["records"]) == 10
+    assert {row["policy_id"] for row in replay["records"]} == {
+        "zero_audit_budget",
+        "frozen_phase9_policy_one_audit",
+        "deterministic_final_checkpoint",
+    }
