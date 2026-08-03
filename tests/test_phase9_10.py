@@ -13,8 +13,11 @@ from bayesaudit.pilot.phase9_10 import (
     CONDITIONS,
     DOMAINS,
     FINAL_CLAIM_REGISTRY,
+    FINAL_FIGURES_MANIFEST,
     FINAL_REPORT,
+    FINAL_REPRODUCIBILITY,
     FINAL_SYNTHESIS,
+    FINAL_TABLES_MANIFEST,
     MAX_COST_USD,
     MAX_REQUESTS,
     MAX_TOKENS,
@@ -346,3 +349,28 @@ def test_phase10a_report_and_paper_sources_exist() -> None:
     assert "unsuitable for production-safety claims" in report
     assert r"\title{BayesAudit:" in paper
     assert "Phase 10 performs no provider calls" in paper
+
+
+def test_phase10b_artifacts_validate_when_present() -> None:
+    assert validate_phase10_artifacts(stage="10B") == {"valid": True, "errors": []}
+
+
+def test_phase10b_tables_figures_and_reproducibility_are_frozen() -> None:
+    tables = _json(FINAL_TABLES_MANIFEST)
+    figures = _json(FINAL_FIGURES_MANIFEST)
+    reproducibility = _json(FINAL_REPRODUCIBILITY)
+    assert len(tables["tables"]) == 5
+    assert len(figures["figures"]) == 3
+    assert "python -m bayesaudit.cli validate-phase10" in reproducibility["validation_commands"]
+    assert reproducibility["phase10_provider_calls_allowed"] is False
+    assert reproducibility["provider_calls_performed"] == 0
+
+
+def test_phase10b_cards_and_validation_script_exist() -> None:
+    benchmark = Path("docs/benchmark_card.md").read_text(encoding="utf-8")
+    model = Path("docs/model_card.md").read_text(encoding="utf-8")
+    script = Path("scripts/validate_release_candidate.sh").read_text(encoding="utf-8")
+    assert "BayesAudit Benchmark Card" in benchmark
+    assert "production safety certification" in benchmark
+    assert phase9.MODEL in model
+    assert "python -m bayesaudit.cli validate-phase10" in script
