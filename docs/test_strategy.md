@@ -122,6 +122,19 @@ consistency, final limitation coverage, repository hygiene, README/report status
 consistency, closeout decision, merge-readiness decision, no automatic merge, no
 provider execution, no Stage E.2 rerun, and no Phase 8 execution.
 
+## Phase 8 Tests
+
+Phase 8 adds 21 focused tests for the preregistered confirmatory protocol, exact
+96-condition matrix, 24 matched quartets, fresh-seed selection, execution-wave
+ordering, provider authorization, hard ceilings, provider-result reconciliation,
+raw-first request summaries, offline adjudication, matched confirmatory analysis,
+dataset manifest stability, evidence package freeze, merge-readiness decision,
+and no Phase 9 execution.
+
+The full local validation after Phase 8D passed with `1907` tests. Phase 8 CI
+must remain provider-disabled; the tracked tests read only redacted summaries and
+hashes under `configs/experiments/`.
+
 ## Continuous Integration
 
 The default CI target should run:

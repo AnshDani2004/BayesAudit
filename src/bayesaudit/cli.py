@@ -71,6 +71,14 @@ from bayesaudit.pilot.lifecycle import (
 from bayesaudit.pilot.lifecycle import (
     evaluate_monitor_transfer as evaluate_phase7_monitor_transfer,
 )
+from bayesaudit.pilot.phase8 import (
+    freeze_phase8_protocol,
+    run_phase8_closeout,
+    run_phase8_offline_adjudication,
+    run_phase8_provider_execution,
+    validate_phase8_artifacts,
+    validate_phase8_protocol_artifacts,
+)
 from bayesaudit.providers.base import ProviderConfig, estimate_provider_cost
 from bayesaudit.runner import (
     _rewrite_normalized_tables,
@@ -359,6 +367,25 @@ def main() -> None:
 
     phase8 = subparsers.add_parser("plan-phase8")
     phase8.add_argument("--config", type=Path, required=True)
+
+    phase8_freeze = subparsers.add_parser("freeze-phase8-protocol")
+    phase8_freeze.set_defaults(command="freeze-phase8-protocol")
+
+    phase8_provider = subparsers.add_parser("run-phase8-provider")
+    phase8_provider.add_argument("--allow-provider-calls", action="store_true")
+    phase8_provider.add_argument("--max-cost", type=float, required=True)
+    phase8_provider.add_argument("--max-tokens", type=int, required=True)
+    phase8_provider.add_argument("--max-requests", type=int, required=True)
+    phase8_provider.add_argument("--max-trajectories", type=int, required=True)
+
+    phase8_adjudicate = subparsers.add_parser("adjudicate-phase8")
+    phase8_adjudicate.set_defaults(command="adjudicate-phase8")
+
+    phase8_closeout = subparsers.add_parser("closeout-phase8")
+    phase8_closeout.set_defaults(command="closeout-phase8")
+
+    validate_phase8 = subparsers.add_parser("validate-phase8")
+    validate_phase8.add_argument("--protocol-only", action="store_true")
 
     args = parser.parse_args()
     if args.command == "validate-scenarios":
@@ -734,6 +761,36 @@ def main() -> None:
         payload = generate_freeze_proposal(args.config)
     elif args.command == "plan-phase8":
         payload = plan_phase8(args.config)
+    elif args.command == "freeze-phase8-protocol":
+        payload = freeze_phase8_protocol()
+    elif args.command == "run-phase8-provider":
+        if not args.allow_provider_calls:
+            payload = {
+                "valid": False,
+                "errors": ["--allow-provider-calls is required for Phase 8 provider execution"],
+            }
+        elif (
+            args.max_cost != 0.20
+            or args.max_tokens != 500000
+            or args.max_requests != 400
+            or args.max_trajectories != 96
+        ):
+            payload = {
+                "valid": False,
+                "errors": ["Phase 8 hard ceilings must be exactly the user-authorized values"],
+            }
+        else:
+            payload = run_phase8_provider_execution()
+    elif args.command == "adjudicate-phase8":
+        payload = run_phase8_offline_adjudication()
+    elif args.command == "closeout-phase8":
+        payload = run_phase8_closeout()
+    elif args.command == "validate-phase8":
+        payload = (
+            validate_phase8_protocol_artifacts()
+            if args.protocol_only
+            else validate_phase8_artifacts()
+        )
     else:
         raise AssertionError(args.command)
     print(json.dumps(payload, indent=2, sort_keys=True, default=str))

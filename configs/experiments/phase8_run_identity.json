@@ -1,0 +1,38 @@
+{
+  "artifact": "phase8_run_identity",
+  "artifact_hash": "b83d4451c9b73356bce274286b998c80d96f71b9bfdc64e81510327caa7957ff",
+  "branch": "codex/phase8-confirmatory-study",
+  "ci_environment": false,
+  "credential_present": true,
+  "current_commit": "07db2f95fad09dcffe983c2b9a975301f66ae420",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "experiment_config_hash": "474f324e4979058645b07f50f10045d78f850728d8fa4ac156042b03c613ddd9",
+  "matrix_hash": "9d47b40958e6b2ab153255312fea1e9a32e8f3a6297d33d15585be185073d143",
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "prompt_hashes": {
+    "p8_privacy_unstructured_seed1_attack_bayesian:attacker_checkpoint": "f43623326dcec45bef65715b726ccc71491db7d455c7bfb6f6fbe117e2b7bbac",
+    "p8_privacy_unstructured_seed1_attack_bayesian:final_output": "2b8972ccdb0ce0291d617102ef85edaa3e9c7a0b1e52a9ec18bbc12635c152f1",
+    "p8_privacy_unstructured_seed1_attack_bayesian:oversight_checkpoint": "a2fb6b4842c1e56bf0765e7f99700f553a8e1b549c6517f1ff0735c5159c70fd",
+    "p8_privacy_unstructured_seed1_attack_none:attacker_checkpoint": "1578cab2384addc1b6b6d8f129e445f3e535fdb8accd3ed43e516b6be18b119a",
+    "p8_privacy_unstructured_seed1_attack_none:final_output": "05559422d5b36c58ff13ab737dbf05d2078d09ee5add979a02eb786e14cc01a8",
+    "p8_privacy_unstructured_seed1_attack_none:oversight_checkpoint": "b9d7881f824b9c657f30464f244c9fc4a79bd126fce1122f30210e78ff3a4b0c",
+    "p8_privacy_unstructured_seed1_attack_rule:attacker_checkpoint": "d1e30355d76feeb803068e321c42fce0094e013caa3a768261875d64aceb1d9b",
+    "p8_privacy_unstructured_seed1_attack_rule:final_output": "d409b684661a2450b5c771dbb578bf2b53cea9e5c4d5bbfa417a9d9e879f7e9c",
+    "p8_privacy_unstructured_seed1_attack_rule:oversight_checkpoint": "82bdd5372d07bcad87f8e512d24767c54eb8a478e4d84ebc9f1e9540eb3c7888",
+    "p8_privacy_unstructured_seed1_safe:attacker_checkpoint": "70c965c647180757f57a0af40286ffa76637accc58e83613c4b535acd60f0331",
+    "p8_privacy_unstructured_seed1_safe:final_output": "5f8556a1da2e591705155f9108e4c72fc15da11f595570b9f799b4eba4e16b2c",
+    "p8_privacy_unstructured_seed1_safe:oversight_checkpoint": "d62da43c30a298d35f31318a37a8694691f18c165deb5cbc20ce56b596054338"
+  },
+  "protocol_hash": "26bb6c2a4173641ccb0a5c2a6fe01eb8424d93b21ab984d9d955b442d5473c64",
+  "provider": "openai",
+  "provider_config_hash": "71b820d2c62e6d5c0a6f4d79f5c2a4d9fc68c1c151818fd312c25c1262f92411",
+  "real_external_tools_enabled": false,
+  "run_id": "phase8_37153f5f3b7aa005",
+  "schema_hashes": {
+    "phase8_response_schema": "0daaf47da3f068b5cebda9dd1ebfaff4a838555d6d4747be03384755ab9b14e2"
+  },
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false,
+  "start_timestamp_utc": "2026-08-03T16:00:15.292463+00:00",
+  "starting_commit": "07db2f95fad09dcffe983c2b9a975301f66ae420"
+}

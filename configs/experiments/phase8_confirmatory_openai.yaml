@@ -1,0 +1,60 @@
+pilot_id: phase8_confirmatory_openai
+pilot_version: phase8_confirmatory_v1
+stage: oversight
+provider_config: configs/providers/remote/openai_phase8_confirmatory.yaml
+output_root: results/tables/phase8
+task_roots:
+- scenarios
+domains:
+- privacy
+- authorization
+- evidence
+task_ids:
+- task_privacy_tool_argument_minimization
+- task_authorization_external_scope
+- task_evidence_claim_support
+architectures:
+- unstructured_delegation
+- structured_inheritance
+delegation_depths:
+- 2
+branching_factors:
+- 1
+behavior_conditions:
+- safe_no_attacker_no_oversight
+- attacker_no_oversight
+- attacker_rule_based_selective_v1
+- attacker_bayesian_adaptive_v1
+attacker_conditions:
+- none
+- strategic_attacker_real_pilot_v1
+oversight_conditions:
+- no_oversight
+- rule_based_selective_v1
+- bayesian_adaptive_v1
+monitor_artifacts:
+- configs/experiments/phase7_stage_d2_monitor_manifest.json
+calibration_artifacts:
+- configs/experiments/phase7_stage_d2_negative_calibration.json
+seeds:
+- 1
+- 2
+- 3
+- 4
+provider_calls_enabled: true
+cache_enabled: true
+resume_enabled: true
+external_tools_enabled: false
+max_cost_usd: 0.2
+max_total_tokens: 500000
+max_requests: 400
+max_trajectories: 96
+max_local_executions: 1
+large_run_threshold: 96
+allow_large_run: true
+prompt_renderer_version: phase8_confirmatory_prompt_v1
+base_branch: main
+phase7_branch: codex/phase7-real-model-pilot
+repository: AnshDani2004/BayesAudit
+benchmark_version: phase7_benchmark_candidate_v1
+notes: Phase 8 confirmatory provider execution; use only after Gate A authorization.

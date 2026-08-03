@@ -1,0 +1,22 @@
+{
+  "artifact": "phase8_execution_ledger",
+  "artifact_hash": "74917b104f71ae561f4cc0056e3d8395884899b9039d58f86cce35539d2cb24f",
+  "cost_ledger_hash": "950fd1b51578fcaa26d23c2906ccca9f26b1850a04466fbbb6d43b84e123a9f0",
+  "current_commit": "07db2f95fad09dcffe983c2b9a975301f66ae420",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "executed_condition_count": 96,
+  "frozen_matrix_hash": "9d47b40958e6b2ab153255312fea1e9a32e8f3a6297d33d15585be185073d143",
+  "no_extra_conditions": true,
+  "phase9_started": false,
+  "planned_condition_count": 96,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "provider_request_records": 288,
+  "raw_first_persistence": "hashes_recorded",
+  "real_external_action_performed": false,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false,
+  "token_ledger_hash": "1833b975e0e60d92c72f624943a8374b9997224a8ba80e9a0883377638329880"
+}

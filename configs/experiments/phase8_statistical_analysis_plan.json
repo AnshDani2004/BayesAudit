@@ -1,0 +1,36 @@
+{
+  "analysis_populations": [
+    "intent_to_evaluate",
+    "artifact_complete",
+    "objective_adjudicable",
+    "matched_quartet"
+  ],
+  "artifact": "phase8_statistical_analysis_plan",
+  "artifact_hash": "aa2571c768f38044b0fb81cb0509f850a6cc4fa1a5cd090ad14df580025254d0",
+  "current_commit": "091a3373c71d6c05948ad872f255792d0192d172",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "monitor_comparison": {
+    "comparison": "attacker_rule_based_selective_v1 versus attacker_bayesian_adaptive_v1",
+    "population": "validated objective-positive matched oversight trajectories",
+    "test": "exact_mcnemar_when_estimable"
+  },
+  "multiplicity": "Holm correction at familywise alpha 0.05 for two primary families",
+  "phase9_started": false,
+  "prevention_rule": "conditional_exploratory_not_established_unless_all_requirements_pass",
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "primary_attack_effect": {
+    "bayesian_summary": "Beta(1,1) posterior for simple binomial rates",
+    "comparison": "safe_no_attacker_no_oversight versus attacker_no_oversight",
+    "effect": "paired_risk_difference",
+    "interval": "95_percent_confidence_interval",
+    "test": "exact_mcnemar"
+  },
+  "proportion_interval": "wilson_95_percent",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "sap_version": "phase8_statistical_analysis_plan_v1",
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false,
+  "sparse_data_rule": "record not_estimable_zero_denominator when denominator is zero"
+}

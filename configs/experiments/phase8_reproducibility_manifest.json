@@ -1,0 +1,22 @@
+{
+  "artifact": "phase8_reproducibility_manifest",
+  "artifact_hash": "a5b4c496d45f3af25e264fbb5b6374d614aaaa464faf36f326977be3d428741b",
+  "current_commit": "4e5491805b842f8d5f216670c60014b4caea963c",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "installation_command": "python -m pip install -e \".[dev]\"",
+  "phase9_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_execution_command": "python -m bayesaudit.cli run-phase8-provider --allow-provider-calls --max-cost 0.20 --max-tokens 500000 --max-requests 400 --max-trajectories 96",
+  "provider_rerun_required": false,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false,
+  "validation_commands": [
+    "python -m ruff check .",
+    "python -m mypy --no-incremental src tests",
+    "python -m pytest -q",
+    "python -m compileall -q src tests scripts",
+    "python -m bayesaudit.cli validate-phase8"
+  ]
+}

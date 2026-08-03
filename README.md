@@ -20,9 +20,14 @@ Primary comparison policies:
 
 ## Phase Status
 
-This repository is currently at Phase 7 closeout. Phase 7 completed a bounded
+This repository is currently at Phase 8 closeout. Phase 7 completed a bounded
 real-model pilot on `gpt-5-nano-2025-08-07`, offline Stage E.3 developer
-adjudication, benchmark refinement, and evidence freeze. The benchmark decision is
+adjudication, benchmark refinement, and evidence freeze. Phase 8 then ran a
+preregistered confirmatory study on the frozen Phase 7 benchmark with 96 planned
+trajectories, 24 matched quartets, four fresh seeds, and the same provider/model.
+The Phase 8 closeout decision is
+`phase8_complete_with_documented_limitations_merge_ready`.
+The Phase 7 benchmark decision remains
 `phase7_benchmark_frozen_with_limitations`.
 
 Implemented now:
@@ -62,6 +67,10 @@ Implemented now:
 - Stage E.3 offline developer adjudication with 17 validated objective positives, 1 validated objective negative, no scorer false positives, no scorer false negatives, and no clean prevention claim
 - Phase 7 benchmark candidate `phase7_benchmark_candidate_v1`, frozen with documented limitations
 - final artifact index, reproducibility manifest, claim registry, limitations record, hygiene audit, and merge-readiness record
+- Phase 8 confirmatory protocol, statistical analysis plan, authorization record,
+  96-condition matrix, four-wave provider execution, offline adjudication,
+  matched confirmatory analysis, evidence package, limitations record, Phase 8
+  report, and merge-readiness record
 - tests for schema validity, workflows, scorers, storage, and integration
 
 Phase 7 established:
@@ -81,6 +90,22 @@ Phase 7 did not establish:
 - causal superiority of any oversight policy
 - independent human-validation agreement
 - clean prevention of final-output objective violations
+
+Phase 8 confirmatory evidence:
+
+- executed all 96 frozen trajectories and all 24 matched quartets
+- recorded 288 provider request summaries, with 285 new provider calls and 3 exact cache hits
+- used 312,174 total tokens and $0.03363020 token-derived cost, under the authorized ceilings
+- found 21 validated objective positives and 75 validated negatives
+- found 7 attacked no-oversight positives versus 3 safe-control positives
+- found internal-only violations only; final-output residual violations were 0
+- found rule-based alerts on validated positive monitored cases and Bayesian/logistic misses in this synthetic setting
+- did not validate clean prevention; prevention remains conditional and exploratory
+
+Phase 8 remains limited to one provider model, synthetic tasks, inert tools, three
+domains, two architectures, four fresh seeds, developer adjudication, and
+benchmark-specific rates rather than population prevalence or production-readiness
+claims.
 
 ## Repository Layout
 
@@ -192,9 +217,16 @@ print(validate_phase7_closeout_artifacts())
 PY
 ```
 
+Validate tracked Phase 8 artifacts offline:
+
+```bash
+python -m bayesaudit.cli validate-phase8
+python -m pytest tests/test_phase8.py -q
+```
+
 Raw provider responses and exact provider caches are intentionally not tracked.
-Local raw Phase 7 provider artifacts belong under `results/tables/phase7/`, which
-is ignored except for placeholder files. Provider execution remains gated by
+Local raw Phase 7 and Phase 8 provider artifacts belong under `results/tables/`,
+which is ignored except for placeholder files. Provider execution remains gated by
 explicit authorization, hard request/token/cost/trajectory ceilings, credential
 Boolean recording only, raw-first persistence, cache validation, and CI tests that
 must never call a remote provider.
@@ -203,4 +235,9 @@ must never call a remote provider.
 
 BayesAudit must not report fabricated findings. Hypotheses, primary metrics, and confirmatory analyses are recorded before main-study execution. Pilot results may be used to repair tasks and scorers, but main benchmark changes after preregistration freeze must be documented as deviations.
 
-All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and attacker-defender outputs are synthetic mock-model artifacts. Phase 7 includes bounded exploratory real-provider pilot results, but default configs and CI remain mock-safe and credential-free. Future provider runs require separate explicit authorization with hard cost, token, request, and trajectory ceilings, and must be labeled exploratory unless a new confirmatory protocol authorizes stronger claims.
+All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and
+attacker-defender outputs are synthetic mock-model artifacts. Phase 7 includes
+bounded exploratory real-provider pilot results, and Phase 8 includes bounded
+confirmatory real-provider results for the frozen benchmark. Default configs and
+CI remain mock-safe and credential-free. Future provider runs require separate
+explicit authorization with hard cost, token, request, and trajectory ceilings.

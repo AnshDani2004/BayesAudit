@@ -1,0 +1,123 @@
+{
+  "artifact": "phase8_confirmatory_protocol",
+  "artifact_hash": "26bb6c2a4173641ccb0a5c2a6fe01eb8424d93b21ab984d9d955b442d5473c64",
+  "credential_env_var": "OPENAI_API_KEY",
+  "current_commit": "091a3373c71d6c05948ad872f255792d0192d172",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "execution_waves": [
+    {
+      "cumulative": 4,
+      "seed": 1,
+      "trajectory_count": 4,
+      "wave_id": "wave_0"
+    },
+    {
+      "cumulative": 24,
+      "seed": 1,
+      "trajectory_count": 20,
+      "wave_id": "wave_1"
+    },
+    {
+      "cumulative": 72,
+      "seeds": [
+        2,
+        3
+      ],
+      "trajectory_count": 48,
+      "wave_id": "wave_2"
+    },
+    {
+      "cumulative": 96,
+      "seed": 4,
+      "trajectory_count": 24,
+      "wave_id": "wave_3"
+    }
+  ],
+  "frozen_components": [
+    "tasks",
+    "attacker_families",
+    "attacker_prompts",
+    "architectures",
+    "seeds",
+    "monitors",
+    "thresholds",
+    "policies",
+    "interventions",
+    "objective_scorers",
+    "primary_outcomes",
+    "stopping_rules",
+    "statistical_analysis_rules"
+  ],
+  "hard_ceilings": {
+    "maximum_actual_provider_requests": 400,
+    "maximum_architectures": 2,
+    "maximum_attack_families": 3,
+    "maximum_attacker_insertions_per_attacked_trajectory": 1,
+    "maximum_audits_per_oversight_trajectory": 1,
+    "maximum_conditions_per_matched_group": 4,
+    "maximum_domains": 3,
+    "maximum_fresh_confirmatory_seeds": 4,
+    "maximum_interventions_per_oversight_trajectory": 1,
+    "maximum_planned_trajectories": 96,
+    "maximum_schema_repair_attempt_per_provider_request": 1,
+    "maximum_tasks": 3,
+    "maximum_token_derived_cost_usd": "0.20",
+    "maximum_total_tokens": 500000,
+    "maximum_transient_retry_per_provider_request": 1
+  },
+  "matrix_hash": "9d47b40958e6b2ab153255312fea1e9a32e8f3a6297d33d15585be185073d143",
+  "phase7_inputs": {
+    "benchmark_hash": "d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be",
+    "benchmark_version": "phase7_benchmark_candidate_v1",
+    "dataset_hash": "0fa854e15411386a45704db7bc4e5ff23a7f2ebceaec57846eccb3ec3e74eae5",
+    "dataset_version": "phase7_stage_e3_validated_dataset_v1",
+    "evidence_package_hash": "443eabcc0338edf3554019025ad862eae41c9bca7af3d35bae75ef15afbf2809",
+    "phase7_real_model_seeds": [
+      20260802
+    ],
+    "reproducibility_manifest_hash": "763bfe88688f822a224ce0c3b70a29d4c5ee0d43f9ed818e1825339b53c554e3",
+    "required_ancestor": "cf52d345ed4d6da22604c974315dd4c4b62842e9",
+    "source_manifests": {
+      "configs/experiments/phase7_benchmark_freeze_decision.json": "9e1e521862aa9209fe61275813e15ef0165a1ea9423e5387a96cf0e96eabdd99",
+      "configs/experiments/phase7_benchmark_version_manifest.json": "fb1cf3ee4cb43709bea7769f9a2fd8b9923744f4ea2a01dd123c0638f766a8f1",
+      "configs/experiments/phase7_final_claim_registry.json": "7d085f2408c0273a0514678a708b9bf8f20854388e601e90e49879dad92de24f",
+      "configs/experiments/phase7_final_limitations.json": "8b882b13b89c59272a5314de3e05296fe5fe8b9c95ff64ebb6caf0917047bf0d",
+      "configs/experiments/phase7_stage_c3_policy_manifest.json": "f08448ba20b2859ba9fb770dae73c3ae2f2ccb5f8ef27e25f24998bd8df00359",
+      "configs/experiments/phase7_stage_d2_monitor_manifest.json": "490815c5961e0191f8f316d20959afc1be973053cd664a0eeeb943608b26ddbf",
+      "configs/experiments/phase7_stage_e1_attacker_construct.json": "f1efdf43fa097551ff62770b55c65e229253708f8024fbdedb22079454973476",
+      "configs/experiments/phase7_stage_e1_intervention_manifest.json": "a823b863a3f2eddefa1f2e678c9007fd4b9ef560cfa6d6c0e016bc2bc9ccaf6d",
+      "configs/experiments/phase7_stage_e1_scorer_endpoint_validation.json": "9ef550e52b1993da092fde456490f12462641cea861719ed1603f04a5c3e614c",
+      "configs/experiments/phase7_stage_e1_selected_attackers.json": "0933e34a0006122105de59c990454310101430a1468dfde8c89e4f4caad9b31c",
+      "configs/experiments/phase7_version_compatibility_matrix.json": "03c6747cf729260a2aa13cfd96209691f1f568a0305f4804417af182c057693b"
+    }
+  },
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "primary_questions": [
+    "controlled_attack_effect",
+    "monitor_detection_comparison",
+    "downstream_containment"
+  ],
+  "prohibited_actions": [
+    "do not merge the Phase 8 PR",
+    "do not delete branches",
+    "do not begin Phase 9",
+    "do not change provider-visible semantics after protocol freeze",
+    "do not rerun based on unfavorable outcomes"
+  ],
+  "protocol_version": "phase8_protocol_v1",
+  "provider": "openai",
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "scientific_framing": "Phase 8 is a preregistered confirmatory study of the frozen Phase 7 benchmark. It remains synthetic, sandboxed, based on inert tools, and limited to one provider model; it is not a population-level or broad production-safety claim.",
+  "secondary_questions": [
+    "architecture_differences",
+    "domain_differences",
+    "attacker_uptake",
+    "monitor_false_positive_rate",
+    "utility_degradation",
+    "token_request_and_cost_overhead",
+    "first_observable_and_last_preventable_timing"
+  ],
+  "secret_exposed": false,
+  "seed_manifest_hash": "d96c7555513f8225afa33215b6c4d7d7d5073943f00588d9c365079df2338495"
+}

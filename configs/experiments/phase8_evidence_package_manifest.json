@@ -1,0 +1,137 @@
+{
+  "artifact": "phase8_evidence_package_manifest",
+  "artifact_count": 24,
+  "artifact_hash": "b82aa69d19ab65c005b117374071428bbb530ee4eb05651943564916a489f2c5",
+  "artifacts": [
+    {
+      "hash": "5a230971eef0f93f8671e4e0e13309030a70acddd15df2be88e8712d428460af",
+      "path": "configs/experiments/phase8_confirmatory_protocol.json",
+      "tracked": true
+    },
+    {
+      "hash": "a641eca13f65c8d4b3b763cabe6ed049cdeb97fc969781c5a3706bccb791d945",
+      "path": "configs/experiments/phase8_confirmatory_matrix.json",
+      "tracked": true
+    },
+    {
+      "hash": "0de37e37940632da2b1ad74d0d47419b6240915221053ba18dc92c1f7aa2ab45",
+      "path": "configs/experiments/phase8_statistical_analysis_plan.json",
+      "tracked": true
+    },
+    {
+      "hash": "f03ea905800cf54946c22eff24c27cc89ca15fe80ef6fabc48a5ebe8300b9156",
+      "path": "configs/experiments/phase8_provider_authorization.json",
+      "tracked": true
+    },
+    {
+      "hash": "c067c00d175fbc0bc34757fe0c72d188f9398dac8935d5ac835ba70de24f2e0d",
+      "path": "configs/experiments/phase8_execution_protocol.json",
+      "tracked": true
+    },
+    {
+      "hash": "31eacf0e0d0218d955c45b08ce0e84347b789e8c7467db27bc96b1984fb24b63",
+      "path": "configs/experiments/phase8_seed_manifest.json",
+      "tracked": true
+    },
+    {
+      "hash": "4de76fa183735cb0d47a080b1e9fc1b2b0451ce651dbeb7b52a29da2d8f2c48b",
+      "path": "configs/experiments/phase8_protocol_decision.json",
+      "tracked": true
+    },
+    {
+      "hash": "d831511cfe64064d5b05aa1898fcee830d56a175016dafdcb4b956ec3952e043",
+      "path": "configs/experiments/phase8_run_identity.json",
+      "tracked": true
+    },
+    {
+      "hash": "c72718f9e4ca057d1b5a513e91e0c547f8a90885721924dacd7e0cb8290ff568",
+      "path": "configs/experiments/phase8_execution_ledger.json",
+      "tracked": true
+    },
+    {
+      "hash": "e01fa2d073dc96152b016beffea1a13b995a40bcc1433e931dd91db7635e3f0f",
+      "path": "configs/experiments/phase8_provider_summary.json",
+      "tracked": true
+    },
+    {
+      "hash": "87380e084964846c3397b9c17655638fb9f4eb36f4038610744e712eb49b25bd",
+      "path": "configs/experiments/phase8_token_summary.json",
+      "tracked": true
+    },
+    {
+      "hash": "fb196c6b31958e73638924ed96459bdd493fdfa14c99467c8fd800df2ff5903e",
+      "path": "configs/experiments/phase8_cost_summary.json",
+      "tracked": true
+    },
+    {
+      "hash": "695546ec459ca66dd8dcc51c7cf311494b5e0b34dd5410c7dd7b5b09635cc4ab",
+      "path": "configs/experiments/phase8_execution_decision.json",
+      "tracked": true
+    },
+    {
+      "hash": "d0c2a4f9285c6d5fa33c77fe753a8482da6d2d480209dbecc53ed7eb6f01cf1d",
+      "path": "configs/experiments/phase8_review_manifest.json",
+      "tracked": true
+    },
+    {
+      "hash": "fbb115f85675132eb2f77fac7668b2d4c7d0f85ab72367142a388ce4667396a5",
+      "path": "configs/experiments/phase8_integrity_report.json",
+      "tracked": true
+    },
+    {
+      "hash": "6446aedc6643c7304b7926e9fe931878f9f55e68a80ad34636c41d44855e5819",
+      "path": "configs/experiments/phase8_matched_confirmatory_analysis.json",
+      "tracked": true
+    },
+    {
+      "hash": "0119cd58cdfde6ad575740a12635fbca79c98166baac0c8e82988c7abac9a9cf",
+      "path": "configs/experiments/phase8_validated_metrics.json",
+      "tracked": true
+    },
+    {
+      "hash": "6eef15a1bbbada3e0c85e4b08a52855e3cc12b0e7f5755081f79ce8da220fda1",
+      "path": "configs/experiments/phase8_dataset_manifest.json",
+      "tracked": true
+    },
+    {
+      "hash": "8f4362325ac6528d23dd22ca7cb4dcadab62a2d528f9d1d0414872f8acfa7cfc",
+      "path": "configs/experiments/phase8_confirmatory_decision.json",
+      "tracked": true
+    },
+    {
+      "hash": "ab281b0f784f39b8397b43fd9cb3b2e8fd93a6129c7531e0663d96c663d349e6",
+      "path": "configs/experiments/phase8_attacker_adjudication.jsonl",
+      "tracked": true
+    },
+    {
+      "hash": "8c73518dfc6f2dd54a9fe92cd9e5b2f92b84a90b073726fe49516d43a7197c11",
+      "path": "configs/experiments/phase8_objective_adjudication.jsonl",
+      "tracked": true
+    },
+    {
+      "hash": "e5eca05c225581bd94e8ac2ac57e6933f9397323a97822179c8e666761a090c3",
+      "path": "configs/experiments/phase8_monitor_adjudication.jsonl",
+      "tracked": true
+    },
+    {
+      "hash": "c4edd7ee8cd333329dcea97af5e04a5b638afccc0a97a7afb44f4e3716a1b0e9",
+      "path": "configs/experiments/phase8_policy_adjudication.jsonl",
+      "tracked": true
+    },
+    {
+      "hash": "4f3c95081c9ac03e0a62474cde6f6ce54d458f5fb0f3d845a29e2d1eb93c0df3",
+      "path": "configs/experiments/phase8_prevention_adjudication.jsonl",
+      "tracked": true
+    }
+  ],
+  "current_commit": "4e5491805b842f8d5f216670c60014b4caea963c",
+  "evidence_package_version": "phase8_confirmatory_evidence_package_v1",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase7_evidence_package_hash": "443eabcc0338edf3554019025ad862eae41c9bca7af3d35bae75ef15afbf2809",
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false
+}

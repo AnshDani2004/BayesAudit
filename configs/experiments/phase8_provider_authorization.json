@@ -1,0 +1,97 @@
+{
+  "artifact": "phase8_provider_authorization",
+  "artifact_hash": "a59b9ea8f7f0bd95db5c9b0989737a44951cf68e968556f98d2c0ecf11db8158",
+  "authorization_decision": "allow",
+  "authorization_version": "phase8_authorization_v1",
+  "ci_environment": false,
+  "credential_env_var": "OPENAI_API_KEY",
+  "credential_present": true,
+  "current_commit": "091a3373c71d6c05948ad872f255792d0192d172",
+  "estimated_input_tokens": 172800,
+  "estimated_output_tokens": 74880,
+  "estimated_token_derived_cost_usd": "0.038592",
+  "estimated_total_tokens": 247680,
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "execution_protocol_hash": "1064a6827e8b199f614a070bc6e397aea3f3cc62f9df05385537681ac5cca3c3",
+  "gate_results": [
+    {
+      "gate_name": "protocol_decision_eligible",
+      "status": "passed"
+    },
+    {
+      "gate_name": "frozen_hashes_validate",
+      "status": "passed"
+    },
+    {
+      "gate_name": "cost_estimate_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "planned_trajectories_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "planned_requests_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "estimated_tokens_within_ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "credential_present",
+      "status": "passed"
+    },
+    {
+      "gate_name": "ci_environment_false",
+      "status": "passed"
+    },
+    {
+      "gate_name": "no_semantic_provider_visible_change_required",
+      "status": "passed"
+    }
+  ],
+  "matrix_hash": "9d47b40958e6b2ab153255312fea1e9a32e8f3a6297d33d15585be185073d143",
+  "maximum_actual_provider_requests": 400,
+  "maximum_token_derived_cost_usd": "0.20",
+  "maximum_total_tokens": 500000,
+  "phase7_hashes": {
+    "benchmark_hash": "d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be",
+    "dataset_hash": "0fa854e15411386a45704db7bc4e5ff23a7f2ebceaec57846eccb3ec3e74eae5",
+    "evidence_package_hash": "443eabcc0338edf3554019025ad862eae41c9bca7af3d35bae75ef15afbf2809",
+    "reproducibility_manifest_hash": "763bfe88688f822a224ce0c3b70a29d4c5ee0d43f9ed818e1825339b53c554e3",
+    "required_ancestor": "cf52d345ed4d6da22604c974315dd4c4b62842e9"
+  },
+  "planned_provider_requests": 288,
+  "planned_trajectories": 96,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "prompt_hashes": {
+    "p8_privacy_unstructured_seed1_attack_bayesian:attacker_checkpoint": "f43623326dcec45bef65715b726ccc71491db7d455c7bfb6f6fbe117e2b7bbac",
+    "p8_privacy_unstructured_seed1_attack_bayesian:final_output": "2b8972ccdb0ce0291d617102ef85edaa3e9c7a0b1e52a9ec18bbc12635c152f1",
+    "p8_privacy_unstructured_seed1_attack_bayesian:oversight_checkpoint": "a2fb6b4842c1e56bf0765e7f99700f553a8e1b549c6517f1ff0735c5159c70fd",
+    "p8_privacy_unstructured_seed1_attack_none:attacker_checkpoint": "1578cab2384addc1b6b6d8f129e445f3e535fdb8accd3ed43e516b6be18b119a",
+    "p8_privacy_unstructured_seed1_attack_none:final_output": "05559422d5b36c58ff13ab737dbf05d2078d09ee5add979a02eb786e14cc01a8",
+    "p8_privacy_unstructured_seed1_attack_none:oversight_checkpoint": "b9d7881f824b9c657f30464f244c9fc4a79bd126fce1122f30210e78ff3a4b0c",
+    "p8_privacy_unstructured_seed1_attack_rule:attacker_checkpoint": "d1e30355d76feeb803068e321c42fce0094e013caa3a768261875d64aceb1d9b",
+    "p8_privacy_unstructured_seed1_attack_rule:final_output": "d409b684661a2450b5c771dbb578bf2b53cea9e5c4d5bbfa417a9d9e879f7e9c",
+    "p8_privacy_unstructured_seed1_attack_rule:oversight_checkpoint": "82bdd5372d07bcad87f8e512d24767c54eb8a478e4d84ebc9f1e9540eb3c7888",
+    "p8_privacy_unstructured_seed1_safe:attacker_checkpoint": "70c965c647180757f57a0af40286ffa76637accc58e83613c4b535acd60f0331",
+    "p8_privacy_unstructured_seed1_safe:final_output": "5f8556a1da2e591705155f9108e4c72fc15da11f595570b9f799b4eba4e16b2c",
+    "p8_privacy_unstructured_seed1_safe:oversight_checkpoint": "d62da43c30a298d35f31318a37a8694691f18c165deb5cbc20ce56b596054338"
+  },
+  "protocol_hash": "26bb6c2a4173641ccb0a5c2a6fe01eb8424d93b21ab984d9d955b442d5473c64",
+  "provider": "openai",
+  "real_external_tools_enabled": false,
+  "schema_hashes": {
+    "phase8_response_schema": "0daaf47da3f068b5cebda9dd1ebfaff4a838555d6d4747be03384755ab9b14e2"
+  },
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "scorer_hashes": {
+    "authorization:v1": "12fb001176dfc74b921497bd26d7a91b5696e85d09a9c557ef5238eef66100df",
+    "evidence:v1": "13a185b2457f2519f677889419dc0da1fac61fcbea764cb94c1ceb06f1e5074c",
+    "privacy:v2": "ca0e67869e2d14d7807219d7c9ff5e051b947656aa23474aa64208d6e711ecd8"
+  },
+  "secret_exposed": false,
+  "seed_manifest_hash": "d96c7555513f8225afa33215b6c4d7d7d5073943f00588d9c365079df2338495",
+  "statistical_analysis_plan_hash": "aa2571c768f38044b0fb81cb0509f850a6cc4fa1a5cd090ad14df580025254d0"
+}
