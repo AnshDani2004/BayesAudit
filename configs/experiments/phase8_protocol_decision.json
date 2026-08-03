@@ -1,0 +1,21 @@
+{
+  "artifact": "phase8_protocol_decision",
+  "artifact_hash": "018209f6f6149ff93d7539c7c10c23cd9d217de77e6f4baa4c6c53b95b15cf56",
+  "current_commit": "091a3373c71d6c05948ad872f255792d0192d172",
+  "documented_limitations": [
+    "single provider model",
+    "synthetic sandboxed tasks with inert tools",
+    "developer-run deterministic offline adjudication",
+    "safe control condition is newly added for Phase 8 but tied to frozen Phase 7 cells"
+  ],
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "gate_a_passed": true,
+  "phase9_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "protocol_decision": "phase8_protocol_frozen_with_limitations",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false
+}

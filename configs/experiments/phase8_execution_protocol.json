@@ -1,0 +1,64 @@
+{
+  "artifact": "phase8_execution_protocol",
+  "artifact_hash": "1064a6827e8b199f614a070bc6e397aea3f3cc62f9df05385537681ac5cca3c3",
+  "current_commit": "091a3373c71d6c05948ad872f255792d0192d172",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "execution_order_hash": "e0ecc3ddf2b794f1298975452be36521e46be774f71cbb020d3350fe1eecd35e",
+  "execution_protocol_version": "phase8_execution_protocol_v1",
+  "non_stop_conditions": [
+    "attacks fail",
+    "violations are sparse",
+    "monitor performance is poor",
+    "utility declines",
+    "results contradict Phase 7"
+  ],
+  "phase9_started": false,
+  "planned_requests": 288,
+  "planned_trajectories": 96,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false,
+  "stop_conditions": [
+    "missing raw response",
+    "provider-ledger inconsistency",
+    "cache corruption",
+    "credential exposure",
+    "real external-action attempt",
+    "unbounded retry",
+    "schema-system defect",
+    "frozen hash mismatch",
+    "continuing could breach a ceiling"
+  ],
+  "waves": [
+    {
+      "cumulative": 4,
+      "seed": 1,
+      "trajectory_count": 4,
+      "wave_id": "wave_0"
+    },
+    {
+      "cumulative": 24,
+      "seed": 1,
+      "trajectory_count": 20,
+      "wave_id": "wave_1"
+    },
+    {
+      "cumulative": 72,
+      "seeds": [
+        2,
+        3
+      ],
+      "trajectory_count": 48,
+      "wave_id": "wave_2"
+    },
+    {
+      "cumulative": 96,
+      "seed": 4,
+      "trajectory_count": 24,
+      "wave_id": "wave_3"
+    }
+  ]
+}
