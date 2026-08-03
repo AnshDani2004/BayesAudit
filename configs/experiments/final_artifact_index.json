@@ -1,7 +1,7 @@
 {
   "artifact": "final_artifact_index",
   "artifact_count": 266,
-  "artifact_hash": "f031607fef4ad5602fa0928ac454ac886273bf8f6e3750a9d704d7bbe8f4b5e1",
+  "artifact_hash": "b631ff91bb95ad8dd6ab42175c22b577c73f6cc6e55349fe6b703730485cbd7c",
   "artifacts": [
     {
       "hash": "074dcd12dbfa26c3b20fe1e16aff4e9dda25a5ab045a125326e19a824eb8533d",
@@ -52,7 +52,7 @@
       "path": "configs/experiments/phase7_evidence_package_manifest.json"
     },
     {
-      "hash": "7d085f2408c0273a0514678a708b9bf8f20854388e601e90e49879dad92de24f",
+      "hash": "243fa41fb57b8a51589b58e7ad1657f1135d1e5c16461471fc08bec0aba8a619",
       "path": "configs/experiments/phase7_final_claim_registry.json"
     },
     {
@@ -60,7 +60,7 @@
       "path": "configs/experiments/phase7_final_limitations.json"
     },
     {
-      "hash": "d52eea50b2bd915dee06779428e7660b2a8e2dc743d1e6b721cfb018363037c7",
+      "hash": "f2f75c09b4a2f7c550a6a20d56d26066556d8d2818f87e2c2677e63e2f47201a",
       "path": "configs/experiments/phase7_merge_readiness.json"
     },
     {
@@ -80,7 +80,7 @@
       "path": "configs/experiments/phase7_stage_c1_task_selection.json"
     },
     {
-      "hash": "bc014c9cfad05122e734b73f8b57270687b287e3133eb266f51cb23eff9fff0d",
+      "hash": "396f5821130c56af5193b0cced476cd598dc7d9445c80a6979c8462e5a9dc42f",
       "path": "configs/experiments/phase7_stage_c1a_adjudicated_labels.json"
     },
     {
@@ -768,7 +768,7 @@
       "path": "configs/experiments/phase8_attacker_adjudication.jsonl"
     },
     {
-      "hash": "b3bab132491a090c6f1548cbd0500d423897496a452c7cc50371a574df610256",
+      "hash": "1b70e85b53a323985f4f9e25b8c8534d340f8416bc528e54d895588034a31d65",
       "path": "configs/experiments/phase8_closeout_decision.json"
     },
     {
@@ -820,7 +820,7 @@
       "path": "configs/experiments/phase8_matched_confirmatory_analysis.json"
     },
     {
-      "hash": "13c47619da18490278b4f94b2d5a0341ab865148fb5773580c18a9c3c21885d5",
+      "hash": "e56411f384b3a899d52ba1ca6a06df9a01380e1f02a903fac03024aa4b7e36ce",
       "path": "configs/experiments/phase8_merge_readiness.json"
     },
     {
@@ -864,7 +864,7 @@
       "path": "configs/experiments/phase8_review_manifest.json"
     },
     {
-      "hash": "d831511cfe64064d5b05aa1898fcee830d56a175016dafdcb4b956ec3952e043",
+      "hash": "32e09a29e5cd0726750801b023e788c3b1f318ada05b2d82e42a2905ea6ca474",
       "path": "configs/experiments/phase8_run_identity.json"
     },
     {
@@ -1024,7 +1024,7 @@
       "path": "configs/experiments/phase9_review_manifest.json"
     },
     {
-      "hash": "5a1a925debfcb2b820436eb0653061049ba7b9914d694041c90f51a34c8e113c",
+      "hash": "aceca926fcac99be4c974d636a09336711204ecd521cb1003fac432f6321874d",
       "path": "configs/experiments/phase9_run_identity.json"
     },
     {

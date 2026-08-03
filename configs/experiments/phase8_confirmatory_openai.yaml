@@ -54,7 +54,7 @@ large_run_threshold: 96
 allow_large_run: true
 prompt_renderer_version: phase8_confirmatory_prompt_v1
 base_branch: main
-phase7_branch: codex/phase7-real-model-pilot
+phase7_branch: phase7-real-model-pilot
 repository: AnshDani2004/BayesAudit
 benchmark_version: phase7_benchmark_candidate_v1
 notes: Phase 8 confirmatory provider execution; use only after Gate A authorization.

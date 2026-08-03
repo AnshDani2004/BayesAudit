@@ -1,7 +1,7 @@
 {
   "artifact": "phase9_evidence_package_manifest",
   "artifact_count": 37,
-  "artifact_hash": "4ad083f5669a5f3120cd5acb125719f4b186b85dbf00146af35a05ce27297f29",
+  "artifact_hash": "9f83992641e5acca6b0b9f75dc008c7944d5e9db82386607ce62ecf9ea9d8a7e",
   "artifacts": [
     {
       "hash": "b9e2d78627e86bba5d569782052798bbbe77af94ddc4c82b3338c2d9d123138d",
@@ -44,7 +44,7 @@
       "path": "configs/experiments/phase9_protocol_decision.json"
     },
     {
-      "hash": "5a1a925debfcb2b820436eb0653061049ba7b9914d694041c90f51a34c8e113c",
+      "hash": "aceca926fcac99be4c974d636a09336711204ecd521cb1003fac432f6321874d",
       "path": "configs/experiments/phase9_run_identity.json"
     },
     {

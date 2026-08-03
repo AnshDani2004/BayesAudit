@@ -265,8 +265,8 @@ def run_stage_e2(*, current_commit: str | None = None) -> dict[str, Any]:
 def preflight_stage_e2(*, current_commit: str | None = None) -> dict[str, Any]:
     current_commit = current_commit or _git("rev-parse", "HEAD")
     errors: list[str] = []
-    if _git("branch", "--show-current") != "codex/phase7-real-model-pilot":
-        errors.append("not on codex/phase7-real-model-pilot")
+    if _git("branch", "--show-current") != "phase7-real-model-pilot":
+        errors.append("not on phase7-real-model-pilot")
     if not _git_status(
         "merge-base",
         "--is-ancestor",

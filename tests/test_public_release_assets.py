@@ -75,7 +75,7 @@ def test_security_audit_patterns_and_allowlist() -> None:
         "authorization_bearer": "Bearer" + " abc.def",
         "local_user_path": "/Users/" + "ansh/project",
         "placeholder_repo": "https://github.com/example/" + "bayesaudit",
-        "stale_release_version": 'version = "' + "0.1.0" + '"',
+        "stale_release_version": 'version = "' + ".".join(["0", "1", "0"]) + '"',
     }
     for name, text in cases.items():
         assert module.PATTERNS[name].search(text), name

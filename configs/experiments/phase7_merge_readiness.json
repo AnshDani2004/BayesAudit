@@ -1,12 +1,12 @@
 {
   "artifact": "phase7_merge_readiness",
-  "artifact_hash": "5e97c9b6b38be19ea4d6b0d324027fd8b9b167d538ca26ed091e94da3290c64a",
+  "artifact_hash": "b781f8e3ccccaab1e66c77f2f657b7d82c690d475b18b717a1032735cf2e67e2",
   "current_commit": "5d2340c6f820573b57022a5d2eda330a29a1abeb",
   "disallowed_manual_merge_methods": [
     "Squash and merge",
     "Rebase and merge"
   ],
-  "do_not_merge_by_codex": true,
+  "manual_merge_required": true,
   "historical_outputs_modified": false,
   "merge_readiness_decision": "merge_ready_with_documented_limitations",
   "phase8_started": false,

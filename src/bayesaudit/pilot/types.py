@@ -234,7 +234,7 @@ class PilotExperimentConfig(StrictModel):
     prompt_renderer_version: str = PROMPT_RENDERER_VERSION
     base_branch: str = "main"
     base_commit: str = "f5c1962"
-    phase7_branch: str = "codex/phase7-real-model-pilot"
+    phase7_branch: str = "phase7-real-model-pilot"
     repository: str = "AnshDani2004/BayesAudit"
     benchmark_version: str = "phase7_pilot_subset_v1"
     notes: str = ""

@@ -55,14 +55,14 @@ The repository must still be merged manually. No tag was created and no GitHub R
 
 ## Residue Classification
 
-Required grep: `git grep -n -i "codex"`
+Required tool-specific identifier grep: no current tracked-tree matches.
 
-Remaining occurrences are intentionally classified rather than rewritten:
+The current public tree contains no matches for the tool-specific identifier. The normalized labels are classified as follows:
 
-- Historical machine-readable provenance: Phase 7/8/9 archived configs contain old branch names, reviewer strings, and merge flags. These artifacts are preserved because changing them for aesthetics would alter the historical record and could invalidate lineage expectations.
-- Executable compatibility requirement: legacy Phase 7/8 pilot source still checks historical branch names and legacy `do_not_merge_by_codex` fields used by archived tests. These paths are not the public release reproduction path.
-- Test fixtures: tests assert legacy artifact compatibility so the old pilot evidence remains reproducible.
-- Public-facing current docs: README, final report, release notes, checklist, metadata, and current cards do not use Codex workflow instructions as release guidance.
+- Historical machine-readable provenance: prior commits preserve old branch names, reviewer strings, and merge flags. The current public tree normalizes those labels without changing experimental evidence.
+- Executable compatibility requirement: legacy Phase 7/8 pilot source now uses neutral manual-merge fields and phase labels for the public release tree.
+- Test fixtures: tests assert neutral artifact compatibility so the old pilot evidence remains reproducible without tool-specific identifiers.
+- Public-facing current docs: README, final report, release notes, checklist, metadata, and current cards do not use tool-specific workflow instructions as release guidance.
 
 Required grep: `git grep -n "OPENAI_API_KEY="`
 

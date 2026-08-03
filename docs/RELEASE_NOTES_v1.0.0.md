@@ -94,7 +94,7 @@ python -m bayesaudit.cli run-phase9-provider \
 - Phase 9 primary analysis: `fd49b1a06f486278de9ed25a277f6b03199c81f724a7f19df2b4c39be1ecb14e`
 - Final claim registry: `8c6a683beffd5633607eb673f058cd7a59e85456f61ad53c72c65b3474546c74`
 - Final statistical synthesis: `29bcc40985449bbf7a997d0f5ba799b37fda9780f4d1d400e621f78079cd2b28`
-- Final artifact index: `f031607fef4ad5602fa0928ac454ac886273bf8f6e3750a9d704d7bbe8f4b5e1`
+- Final artifact index: `b631ff91bb95ad8dd6ab42175c22b577c73f6cc6e55349fe6b703730485cbd7c`
 
 ## Compatibility
 
