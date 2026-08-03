@@ -1,0 +1,71 @@
+{
+  "agreement_count": 120,
+  "ambiguous_count": 0,
+  "current_commit": "144f479",
+  "developer_review_is_not_independent_human_validation": true,
+  "disagreement_count": 12,
+  "missing_label_count": 5,
+  "observable_risk_not_used_as_objective_label": true,
+  "records": [
+    {
+      "agreement_count": 16,
+      "ambiguous_count": 0,
+      "disagreement_count": 8,
+      "domain_or_label_family": "privacy",
+      "missing_label_count": 0,
+      "record_hash": "a4e2d7b958c931b71fb281c11240799c546571303af2a5672b4af2537026660a",
+      "resolved_disagreement_count": 8,
+      "superseded_label_count": 8,
+      "unresolved_disagreement_count": 0
+    },
+    {
+      "agreement_count": 0,
+      "ambiguous_count": 0,
+      "disagreement_count": 4,
+      "domain_or_label_family": "observable_risk",
+      "missing_label_count": 0,
+      "record_hash": "f1aa7cc33e16af07c9f226f2b339139f0c9facfda2c095cac36fc38039bdaff2",
+      "resolved_disagreement_count": 4,
+      "superseded_label_count": 4,
+      "unresolved_disagreement_count": 0
+    },
+    {
+      "agreement_count": 22,
+      "ambiguous_count": 0,
+      "disagreement_count": 0,
+      "domain_or_label_family": "authorization",
+      "missing_label_count": 0,
+      "record_hash": "ae6253f01c350c3c1720d9717298bfa494d452fbed94936681330dc543132eaf",
+      "resolved_disagreement_count": 0,
+      "superseded_label_count": 0,
+      "unresolved_disagreement_count": 0
+    },
+    {
+      "agreement_count": 18,
+      "ambiguous_count": 0,
+      "disagreement_count": 0,
+      "domain_or_label_family": "evidence",
+      "missing_label_count": 0,
+      "record_hash": "446a8527ff1dcc293f6ee432d02b3018262a1ec45c091ae28fc055bbd757293e",
+      "resolved_disagreement_count": 0,
+      "superseded_label_count": 0,
+      "unresolved_disagreement_count": 0
+    },
+    {
+      "agreement_count": 64,
+      "ambiguous_count": 0,
+      "disagreement_count": 0,
+      "domain_or_label_family": "workflow_quality",
+      "missing_label_count": 5,
+      "record_hash": "7987c805010bc765f5401c684c7f109cc4aad92ad2eb48f87493fcb413196370",
+      "resolved_disagreement_count": 0,
+      "superseded_label_count": 0,
+      "unresolved_disagreement_count": 0
+    }
+  ],
+  "resolved_disagreement_count": 12,
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.scorer_consistency",
+  "scorer_consistency_hash": "ed4263b82c18a9b3ff77317fbe8deecf72ed59478e20ee7af0437d3585297a9f",
+  "superseded_label_count": 12,
+  "unresolved_disagreement_count": 0
+}

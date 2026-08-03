@@ -63,6 +63,65 @@ Current total coverage contains 331 collected tests. Phase 6 adds attacker-obser
 - concealment is represented as synthetic artifact metadata
 - oracle attacker access is blocked outside evaluation mode
 
+## Phase 7 Tests
+
+Current total coverage contains 1676 collected tests after Stage D.2. The previous structured-output repair-template skip was removed; the repair prompt now has direct coverage and no Phase 7 test skip is required for mock/offline behavior. Phase 7 tests cover branch/base manifest metadata, provider gate failures, credential-free configs, OpenAI Stage A/A.1 configuration, Stage B workflow-pilot configuration, Stage B request planning, Stage B.1 role schemas, Stage B.2 authorization/evidence factor counts, Stage B.2 ceilings, authorization-before-evidence execution order, B.2 native schema translation, B.2 review-packet routing, combined Stage B pass/fail/block calculation, Stage C.1 six-task selection, two tasks per domain, seen/unseen labeling, frozen task-selection manifests, 24-trajectory factor counts, depth-specific request planning, hard ceiling enforcement, domain/depth block ordering, stop-after-infrastructure-failure behavior, depth-2 parent-child linkage and constraint snapshots, internal-only violation measurement, annotation-sampling-manifest generation, Stage C.1 pass/fail/block calculation, Stage C.1a privacy provenance, prompt-versus-response scorer exclusion, benchmark-originated exposure attribution, response/tool/final privacy inclusion, blind/adjudication packet separation, Stage C.1b privacy scorer versioning, offline v1-v2 rescoring, historical-label preservation, provider-ledger immutability, zero-provider-call enforcement, provenance-aware negative/positive/ambiguity regression fixtures, configured approximate matching, authorized handling, access expansion, tool-argument disclosure, Stage C.2 readiness artifact generation without starting Stage C.2, Stage C.2a treatment delivery, matched prompt differences, uptake taxonomy, matched honest attribution, task pressure, scorer challenge fixtures, Stage C.3 candidate auditing, C.2b design-only readiness, schema hashes, native provider schema request generation, layered parsing, deterministic fence normalization, no arbitrary prose coercion, bounded repair accounting, native-valid versus repaired-valid reporting, semantic-valid versus serialization-invalid classification, privacy-only factor counts, domain-block ordering, architecture-block execution control, domain-stop gates, provider-failure exclusions, Stage B review-packet generation, raw-response preservation, response extraction statuses, metadata parsing, CI blocking, cost/token/request/trajectory ceilings, permission records, cache hits, stable request hashes, sampling/model/prompt cache invalidation, partial cache rejection, mock connectivity, prompt rendering, hidden-label leakage checks, structured-output parsing and bounded repair, Decimal cost accounting, versioned pricing-table preservation, provider-reported versus token-derived cost, nullable billed cost reporting, historical failed-run unreconciled status, workflow-quality flags, scorer-human disagreement records, blind annotation exports, sampling probabilities, agreement metrics, monitor/calibration/OOD transfer summaries, oversight feasibility, task/scorer readiness, freeze proposal generation, Phase 8 planning, Stage D.2 monitor inventory and exclusion provenance, frozen adapter compatibility, real-negative checkpoint and trajectory scoring, abstention and negative calibration diagnostics, score shift, feature drift, workflow-invalid and policy-negative audit separation, Stage E readiness decision branches, and CLI dry-run commands.
+
+Stage D.1 adds 589 focused offline tests for source inventory, integrity reports, trajectory/checkpoint/label schemas, deterministic primary-label resolution, lineage and deduplication counts, inclusion/exclusion rules, policy-evaluation separation, runtime/posthoc feature boundaries, leakage repairs, split disjointness, class sufficiency, scorer-consistency disagreements, blind/adjudication packet redaction, metric feasibility, decision branches, and hard no-run/no-provider-call guards.
+
+Stage D.2 adds 173 focused offline tests for frozen monitor inventory, missing-artifact exclusions, adapter determinism, leakage denial, real-negative metric limitations, checkpoint and trajectory score schema, abstention, negative calibration, descriptive score shift, feature drift, workflow-invalid and policy-negative audit separation, monitor comparison, Stage E recommendation, decision-branch coverage, and hard no-provider/no-fit/no-Stage-E guards.
+
+Stage E.1 adds 19 focused offline tests for strategic-attacker design readiness,
+frozen Stage E.2 matrix construction, task and attacker selection, monitor
+preflight, cost ceilings, authorization, and no-provider/no-Stage-E execution
+guards.
+
+Stage E.2 adds 129 artifact-only tests. They validate frozen Stage E.1 readiness
+loading, matrix hash integrity, exactly 18 conditions, no extra condition
+generation, frozen tasks, task versions, scenario hashes, attacker families,
+primitives, seeds, architectures, depths, insertion points, oversight conditions,
+monitor versions, parameter hashes, threshold hashes, abstention hashes, policy
+versions, intervention hash, scorer versions, authorization, credential redaction,
+request/token/cost/trajectory ceilings, raw-first persistence, exact cache matching,
+invalid-cache rejection, bounded schema repair and transient retry, no
+outcome-based rerun, provider/token/cost ledger reconciliation, attacker-uptake and
+strategy-validity classifications, leakage rejection, objective-positive
+classification by domain, internal/tool/final/corrected-before-final distinctions,
+monitor alert and abstention calculations, first-alert timing, false negatives,
+false positives, zero-positive metric guards, audit and intervention budgets,
+policy information boundaries, intervention timing, prevention logic, matched
+pair/triplet/quartet comparisons, treatment isolation, utility/workflow/constraint
+deltas, token and cost overhead, subgroup reporting, small-denominator warnings,
+decision branches, Stage E.3 isolation, no benchmark repair, no Phase 8 execution,
+historical Stage E.1 immutability, and CI provider-call prohibition.
+
+No CI test may call OpenAI. Stage E.2 tests read only preserved local, redacted
+artifacts under `configs/experiments/`.
+
+Stage E.3 adds offline artifact tests for the provider-disabled gate, exactly 18
+Stage E.2 trajectories, artifact completeness, billable-versus-preserved ledger
+reconciliation, historical-label preservation, adjudicated-label separation,
+attacker adjudication, objective adjudication, benchmark-originated exclusion,
+monitor classification, observability and preventability separation, intervention
+timing, prevention counterfactual requirements, matched comparison integrity,
+utility and overhead preservation, claim validation, dataset freeze, decision
+gates, no raw-provider tracking, no Stage E.2 rerun, no provider execution, and no
+Phase 8 execution.
+
+Benchmark refinement adds offline tests for historical-version preservation,
+versioned benchmark candidate creation, refinement classification, compatibility
+matrix integrity, historical/repaired/adjudicated label preservation, offline
+rescore eligibility, provider-rerun requirement logic, no silent task, prompt,
+attacker, scorer, monitor, policy, or intervention replacement, evidence-package
+integrity, benchmark-manifest hash stability, frozen-with-limitations decision
+logic, no provider execution, and no Phase 8 execution.
+
+Phase 7 closeout adds offline tests for artifact-index completeness,
+reproducibility-manifest commands and expected counts, final claim-registry
+consistency, final limitation coverage, repository hygiene, README/report status
+consistency, closeout decision, merge-readiness decision, no automatic merge, no
+provider execution, no Stage E.2 rerun, and no Phase 8 execution.
+
 ## Continuous Integration
 
 The default CI target should run:

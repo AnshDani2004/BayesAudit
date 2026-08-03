@@ -1,0 +1,13 @@
+{
+  "calibration_was_run": false,
+  "current_commit": "144f479",
+  "dataset_decision": "dataset_ready_real_negative_only",
+  "monitor_transfer_was_run": false,
+  "ood_evaluation_was_run": false,
+  "phase8_started": false,
+  "readiness_hash": "6d6946dc5560ccebe9c87279fb74588e4588c9964b8644fb5d756e4bf403ff29",
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.stage_d2_readiness",
+  "stage_d2_readiness": "ready_for_stage_d2_real_negative_only",
+  "stage_d2_was_run": false,
+  "strategic_attackers_were_run": false
+}

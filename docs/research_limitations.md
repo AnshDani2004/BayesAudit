@@ -1,14 +1,15 @@
 # Research Limitations
 
-BayesAudit Phase 6 validates benchmark mechanics for strategic attack selection. It does not establish real-world attack rates, real model capability, or production safety guarantees.
+BayesAudit Phase 7 validates the infrastructure needed for a real-model pilot. Until an explicitly authorized provider run is completed, it does not establish real-world attack rates, real model capability, monitor transfer, or production safety guarantees.
 
 Current limitations:
 
-- mock and synthetic-only trajectories
+- mock and synthetic-only trajectories through Phase 6
+- Phase 7 default configs are mock-safe dry runs
 - simple local probability estimators
 - restricted attacker and defender classes
-- no human annotation campaign for Phase 6
-- no paid or real-provider model calls
+- no completed human annotation campaign
+- no paid or real-provider model calls by default
 - no true game equilibrium claims
 - confirmatory matrices are configured but not automatically run
 

@@ -1,0 +1,15 @@
+pricing:
+  schema_version: bayesaudit.pilot.pricing.v1
+  pricing_table_version: openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1
+  provider: openai
+  model_identifier: gpt-5-nano-2025-08-07
+  currency: USD
+  input_price_per_million_tokens: "0.05"
+  cached_input_price_per_million_tokens: "0.005"
+  output_price_per_million_tokens: "0.40"
+  effective_date: "2026-07-31"
+  pricing_source_description: "User-provided Stage A.2 audit pricing for GPT-5 nano, recorded 2026-07-31."
+  regional_uplift_multiplier: "1"
+  additional_fixed_fee_usd: "0"
+  fixed_tool_charge_usd: "0"
+  configuration_hash: 767fa5ca39aac5617fb39d81e6cb9a0f197264b5d097d51cec3deb01214eff61

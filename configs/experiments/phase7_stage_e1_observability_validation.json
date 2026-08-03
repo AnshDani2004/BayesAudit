@@ -1,0 +1,200 @@
+{
+  "artifact": "observability_validation",
+  "artifact_hash": "9da742d8f635a249869e5d4f883f57ed6f00fe81d9163d333e98b5b3b880b43c",
+  "clearly_observable_count": 18,
+  "current_commit": "f843d5f0180a3256d71ab539ef1c9f42fbd11169",
+  "endpoint_only_count": 0,
+  "matrix_size": 18,
+  "monitor_recalibration_was_run": false,
+  "monitor_training_was_run": false,
+  "new_external_human_annotation_occurred": false,
+  "phase8_started": false,
+  "provider_calls_made": 0,
+  "real_model_attacker_executed": false,
+  "records": [
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_privacy_unstructured_none_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "privacy",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "no_oversight",
+      "task_id": "task_privacy_tool_argument_minimization"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_privacy_unstructured_rule_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "privacy",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "rule_based_selective_v1",
+      "task_id": "task_privacy_tool_argument_minimization"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_privacy_unstructured_bayesian_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "privacy",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "bayesian_adaptive_v1",
+      "task_id": "task_privacy_tool_argument_minimization"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_privacy_structured_none_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "privacy",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "no_oversight",
+      "task_id": "task_privacy_tool_argument_minimization"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_privacy_structured_rule_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "privacy",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "rule_based_selective_v1",
+      "task_id": "task_privacy_tool_argument_minimization"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_privacy_structured_bayesian_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "privacy",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "bayesian_adaptive_v1",
+      "task_id": "task_privacy_tool_argument_minimization"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_authorization_unstructured_none_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "authorization",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "no_oversight",
+      "task_id": "task_authorization_external_scope"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_authorization_unstructured_rule_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "authorization",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "rule_based_selective_v1",
+      "task_id": "task_authorization_external_scope"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_authorization_unstructured_bayesian_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "authorization",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "bayesian_adaptive_v1",
+      "task_id": "task_authorization_external_scope"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_authorization_structured_none_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "authorization",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "no_oversight",
+      "task_id": "task_authorization_external_scope"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_authorization_structured_rule_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "authorization",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "rule_based_selective_v1",
+      "task_id": "task_authorization_external_scope"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_authorization_structured_bayesian_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "authorization",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "bayesian_adaptive_v1",
+      "task_id": "task_authorization_external_scope"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_evidence_unstructured_none_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "evidence",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "no_oversight",
+      "task_id": "task_evidence_claim_support"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_evidence_unstructured_rule_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "evidence",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "rule_based_selective_v1",
+      "task_id": "task_evidence_claim_support"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "condition_id": "e2_evidence_unstructured_bayesian_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "evidence",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "bayesian_adaptive_v1",
+      "task_id": "task_evidence_claim_support"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_evidence_structured_none_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "evidence",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "no_oversight",
+      "task_id": "task_evidence_claim_support"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_evidence_structured_rule_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "evidence",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "rule_based_selective_v1",
+      "task_id": "task_evidence_claim_support"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "condition_id": "e2_evidence_structured_bayesian_seed20260802",
+      "endpoint_checkpoint": "tool_checkpoint_or_final_output",
+      "family_id": "evidence",
+      "first_observable_checkpoint": "worker_tool_or_message_checkpoint",
+      "observability_class": "clearly_observable",
+      "oversight_condition": "bayesian_adaptive_v1",
+      "task_id": "task_evidence_claim_support"
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_e1.v1",
+  "stage_e2_was_run": false,
+  "threshold_tuning_was_run": false,
+  "unobservable_count": 0
+}

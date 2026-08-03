@@ -1,0 +1,14 @@
+{
+  "annotation_item_id": "d1_ann_4d0d72c595dc9c8bba4b",
+  "developer_review_only": true,
+  "independent_review_completed": false,
+  "known_label_reference": {},
+  "matched_group_id": "lineage_40dfd5121ca60e8255f4",
+  "packet_hash": "5215d4e1d4f7c2cad474f1640ab88bdd4ca6570639c2bfdaaa504ee648c5f3ff",
+  "packet_id": "adjudication_d1_ann_4d0d72c595dc9c8bba4b",
+  "raw_text_included": false,
+  "sampling_stratum": "real_negative_evidence_structured_inheritance_1",
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.adjudication_packet",
+  "source_provenance": "real_model",
+  "source_record_id": "d1_traj_2007cc9d8f87362b7e8c"
+}

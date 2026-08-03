@@ -1,0 +1,149 @@
+{
+  "artifact": "matched_comparison_audit",
+  "artifact_hash": "b5c381c6b571469f97878ce15691cc38ea2974484d7c0d7a842c60d67b043a31",
+  "current_commit": "f843d5f0180a3256d71ab539ef1c9f42fbd11169",
+  "matched_pair_count": 12,
+  "monitor_recalibration_was_run": false,
+  "monitor_training_was_run": false,
+  "new_external_human_annotation_occurred": false,
+  "phase8_started": false,
+  "provider_calls_made": 0,
+  "real_model_attacker_executed": false,
+  "records": [
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_privacy_unstructured_rule_seed20260802",
+      "match_key_hash": "29583452d1f6dc3f9dcfd3119ff000b8db72062859ed05771709b46fd9f5432d",
+      "matched_no_oversight_condition_id": "e2_privacy_unstructured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_privacy_unstructured_bayesian_seed20260802",
+      "match_key_hash": "29583452d1f6dc3f9dcfd3119ff000b8db72062859ed05771709b46fd9f5432d",
+      "matched_no_oversight_condition_id": "e2_privacy_unstructured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_privacy_structured_rule_seed20260802",
+      "match_key_hash": "01f9f00b0e0a1b8cbb9c907d74554aa362187a7711f8e8e2011b74ba888d0f0a",
+      "matched_no_oversight_condition_id": "e2_privacy_structured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_privacy_structured_bayesian_seed20260802",
+      "match_key_hash": "01f9f00b0e0a1b8cbb9c907d74554aa362187a7711f8e8e2011b74ba888d0f0a",
+      "matched_no_oversight_condition_id": "e2_privacy_structured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_authorization_unstructured_rule_seed20260802",
+      "match_key_hash": "88d65a4ea20842465fb67a287b11c05356b38832a49a85b74f5477299ed7dd2e",
+      "matched_no_oversight_condition_id": "e2_authorization_unstructured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_authorization_unstructured_bayesian_seed20260802",
+      "match_key_hash": "88d65a4ea20842465fb67a287b11c05356b38832a49a85b74f5477299ed7dd2e",
+      "matched_no_oversight_condition_id": "e2_authorization_unstructured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_authorization_structured_rule_seed20260802",
+      "match_key_hash": "c418c55a0eb158fee75e70eede5db3733e3f871c1fd42c54fe964e2d826f1a42",
+      "matched_no_oversight_condition_id": "e2_authorization_structured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_authorization_structured_bayesian_seed20260802",
+      "match_key_hash": "c418c55a0eb158fee75e70eede5db3733e3f871c1fd42c54fe964e2d826f1a42",
+      "matched_no_oversight_condition_id": "e2_authorization_structured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_evidence_unstructured_rule_seed20260802",
+      "match_key_hash": "fe9f24ae41b65df16cfff0a596671e1b0b9e64f59bfeef5bff009510a654e7d3",
+      "matched_no_oversight_condition_id": "e2_evidence_unstructured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_evidence_unstructured_bayesian_seed20260802",
+      "match_key_hash": "fe9f24ae41b65df16cfff0a596671e1b0b9e64f59bfeef5bff009510a654e7d3",
+      "matched_no_oversight_condition_id": "e2_evidence_unstructured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_evidence_structured_rule_seed20260802",
+      "match_key_hash": "918a5f13d7c168776164ac0df210f64d226ba9cd99baaa1c4ac4a43355dd5abf",
+      "matched_no_oversight_condition_id": "e2_evidence_structured_none_seed20260802",
+      "unexpected_difference_count": 0
+    },
+    {
+      "allowed_differences": [
+        "oversight_condition",
+        "monitor_id",
+        "intervention_id"
+      ],
+      "condition_id": "e2_evidence_structured_bayesian_seed20260802",
+      "match_key_hash": "918a5f13d7c168776164ac0df210f64d226ba9cd99baaa1c4ac4a43355dd5abf",
+      "matched_no_oversight_condition_id": "e2_evidence_structured_none_seed20260802",
+      "unexpected_difference_count": 0
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_e1.v1",
+  "stage_e2_was_run": false,
+  "threshold_tuning_was_run": false
+}

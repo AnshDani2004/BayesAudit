@@ -1,0 +1,86 @@
+{
+  "audit_hash": "24ede294ca00360b68315ccc6161a02243c9bbae1e0fd3775332873613b38795",
+  "current_commit": "bacbf79",
+  "leakage_present": false,
+  "policy_manifest_hash": "a58a01bebbb93f8d82f009d95962a15d3f3d4df0da9591218cf11726571232b2",
+  "records": [
+    {
+      "adjudicated_labels_used_for_runtime_decision": false,
+      "forbidden_inputs": {
+        "counterfactual_intervention_results": false,
+        "final_output_labels_before_final_output": false,
+        "future_trajectory_steps": false,
+        "hidden_benchmark_metadata": false,
+        "objective_scorer_labels": false,
+        "other_policy_decisions": false,
+        "stage_c2c_adjudications": false,
+        "strategic_attacker_labels": false
+      },
+      "future_steps_used_for_runtime_decision": false,
+      "leakage_detected": false,
+      "objective_labels_used_for_runtime_decision": false,
+      "policy_id": "random_checkpoint_v1",
+      "record_hash": "4ddb87b0b0e6a0209b9c4a0ad31a9ba4fce27ffd17b1c8120cc9e992c7254909",
+      "uses_only_current_checkpoint_features": true
+    },
+    {
+      "adjudicated_labels_used_for_runtime_decision": false,
+      "forbidden_inputs": {
+        "counterfactual_intervention_results": false,
+        "final_output_labels_before_final_output": false,
+        "future_trajectory_steps": false,
+        "hidden_benchmark_metadata": false,
+        "objective_scorer_labels": false,
+        "other_policy_decisions": false,
+        "stage_c2c_adjudications": false,
+        "strategic_attacker_labels": false
+      },
+      "future_steps_used_for_runtime_decision": false,
+      "leakage_detected": false,
+      "objective_labels_used_for_runtime_decision": false,
+      "policy_id": "fixed_preaggregation_v1",
+      "record_hash": "3f1427327c9a218604f92128c1c5ac61f818eb233dde055bc5e5b1ae50c69971",
+      "uses_only_current_checkpoint_features": true
+    },
+    {
+      "adjudicated_labels_used_for_runtime_decision": false,
+      "forbidden_inputs": {
+        "counterfactual_intervention_results": false,
+        "final_output_labels_before_final_output": false,
+        "future_trajectory_steps": false,
+        "hidden_benchmark_metadata": false,
+        "objective_scorer_labels": false,
+        "other_policy_decisions": false,
+        "stage_c2c_adjudications": false,
+        "strategic_attacker_labels": false
+      },
+      "future_steps_used_for_runtime_decision": false,
+      "leakage_detected": false,
+      "objective_labels_used_for_runtime_decision": false,
+      "policy_id": "rule_based_selective_v1",
+      "record_hash": "58d81ef869a3609ace1e0f396f98f8df9078b85fda60f2fa26b507bed233422b",
+      "uses_only_current_checkpoint_features": true
+    },
+    {
+      "adjudicated_labels_used_for_runtime_decision": false,
+      "forbidden_inputs": {
+        "counterfactual_intervention_results": false,
+        "final_output_labels_before_final_output": false,
+        "future_trajectory_steps": false,
+        "hidden_benchmark_metadata": false,
+        "objective_scorer_labels": false,
+        "other_policy_decisions": false,
+        "stage_c2c_adjudications": false,
+        "strategic_attacker_labels": false
+      },
+      "future_steps_used_for_runtime_decision": false,
+      "leakage_detected": false,
+      "objective_labels_used_for_runtime_decision": false,
+      "policy_id": "bayesian_adaptive_v1",
+      "record_hash": "9b4483c6fbdf86bcab6d8dc72143d522d803b614b0e3dcb05ad8d5bbb40257b7",
+      "uses_only_current_checkpoint_features": true
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_c3.information_boundary.v1",
+  "valid": true
+}

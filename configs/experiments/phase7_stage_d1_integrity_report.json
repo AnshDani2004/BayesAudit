@@ -1,0 +1,61 @@
+{
+  "blocking_issue_count": 0,
+  "current_commit": "144f479",
+  "dual_track_synthetic_artifact_valid": true,
+  "integrity_hash": "0a334b06f0784f0ef2ea93f4590c447f5805758a4fd9f9098d831b01c5116acb",
+  "issue_count": 2,
+  "issues": [
+    {
+      "issue_hash": "3cd20d4530d3ec35b981e80cd6dfe658d45c0ac48deb9b4cdd7029fe67f28dad",
+      "issue_type": "schema_version_missing",
+      "message": "schema version could not be inferred from source",
+      "severity": "warning",
+      "source_id": "phase6_smoke_attack_events"
+    },
+    {
+      "issue_hash": "bbf49fce2c894879cd567620f1fec9997eda848f15101262b105f0eef99bf29b",
+      "issue_type": "schema_version_missing",
+      "message": "schema version could not be inferred from source",
+      "severity": "warning",
+      "source_id": "phase6_smoke_plan"
+    }
+  ],
+  "provider_calls_made": 0,
+  "provider_ledger_state": {
+    "cached_execution_total": 24,
+    "phase7_stage_c1": {
+      "ledger_path": "results/tables/phase7/phase7_measurement_openai_stage_c1/provider_request_ledger.jsonl",
+      "row_count": 84,
+      "status_counts": {
+        "cached": 12,
+        "completed": 72
+      }
+    },
+    "phase7_stage_c2": {
+      "ledger_path": "results/tables/phase7/phase7_measurement_openai_stage_c2/provider_request_ledger.jsonl",
+      "row_count": 84,
+      "status_counts": {
+        "cached": 12,
+        "completed": 72
+      }
+    },
+    "phase7_stage_c2b": {
+      "ledger_path": "results/tables/phase7/phase7_measurement_openai_stage_c2b/provider_request_ledger.jsonl",
+      "row_count": 16,
+      "status_counts": {
+        "completed": 16
+      }
+    },
+    "phase7_stage_c3": {
+      "ledger_path": null,
+      "policy_result_count": 16,
+      "provider_requests_caused": 0,
+      "row_count": 0,
+      "status_counts": {}
+    }
+  },
+  "raw_artifacts_remain_ignored": true,
+  "real_track_integrity_valid": true,
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.integrity_report",
+  "secret_scan_status": "no_secret_material_tracked_by_stage_d1"
+}

@@ -1,0 +1,239 @@
+{
+  "artifact": "phase7_benchmark_refinement_manifest",
+  "artifact_hash": "fe8c2c1f566d61e4c3dae6060447fd1da8d8170814b210a92c25cd8219ae4adb",
+  "attacker_semantic_refinements": 0,
+  "benchmark_candidate_version": "phase7_benchmark_candidate_v1",
+  "classification_counts": {
+    "classifier_version_update": 1,
+    "derived_label_only": 1,
+    "documentation_only": 8,
+    "infrastructure_change": 2,
+    "schema_or_parser_change": 1,
+    "scorer_version_update": 1
+  },
+  "current_commit": "cb00b395278407a66c780a9381b16dd290eca82b",
+  "historical_outputs_modified": false,
+  "monitor_or_policy_runtime_refinements": 0,
+  "phase8_started": false,
+  "pr_merged": false,
+  "prompt_semantic_refinements": 0,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "provider_rerun_required": false,
+  "refinement_count": 14,
+  "refinements": [
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "infrastructure_change",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_001",
+      "source_defect": "OpenAI raw-output extraction repair"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "infrastructure_change",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_002",
+      "source_defect": "Token-derived cost-accounting repair"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "schema_or_parser_change",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_003",
+      "source_defect": "Role-specific structured-output schema repair"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "scorer_version_update",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_004",
+      "source_defect": "privacy:v1 false-positive repair to privacy:v2"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_005",
+      "source_defect": "opportunistic_completion_v1 weak-uptake diagnosis"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_006",
+      "source_defect": "opportunistic_completion_v2 limitations"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "classifier_version_update",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_007",
+      "source_defect": "observable_risk:v1 false-positive repair to observable_risk:v2"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_008",
+      "source_defect": "Negative-only Stage C.3 limitations"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_009",
+      "source_defect": "Real-negative-only Stage D.1 dataset limitation"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_010",
+      "source_defect": "Stage D.2 monitor transfer limitations"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_011",
+      "source_defect": "Stage E.1 attacker-design limitations"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_012",
+      "source_defect": "Stage E.2 controlled-positive limitations"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "derived_label_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_013",
+      "source_defect": "Stage E.3 developer adjudication labels"
+    },
+    {
+      "affected_stages": [
+        "phase7"
+      ],
+      "affected_trajectories": "preserved_historical_outputs_only",
+      "benchmark_inclusion_decision": "include_with_versioned_provenance",
+      "classification": "documentation_only",
+      "historical_result_impact": "preserved_with_separate_repaired_or_adjudicated_labels",
+      "new_version": "phase7_benchmark_candidate_v1",
+      "old_version": "historical_phase7_version",
+      "provider_rerun_needed": false,
+      "rationale": "offline refinement preserves provider-visible experimental conditions",
+      "refinement_id": "p7_refine_014",
+      "source_defect": "Stage E.3 claim-support linkage"
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.refinement.v1",
+  "stage_e2_rerun_performed": false,
+  "task_semantic_refinements": 0
+}

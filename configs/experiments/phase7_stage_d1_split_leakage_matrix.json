@@ -1,0 +1,349 @@
+{
+  "current_commit": "144f479",
+  "matrix_hash": "c974c1cda4c23d6ddaec1ec2ca1a23e88baa5c39b253dca19abba6b4c06842aa",
+  "passes": true,
+  "prohibited_split_overlap_count": 0,
+  "records": [
+    {
+      "overlap_group_keys": [
+        "duplicate_text_group",
+        "matched_condition_group",
+        "scenario_family_group",
+        "scenario_hash_family",
+        "sensitive_token_family",
+        "task_family_group",
+        "trajectory_lineage_id"
+      ],
+      "policy_relation_overlap_allowed": true,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 20,
+      "record_hash": "281d0cf34132cc9db42ab98d4480c065147eae35ebf4291512acfb13887dc7ef",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_negative_transfer_test__real_policy_negative_audit"
+    },
+    {
+      "overlap_group_keys": [
+        "duplicate_text_group",
+        "matched_condition_group",
+        "scenario_family_group",
+        "scenario_hash_family",
+        "sensitive_token_family",
+        "task_family_group",
+        "trajectory_lineage_id"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 23,
+      "record_hash": "6f6be321f6ed0d8937a9d77a641e0f45ce90523ef7247aebc8bdc6a2e5e65ef7",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_negative_transfer_test__real_workflow_invalid_audit"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "1b89bc98adcb68e08f1117996848432d30059d4547f6932fd6671b83ae8b0ec8",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "real_negative_transfer_test__synthetic_calibration"
+    },
+    {
+      "overlap_group_keys": [
+        "scenario_family_group",
+        "scenario_hash_family",
+        "sensitive_token_family",
+        "task_family_group"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 4,
+      "record_hash": "e7b844b45698b7b9626b6528fc63dade832f3c9c92501081b92d883bf3310e69",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_negative_transfer_test__synthetic_id_test"
+    },
+    {
+      "overlap_group_keys": [
+        "scenario_family_group",
+        "task_family_group"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 2,
+      "record_hash": "8d0a538993ffb25538ea9ed0890f80cb89c29d84b81da40947561e443adb161a",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_negative_transfer_test__synthetic_ood_attack_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "2f38872b3f7c9ae5d05261cfdb14dca1a8e400a130944ae7f968ab1915403ab0",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_negative_transfer_test__synthetic_ood_domain_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "bb44b325f05c06152e62bbf23f438108adebb843bde3e70c7228941e6c02c9eb",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "real_negative_transfer_test__synthetic_train"
+    },
+    {
+      "overlap_group_keys": [
+        "duplicate_text_group",
+        "matched_condition_group",
+        "scenario_family_group",
+        "scenario_hash_family",
+        "sensitive_token_family",
+        "task_family_group",
+        "trajectory_lineage_id"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 11,
+      "record_hash": "50320aa5575d50250052ff6c6dfde3ffa1cb644764e8f823c24678f9b6f119d4",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_policy_negative_audit__real_workflow_invalid_audit"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "afb9c4e4d79622b8978c6d3ce6d5b39cbb1e1b259d4ceb22d56c7ecded269e28",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "real_policy_negative_audit__synthetic_calibration"
+    },
+    {
+      "overlap_group_keys": [
+        "sensitive_token_family"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 1,
+      "record_hash": "e1fd6ced355aaa91662f31a8dbc25aa8558c796d38b848c90f6a0da28dbd6ed5",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_policy_negative_audit__synthetic_id_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "17c1dad6182b3f8683f1daf4ac7c764ac88cd2e0edb4d405acb0cd2a6714439e",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_policy_negative_audit__synthetic_ood_attack_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "7d0014a946acabff78bc8910e1ab2c8ee511f4ed8f099c9bd334d513fc271c6e",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_policy_negative_audit__synthetic_ood_domain_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "158a88f4f11a2ebbec572e329b351f4c9ada406dea266d671cca827a13e73094",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "real_policy_negative_audit__synthetic_train"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "7598bd7958771c61639f1ff8bb4dc190a52052a0d7711f2debd88fea8480eb77",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "real_workflow_invalid_audit__synthetic_calibration"
+    },
+    {
+      "overlap_group_keys": [
+        "scenario_family_group",
+        "scenario_hash_family",
+        "sensitive_token_family",
+        "task_family_group"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 4,
+      "record_hash": "7c9444f98723dee1eb7b945aeb28b2d317f42c26d2922b8166063e1363a71fd4",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_workflow_invalid_audit__synthetic_id_test"
+    },
+    {
+      "overlap_group_keys": [
+        "scenario_family_group",
+        "task_family_group"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 2,
+      "record_hash": "63b84a2e4ccd93a44b52e3ef8065761a2f3f7facd3acab9dff3d80d6acec8dcd",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_workflow_invalid_audit__synthetic_ood_attack_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "b7d3a9104959f3eed4628e8c8d8278b61f96edf50704ef97e71a14c8b17292e1",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "real_workflow_invalid_audit__synthetic_ood_domain_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "a9a79c1fc05fe383296da3fff28b4a3a628a52179efbc88a68c079ba821d0cf5",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "real_workflow_invalid_audit__synthetic_train"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "a80fe1c15af3d4e9e6afd59ce8fcd3b7f0504b7b34fa5837925bc1e6aec95943",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_calibration__synthetic_id_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "4a40284303df1a34fd591875b1ae9e421d66e7fd8ad48edd064bdd1263e2d7dd",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_calibration__synthetic_ood_attack_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "9fed7081c39d1ff41e69a99e358e0d6714fc92fed1f7e829bae9a70759e6dcfb",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_calibration__synthetic_ood_domain_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "85ccea4ee2f045ea19ea2906a6324bed44b175dc8a3332fd6f594f788d87055a",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_calibration__synthetic_train"
+    },
+    {
+      "overlap_group_keys": [
+        "scenario_family_group",
+        "sensitive_token_family",
+        "task_family_group"
+      ],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 3,
+      "record_hash": "c03944f92ba96b90007e8da4455369a58395f00053149b24bbda6b7f55eb5010",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": true,
+      "split_pair": "synthetic_id_test__synthetic_ood_attack_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "45851a59618560f690fa86375fbc521ad4d18c8f9dc38dc886a896eb214f8bce",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_id_test__synthetic_ood_domain_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "42d49ae37a9b5e594db2a9c28eaecc655cf3c759a79456ac6678b03d12462eb7",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_id_test__synthetic_train"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "58f94c67fc942caa4219078bcff48abfcf1c80f84afb237efc7b0e4ba571b66f",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_ood_attack_test__synthetic_ood_domain_test"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "4b086954cd647aab2deadc1ba44d21ad2356067a347fc7279d15742b73c43adf",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_ood_attack_test__synthetic_train"
+    },
+    {
+      "overlap_group_keys": [],
+      "policy_relation_overlap_allowed": false,
+      "prohibited_overlap": false,
+      "protected_group_overlap_count": 0,
+      "record_hash": "8ac5f777de006c9d33aba9b4ab48c669ac9f89fc041cc32fb408792e95e48d21",
+      "record_id_overlap_count": 0,
+      "relation_overlap_allowed": false,
+      "split_pair": "synthetic_ood_domain_test__synthetic_train"
+    }
+  ],
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.split_leakage_matrix",
+  "tested_overlap_types": [
+    "record_id",
+    "trajectory_id",
+    "lineage_id",
+    "scenario_family",
+    "task_family",
+    "scenario_hash_family",
+    "attack_family",
+    "mutation_family",
+    "sensitive_token_family",
+    "duplicate_text",
+    "matched_condition",
+    "counterfactual_group"
+  ]
+}

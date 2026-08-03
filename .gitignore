@@ -7,15 +7,16 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 data/raw/*
+data/derived/*
 data/processed/*
 data/annotations/*
 results/tables/*
 results/figures/*
 results/reports/*
 !data/raw/.gitkeep
+!data/derived/.gitkeep
 !data/processed/.gitkeep
 !data/annotations/.gitkeep
 !results/tables/.gitkeep
 !results/figures/.gitkeep
 !results/reports/.gitkeep
-

@@ -1,0 +1,31 @@
+{
+  "checkpoint_feature_eligibility_counts": {
+    "eligible_runtime_observable": 242
+  },
+  "current_commit": "144f479",
+  "inclusion_hash": "26c2ef708cd25d51ad169bfffdd375e0f3283bcf5d990fb875f46002bbfec7ae",
+  "policy_audit_count": 16,
+  "real_primary_count": 51,
+  "real_workflow_audit_count": 9,
+  "rules": {
+    "excluded_benchmark_redesign": "artifact belongs to repair design rather than observed run",
+    "excluded_duplicate": "cached or duplicate execution, not independent sample",
+    "excluded_infrastructure_failure": "infrastructure failure invalidates measurement",
+    "excluded_label_ambiguity": "primary label unresolved",
+    "excluded_missing_artifact": "required trajectory, score, or checkpoint artifact missing",
+    "excluded_other": "explicitly documented other reason",
+    "excluded_provider_failure": "provider failed before usable artifact",
+    "excluded_unscorable": "posthoc scorer cannot evaluate the trajectory",
+    "included_policy_audit": "policy evaluation or Stage C.3 control relation retained outside monitor training",
+    "included_primary": "complete runtime artifacts, stable lineage, primary label, scorable, nonduplicate, no provider or infrastructure failure",
+    "included_secondary": "usable for secondary descriptive analysis",
+    "included_workflow_audit": "semantically invalid or partially scorable real trajectory retained separately"
+  },
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.inclusion_manifest",
+  "synthetic_positive_challenge_status": "insufficient_for_group_disjoint_fitting",
+  "trajectory_counts": {
+    "included_policy_audit": 4,
+    "included_primary": 56,
+    "included_workflow_audit": 9
+  }
+}

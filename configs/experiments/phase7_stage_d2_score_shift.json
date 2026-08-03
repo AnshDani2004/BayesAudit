@@ -1,0 +1,97 @@
+{
+  "current_commit": "55694b2",
+  "records": [
+    {
+      "abstention_rate_shift": 0.0,
+      "alert_rate_shift": 0.0,
+      "jensen_shannon_divergence": 0.0,
+      "ks_statistic": 0.0,
+      "limitations": "descriptive only; synthetic reference is Phase 5 smoke negative data",
+      "mean_score_shift": 0.0,
+      "median_score_shift": 0.0,
+      "monitor_id": "constant_negative_v1",
+      "population_stability_index": 0.0,
+      "quantile_shift": {
+        "q10": 0.0,
+        "q50": 0.0,
+        "q90": 0.0
+      },
+      "real_count": 177,
+      "record_hash": "01b967273ddaebeccf9789f3bd009bf5f791e41bdfb828fca58fc3bda7a6ab37",
+      "synthetic_count": 12,
+      "tail_probability_shift": 0.0,
+      "variance_shift": 0.0,
+      "wasserstein_distance": 0.0
+    },
+    {
+      "abstention_rate_shift": 0.0,
+      "alert_rate_shift": 0.0,
+      "jensen_shannon_divergence": 0.0,
+      "ks_statistic": 0.0,
+      "limitations": "descriptive only; synthetic reference is Phase 5 smoke negative data",
+      "mean_score_shift": 0.0,
+      "median_score_shift": 0.0,
+      "monitor_id": "constant_smoke",
+      "population_stability_index": 0.0,
+      "quantile_shift": {
+        "q10": 0.0,
+        "q50": 0.0,
+        "q90": 0.0
+      },
+      "real_count": 177,
+      "record_hash": "f27d326fe8b46ac92cf8f20c9727b9971c386949784ce7134c47b4880796d745",
+      "synthetic_count": 12,
+      "tail_probability_shift": 0.0,
+      "variance_shift": 0.0,
+      "wasserstein_distance": 0.0
+    },
+    {
+      "abstention_rate_shift": 0.0,
+      "alert_rate_shift": 0.0,
+      "jensen_shannon_divergence": 0.0,
+      "ks_statistic": 0.0,
+      "limitations": "descriptive only; synthetic reference is Phase 5 smoke negative data",
+      "mean_score_shift": 0.0,
+      "median_score_shift": 0.0,
+      "monitor_id": "logistic_smoke",
+      "population_stability_index": 0.0,
+      "quantile_shift": {
+        "q10": 0.0,
+        "q50": 0.0,
+        "q90": 0.0
+      },
+      "real_count": 177,
+      "record_hash": "fe3f7cb744491b3f208485ef7ad0558bb2539b576718b5679b136db1c0a9acfe",
+      "synthetic_count": 12,
+      "tail_probability_shift": 0.0,
+      "variance_shift": 0.0,
+      "wasserstein_distance": 0.0
+    },
+    {
+      "abstention_rate_shift": 0.0,
+      "alert_rate_shift": 0.0,
+      "jensen_shannon_divergence": 0.21576155383883566,
+      "ks_statistic": 0.5,
+      "limitations": "descriptive only; synthetic reference is Phase 5 smoke negative data",
+      "mean_score_shift": -0.11552928931500239,
+      "median_score_shift": -0.11552928931500239,
+      "monitor_id": "rule_based_monitor_v1",
+      "population_stability_index": 10.361632918973207,
+      "quantile_shift": {
+        "q10": 0.0,
+        "q50": -0.2310585786300049,
+        "q90": -0.2310585786300049
+      },
+      "real_count": 177,
+      "record_hash": "4ce20a871a60fe2190c06d44afdc1e81d5093671da544569228610d3140604ef",
+      "synthetic_count": 12,
+      "tail_probability_shift": 0.0,
+      "variance_shift": -0.013347016689629537,
+      "wasserstein_distance": 0.11487658146576527
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.score_shift",
+  "score_shift_claim_is_descriptive": true,
+  "score_shift_hash": "d6a8620118e2aecffa01e4c172c1248d6d9b3bdc05f196ab1605597f2f2e6150",
+  "synthetic_reference_negative_count": 12
+}

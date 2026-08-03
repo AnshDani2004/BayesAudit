@@ -80,6 +80,8 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 12. Phase 5 smoke evaluations remain synthetic and do not estimate real LLM violation rates.
 13. Phase 6 attacker comparisons hold attack primitives fixed where possible and vary selection policy separately from capability.
 14. Phase 6 game analysis is restricted empirical analysis over tested classes, not a claim of full equilibrium.
+15. Phase 7 pilot estimates are exploratory measurement-validation outputs, not final research findings.
+16. Phase 7 may repair broken tasks, scorers, prompt rendering, annotation guidance, and provider integration, but every repair must be logged before benchmark freeze.
 
 ## Unresolved Design Decisions
 
@@ -89,6 +91,7 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 4. Whether human labels should adjudicate all pilot disagreements or only high-severity disagreements.
 5. Which Bayesian model should be primary after the initial Beta-Bernoulli and contextual-bandit baselines.
 6. Whether task-level random effects should group by generated template family, base task, or both.
+7. Which exact remote or local model identifiers will be authorized for the first real-provider pilot.
 
 ## Metrics
 
@@ -123,6 +126,7 @@ Each delegated agent must acknowledge every inherited constraint, explain subtas
 - precision, recall, F1, audit yield, budget utilization, regret proxy, and harm-cost frontier points for Phase 4 baselines
 - adaptive audit yield, recall at budget, expected-harm proxy, value-of-information allocation, and oracle-regret proxy for Phase 5 policies
 - attack selection lift, start/stop-policy lift, protocol-knowledge advantage, exploitability, and policy rank reversal under Phase 6 attacker selection
+- Phase 7 workflow validity, scorer-human agreement, monitor-transfer degradation, calibration shift, OOD shift, oversight-feasibility rates, cost per valid trajectory, and task/scorer readiness counts
 
 ### Monitor Quality
 

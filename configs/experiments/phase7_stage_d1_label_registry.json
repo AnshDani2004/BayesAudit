@@ -1,0 +1,929 @@
+{
+  "current_commit": "144f479",
+  "diagnostic_labels_cannot_replace_objective_labels": true,
+  "entries": [
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "workflow_semantically_valid label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "workflow_semantically_valid",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "workflow_semantically_valid_with_minor_issue label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "workflow_semantically_valid_with_minor_issue",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "workflow_semantically_invalid label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "workflow_semantically_invalid",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "workflow_unknown label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "workflow_unknown",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "execution_complete label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "execution_complete",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "execution_incomplete label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "execution_incomplete",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "provider_failed label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "provider_failed",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "infrastructure_failed label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "infrastructure_failed",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "measurement_fully_scorable label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "measurement_fully_scorable",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "measurement_partially_scorable label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "measurement_partially_scorable",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "measurement_unscorable label in workflow",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "measurement_unscorable",
+      "label_namespace": "workflow",
+      "positive_class_meaning": null,
+      "source": "workflow",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "any_objective_violation label in objective_safety",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "any_objective_violation",
+      "label_namespace": "objective_safety",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "objective_safety",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "privacy_violation label in privacy",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "privacy_violation",
+      "label_namespace": "privacy",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "privacy",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "authorization_violation label in authorization",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "authorization_violation",
+      "label_namespace": "authorization",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "authorization",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "evidence_violation label in evidence",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "evidence_violation",
+      "label_namespace": "evidence",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "evidence",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "internal_only_violation label in objective_safety",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "internal_only_violation",
+      "label_namespace": "objective_safety",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "objective_safety",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "final_output_violation label in objective_safety",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "final_output_violation",
+      "label_namespace": "objective_safety",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "objective_safety",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "tool_argument_violation label in objective_safety",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "tool_argument_violation",
+      "label_namespace": "objective_safety",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "objective_safety",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "corrected_before_final label in objective_safety",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "corrected_before_final",
+      "label_namespace": "objective_safety",
+      "positive_class_meaning": null,
+      "source": "objective_safety",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "none",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "available_at_runtime": false,
+      "definition": "violation_severity label in objective_safety",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "violation_severity",
+      "label_namespace": "objective_safety",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "objective_safety",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "privacy:v1 label in privacy",
+      "future_derived": true,
+      "historically_superseded": true,
+      "known_limitations": "historical scorer retained for reproducibility",
+      "label_name": "privacy:v1",
+      "label_namespace": "privacy",
+      "positive_class_meaning": null,
+      "source": "privacy",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "privacy:v1"
+    },
+    {
+      "allowed_values": [
+        "positive",
+        "negative",
+        "unknown"
+      ],
+      "available_at_runtime": false,
+      "definition": "privacy:v2 label in privacy",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "repaired scorer; preserve superseded labels",
+      "label_name": "privacy:v2",
+      "label_namespace": "privacy",
+      "positive_class_meaning": null,
+      "source": "privacy",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "privacy:v2"
+    },
+    {
+      "allowed_values": [
+        "objective_privacy_violation",
+        "no_objective_privacy_violation",
+        "no_sensitive_occurrence"
+      ],
+      "available_at_runtime": false,
+      "definition": "stage_c1a_adjudication label in privacy",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "stage_c1a_adjudication",
+      "label_namespace": "privacy",
+      "positive_class_meaning": null,
+      "source": "privacy",
+      "suitable_as_monitor_target": true,
+      "suitable_for_primary_metrics": true,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "ordinary_negative",
+        "sensitive_context_expansion",
+        "authorization_boundary_pressure"
+      ],
+      "available_at_runtime": false,
+      "definition": "observable_risk:v1 label in observable_risk",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "observable_risk:v1",
+      "label_namespace": "observable_risk",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "observable_risk",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "checkpoint",
+      "version": "observable_risk:v1"
+    },
+    {
+      "allowed_values": [
+        "ordinary_negative",
+        "stylistic_opportunism",
+        "ambiguous_risk",
+        "validated_observable_risk",
+        "validated_objective_violation"
+      ],
+      "available_at_runtime": false,
+      "definition": "observable_risk:v2 label in observable_risk",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "repaired scorer; preserve superseded labels",
+      "label_name": "observable_risk:v2",
+      "label_namespace": "observable_risk",
+      "positive_class_meaning": "label-specific positive event",
+      "source": "observable_risk",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "checkpoint",
+      "version": "observable_risk:v2"
+    },
+    {
+      "allowed_values": [
+        "ordinary_negative",
+        "stylistic_opportunism",
+        "validated_observable_risk",
+        "objective_violation"
+      ],
+      "available_at_runtime": false,
+      "definition": "stage_c2c_adjudication label in observable_risk",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "stage_c2c_adjudication",
+      "label_namespace": "observable_risk",
+      "positive_class_meaning": null,
+      "source": "observable_risk",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "honest label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "honest",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "opportunistic_completion_v1 label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "opportunistic_completion_v1",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "opportunistic_completion_v2 label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "opportunistic_completion_v2",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "treatment_uptake_clear label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "treatment_uptake_clear",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "treatment_uptake_weak label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "treatment_uptake_weak",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "treatment_uptake_none label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "treatment_uptake_none",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "treatment_uptake_opposite label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "treatment_uptake_opposite",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "treatment_uptake_ambiguous label in behavior",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "treatment_uptake_ambiguous",
+      "label_namespace": "behavior",
+      "positive_class_meaning": null,
+      "source": "behavior",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "audited label in oversight",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "audited",
+      "label_namespace": "oversight",
+      "positive_class_meaning": null,
+      "source": "oversight",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "policy_evaluation",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "alerted label in oversight",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "alerted",
+      "label_namespace": "oversight",
+      "positive_class_meaning": null,
+      "source": "oversight",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "policy_evaluation",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "escalated label in oversight",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "escalated",
+      "label_namespace": "oversight",
+      "positive_class_meaning": null,
+      "source": "oversight",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "policy_evaluation",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "intervened label in oversight",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "intervened",
+      "label_namespace": "oversight",
+      "positive_class_meaning": null,
+      "source": "oversight",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "policy_evaluation",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "abstained label in oversight",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "abstained",
+      "label_namespace": "oversight",
+      "positive_class_meaning": null,
+      "source": "oversight",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "policy_evaluation",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "false_positive_alert label in oversight",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "false_positive_alert",
+      "label_namespace": "oversight",
+      "positive_class_meaning": null,
+      "source": "oversight",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "policy_evaluation",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "unnecessary_intervention label in oversight",
+      "future_derived": true,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "unnecessary_intervention",
+      "label_namespace": "oversight",
+      "positive_class_meaning": null,
+      "source": "oversight",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "policy_evaluation",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "real_model label in provenance",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "real_model",
+      "label_namespace": "provenance",
+      "positive_class_meaning": null,
+      "source": "provenance",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "synthetic label in provenance",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "synthetic",
+      "label_namespace": "provenance",
+      "positive_class_meaning": null,
+      "source": "provenance",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "trajectory",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "benchmark_originated label in provenance",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "benchmark_originated",
+      "label_namespace": "provenance",
+      "positive_class_meaning": null,
+      "source": "provenance",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "span",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "model_originated label in provenance",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "model_originated",
+      "label_namespace": "provenance",
+      "positive_class_meaning": null,
+      "source": "provenance",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "span",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "adjudicated label in provenance",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "adjudicated",
+      "label_namespace": "provenance",
+      "positive_class_meaning": null,
+      "source": "provenance",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "label",
+      "version": "v1"
+    },
+    {
+      "allowed_values": [
+        "true",
+        "false"
+      ],
+      "available_at_runtime": false,
+      "definition": "automatically_scored label in provenance",
+      "future_derived": false,
+      "historically_superseded": false,
+      "known_limitations": "",
+      "label_name": "automatically_scored",
+      "label_namespace": "provenance",
+      "positive_class_meaning": null,
+      "source": "provenance",
+      "suitable_as_monitor_target": false,
+      "suitable_for_primary_metrics": false,
+      "unit_of_analysis": "label",
+      "version": "v1"
+    }
+  ],
+  "label_count": 47,
+  "primary_label_precedence": [
+    "developer_adjudication_when_available",
+    "repaired_scorer_output",
+    "current_validated_scorer_output",
+    "historical_scorer_output",
+    "heuristic_diagnostic_label"
+  ],
+  "registry_hash": "b05ff7a6270613d84955cd84c7f4f8f3d1038bf0ec29d1b3e8b81e1e63762b45",
+  "schema_version": "bayesaudit.real_pilot_dataset.v1.label_registry"
+}

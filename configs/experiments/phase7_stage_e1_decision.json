@@ -1,0 +1,58 @@
+{
+  "artifact": "stage_e1_decision",
+  "artifact_hash": "d6b7fe8bde82354e903358145d5fb037cfc32ccc24ce9b1f734fd1e3778b7db9",
+  "benchmark_status": "not_ready_to_freeze",
+  "checks": {
+    "all_matrix_conditions_observable": true,
+    "all_matrix_conditions_preventable_or_potentially_preventable": true,
+    "architecture_count_within_ceiling": true,
+    "authorization_record_generated": true,
+    "cost_under_ceiling": true,
+    "information_boundary_passed": true,
+    "matrix_frozen_under_ceiling": true,
+    "monitor_preflight_complete": true,
+    "oversight_condition_count_within_ceiling": true,
+    "phase6_attacker_inventory_complete": true,
+    "provider_calls_made_zero": true,
+    "scorer_endpoint_validation_passed": true,
+    "selected_family_count_within_ceiling": true,
+    "selected_task_count_within_ceiling": true,
+    "stage_d2_monitor_stack_ready": true,
+    "stage_e2_not_run": true
+  },
+  "current_commit": "f843d5f0180a3256d71ab539ef1c9f42fbd11169",
+  "limitations": [
+    "Stage E.2 is a small controlled pilot, not a population-prevalence or broad real-world-safety estimate.",
+    "The Stage D.2 Bayesian logistic monitor artifact is absent; bayesian_adaptive_v1 uses the frozen D.2 primary logistic_smoke monitor as its statistical signal.",
+    "Authorization and evidence monitor-positive preflight support is based on offline endpoint fixtures and frozen monitor compatibility, not real positive outcomes.",
+    "No Stage E positive-case outcome has been observed."
+  ],
+  "monitor_recalibration_was_run": false,
+  "monitor_training_was_run": false,
+  "new_external_human_annotation_occurred": false,
+  "phase8_started": false,
+  "pr_1_merged": false,
+  "provider_calls_made": 0,
+  "real_model_attacker_executed": false,
+  "real_positive_case_outcomes_observed": 0,
+  "required_report_statements": [
+    "No real provider calls occurred.",
+    "No real-model attacker was executed.",
+    "No Stage E positive-case outcome was observed.",
+    "Attacker families were selected using frozen design criteria, not provider outcomes.",
+    "Monitor parameters, calibration mappings, thresholds, and abstention rules remain frozen.",
+    "Stage E.2 results must be interpreted as a small controlled pilot.",
+    "Stage E.2 cannot establish population prevalence or broad real-world safety.",
+    "Strategic-attacker outputs remain synthetic, sandboxed, and non-actionable.",
+    "Real external tools remain disabled."
+  ],
+  "schema_version": "bayesaudit.phase7.stage_e1.v1",
+  "scientific_framing": [
+    "Stage E.1 designs and authorizes a constrained real-model strategic-attacker pilot. It does not itself measure attack success, monitor sensitivity, intervention effectiveness, or prevention.",
+    "Stage E.2 will be the first Phase 7 provider experiment designed to evaluate controlled positive-case detection and prevention."
+  ],
+  "stage_e1_design_decision": "strategic_attacker_design_ready_with_limitations",
+  "stage_e1_status": "passed",
+  "stage_e2_was_run": false,
+  "threshold_tuning_was_run": false
+}

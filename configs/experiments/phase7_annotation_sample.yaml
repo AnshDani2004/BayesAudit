@@ -1,0 +1,25 @@
+pilot_id: phase7_annotation_sample
+stage: annotation_sample
+provider_config: configs/providers/mock/smoke.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy, authorization, evidence]
+task_ids:
+  - task_privacy_aggregate_only
+  - task_authorization_external_scope
+  - task_evidence_claim_support
+architectures: [unstructured_delegation, structured_inheritance]
+delegation_depths: [1]
+branching_factors: [1]
+behavior_conditions: [honest]
+attacker_conditions: [none]
+oversight_conditions: [none, rule_based]
+seeds: [1]
+cost_ceiling: 0.0
+token_ceiling: 1
+request_ceiling: 0
+trajectory_ceiling: 20
+max_runs: 3
+human_review_sample_size: 3
+notes: "Blind/adjudication/error-analysis sample generation."
+

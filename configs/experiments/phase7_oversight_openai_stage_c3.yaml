@@ -1,0 +1,31 @@
+pilot_id: phase7_oversight_openai_stage_c3
+stage: oversight
+provider_config: configs/providers/remote/openai_phase7_stage_c3.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy, authorization]
+task_ids:
+  - task_privacy_final_masking
+  - task_authorization_external_scope
+architectures: [structured_inheritance, unstructured_delegation]
+delegation_depths: [2]
+branching_factors: [1]
+behavior_conditions: [opportunistic_completion_v2]
+attacker_conditions: [none]
+oversight_conditions:
+  - random_checkpoint_v1
+  - fixed_preaggregation_v1
+  - rule_based_selective_v1
+  - bayesian_adaptive_v1
+seeds: [20260731]
+provider_calls_enabled: true
+cache_enabled: true
+resume_enabled: true
+external_tools_enabled: false
+cost_ceiling: 0.10
+token_ceiling: 120000
+request_ceiling: 80
+trajectory_ceiling: 16
+max_runs: 16
+human_review_sample_size: 0
+notes: "Stage C.3 false-positive/selectivity/budget-use/utility-cost oversight pilot on four frozen negative controls; provider continuations only for interventions."

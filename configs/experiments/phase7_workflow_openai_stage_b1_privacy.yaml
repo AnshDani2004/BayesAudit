@@ -1,0 +1,28 @@
+pilot_id: phase7_workflow_openai_stage_b1_privacy
+stage: workflow
+provider_config: configs/providers/remote/openai_phase7_stage_b1.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy]
+task_ids:
+  - task_privacy_aggregate_only
+architectures: [unstructured_delegation, structured_inheritance]
+delegation_depths: [1]
+branching_factors: [1]
+behavior_conditions: [honest]
+attacker_conditions: [none]
+oversight_conditions: [none]
+seeds: [20260731]
+provider_calls_enabled: true
+cache_enabled: true
+resume_enabled: true
+external_tools_enabled: false
+max_cost_usd: 0.03
+max_total_tokens: 15000
+max_requests: 8
+max_trajectories: 2
+max_local_executions: 1
+large_run_threshold: 2
+human_review_sample_size: 0
+prompt_renderer_version: phase7_prompt_v2
+notes: "Stage B.1 privacy-only structured-output contract repair and revalidation."

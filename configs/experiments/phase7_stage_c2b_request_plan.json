@@ -1,0 +1,149 @@
+{
+  "architectures": [
+    "structured_inheritance",
+    "unstructured_delegation"
+  ],
+  "artifact_locations": {
+    "behavior_profile": "configs/experiments/phase7_stage_c2b_opportunistic_behavior_profile.json",
+    "construct_validation": "configs/experiments/phase7_stage_c2b_treatment_construct_validation.json",
+    "run_manifest": "configs/experiments/phase7_stage_c2b_run_manifest.json",
+    "treatment_isolation": "configs/experiments/phase7_stage_c2b_treatment_isolation_report.json"
+  },
+  "behavior_profile": "opportunistic_completion_v2",
+  "behavior_profile_hash": "fdb782ce7739fb61e1869a72f67262c22127ea80d03e8126ab92927f3d456911",
+  "candidate_design_hash": "ff3e59c276a75c048f9e8d866992f9f0086cc3cd28b90c348ee3e35760a51818",
+  "conservative_upper_bound_usd": "0.0043",
+  "depths": [
+    2
+  ],
+  "domains": [
+    "authorization",
+    "privacy"
+  ],
+  "estimated_input_tokens": 24000,
+  "estimated_output_tokens": 5600,
+  "estimated_token_derived_cost_usd": "0.00344",
+  "estimated_total_tokens": 29600,
+  "expected_normal_requests": 16,
+  "matched_honest_baseline_count": 4,
+  "matched_stage_c2_v1_count": 4,
+  "maximum_possible_input_tokens": 30000,
+  "maximum_possible_output_tokens": 7000,
+  "maximum_possible_requests": 20,
+  "maximum_possible_token_derived_cost_usd": "0.0043",
+  "maximum_possible_total_tokens": 37000,
+  "maximum_repair_requests": 4,
+  "model_identifier": "gpt-5-nano-2025-08-07",
+  "pilot_id": "phase7_measurement_openai_stage_c2b",
+  "planned_trajectories": 4,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "prompt_context_hash": "179cb1f936cfacfbed78ec1f79f3b0687ca41dd669aedc19ebe358667fca2c04",
+  "prompt_template_versions": {
+    "aggregator": "phase7_prompt_v2",
+    "planner": "phase7_prompt_v2",
+    "worker": "phase7_prompt_v2"
+  },
+  "provider": "openai",
+  "request_plan_hash": "9f5b3899d8cdce8462823922823b8c93f9b29b81ce98eb6c3155acd57e04b0b9",
+  "request_rows": [
+    {
+      "aggregator_requests": 1,
+      "architecture": "unstructured_delegation",
+      "candidate_id": "c2b_13b68bf9f37bb6bc",
+      "depth": 2,
+      "domain": "privacy",
+      "estimated_input_tokens": 6000,
+      "estimated_output_tokens": 1400,
+      "intermediate_agent_requests": 1,
+      "matched_honest_stage_c1_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_privacy_final_masking_unstructured_delegation_depth2",
+      "matched_stage_c2_v1_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_privacy_final_masking_unstructured_delegation_depth2",
+      "maximum_provider_requests": 5,
+      "maximum_repair_requests": 1,
+      "normal_role_requests": 4,
+      "pilot_seen_status": "pilot_unseen",
+      "planner_requests": 1,
+      "task_id": "task_privacy_final_masking",
+      "trajectory_id": "traj_phase7_measurement_openai_stage_c2b_task_privacy_final_masking_unstructured_delegation_depth2",
+      "worker_requests": 1
+    },
+    {
+      "aggregator_requests": 1,
+      "architecture": "structured_inheritance",
+      "candidate_id": "c2b_f30d67a0e3c1a343",
+      "depth": 2,
+      "domain": "privacy",
+      "estimated_input_tokens": 6000,
+      "estimated_output_tokens": 1400,
+      "intermediate_agent_requests": 1,
+      "matched_honest_stage_c1_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_privacy_final_masking_structured_inheritance_depth2",
+      "matched_stage_c2_v1_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_privacy_final_masking_structured_inheritance_depth2",
+      "maximum_provider_requests": 5,
+      "maximum_repair_requests": 1,
+      "normal_role_requests": 4,
+      "pilot_seen_status": "pilot_unseen",
+      "planner_requests": 1,
+      "task_id": "task_privacy_final_masking",
+      "trajectory_id": "traj_phase7_measurement_openai_stage_c2b_task_privacy_final_masking_structured_inheritance_depth2",
+      "worker_requests": 1
+    },
+    {
+      "aggregator_requests": 1,
+      "architecture": "unstructured_delegation",
+      "candidate_id": "c2b_0477d966be80d935",
+      "depth": 2,
+      "domain": "authorization",
+      "estimated_input_tokens": 6000,
+      "estimated_output_tokens": 1400,
+      "intermediate_agent_requests": 1,
+      "matched_honest_stage_c1_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_external_scope_unstructured_delegation_depth2",
+      "matched_stage_c2_v1_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_external_scope_unstructured_delegation_depth2",
+      "maximum_provider_requests": 5,
+      "maximum_repair_requests": 1,
+      "normal_role_requests": 4,
+      "pilot_seen_status": "pilot_unseen",
+      "planner_requests": 1,
+      "task_id": "task_authorization_external_scope",
+      "trajectory_id": "traj_phase7_measurement_openai_stage_c2b_task_authorization_external_scope_unstructured_delegation_depth2",
+      "worker_requests": 1
+    },
+    {
+      "aggregator_requests": 1,
+      "architecture": "structured_inheritance",
+      "candidate_id": "c2b_57a3edf224770ca9",
+      "depth": 2,
+      "domain": "authorization",
+      "estimated_input_tokens": 6000,
+      "estimated_output_tokens": 1400,
+      "intermediate_agent_requests": 1,
+      "matched_honest_stage_c1_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_external_scope_structured_inheritance_depth2",
+      "matched_stage_c2_v1_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_external_scope_structured_inheritance_depth2",
+      "maximum_provider_requests": 5,
+      "maximum_repair_requests": 1,
+      "normal_role_requests": 4,
+      "pilot_seen_status": "pilot_unseen",
+      "planner_requests": 1,
+      "task_id": "task_authorization_external_scope",
+      "trajectory_id": "traj_phase7_measurement_openai_stage_c2b_task_authorization_external_scope_structured_inheritance_depth2",
+      "worker_requests": 1
+    }
+  ],
+  "schema_hashes": {
+    "aggregator": "ecfe0921c5008dca70825c1c303b258d9d4da807fbbeff2fc366820c3ba88a3a",
+    "planner": "7d8f1b4199ed5257f2fb7601794a05508ef078494aa9076bb0ec0adc201d2810",
+    "worker": "4fb837cc5504108b8252c9a70bdce4f7a4fbabb86e4b4037c87dc4d71c34c036"
+  },
+  "schema_versions": {
+    "aggregator": "phase7_stage_b1_role_schema_v1",
+    "planner": "phase7_stage_b1_role_schema_v1",
+    "worker": "phase7_stage_b1_role_schema_v1"
+  },
+  "scorer_versions": {
+    "authorization": "v1",
+    "evidence": "v1",
+    "privacy": "v2"
+  },
+  "task_ids": [
+    "task_authorization_external_scope",
+    "task_privacy_final_masking"
+  ]
+}

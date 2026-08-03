@@ -1,0 +1,68 @@
+{
+  "current_commit": "55694b2",
+  "policy_evaluations_are_not_independent_trajectories": true,
+  "policy_negative_audit_hash": "640a19f4491cda3411bd56fdd31833ec88577e5eefe97a755a501f6f478b4d41",
+  "records": [
+    {
+      "agreement_count": 0,
+      "disagreement_count": 0,
+      "information_boundary_compatibility": "compatible_but_no_runtime_checkpoint_join",
+      "monitor_abstention_count": 0,
+      "monitor_alert_decision_count": 0,
+      "monitor_id": "constant_negative_v1",
+      "monitor_score_at_inspected_checkpoint_available": false,
+      "nonindependent_policy_evaluations": true,
+      "policy_abstention_count": 4,
+      "policy_alert_decision_count": 0,
+      "policy_evaluation_count": 16,
+      "record_hash": "3a5d0783aa87d51a120ac5070138decc4ff870d8fa7fdcb805753ca9265c012f",
+      "unique_base_trajectory_count": 4
+    },
+    {
+      "agreement_count": 0,
+      "disagreement_count": 0,
+      "information_boundary_compatibility": "compatible_but_no_runtime_checkpoint_join",
+      "monitor_abstention_count": 0,
+      "monitor_alert_decision_count": 0,
+      "monitor_id": "constant_smoke",
+      "monitor_score_at_inspected_checkpoint_available": false,
+      "nonindependent_policy_evaluations": true,
+      "policy_abstention_count": 4,
+      "policy_alert_decision_count": 0,
+      "policy_evaluation_count": 16,
+      "record_hash": "771ecf78fcb848a09124a0a718aabe9ddbace2125ac9a2cf63eeebbd961e8bfd",
+      "unique_base_trajectory_count": 4
+    },
+    {
+      "agreement_count": 0,
+      "disagreement_count": 0,
+      "information_boundary_compatibility": "compatible_but_no_runtime_checkpoint_join",
+      "monitor_abstention_count": 0,
+      "monitor_alert_decision_count": 0,
+      "monitor_id": "rule_based_monitor_v1",
+      "monitor_score_at_inspected_checkpoint_available": false,
+      "nonindependent_policy_evaluations": true,
+      "policy_abstention_count": 4,
+      "policy_alert_decision_count": 0,
+      "policy_evaluation_count": 16,
+      "record_hash": "f333262cfd46a0ce42d35b47f126badb063d4b3c3e4b785ef0c84b1c3f7b1249",
+      "unique_base_trajectory_count": 4
+    },
+    {
+      "agreement_count": 0,
+      "disagreement_count": 0,
+      "information_boundary_compatibility": "compatible_but_no_runtime_checkpoint_join",
+      "monitor_abstention_count": 0,
+      "monitor_alert_decision_count": 0,
+      "monitor_id": "logistic_smoke",
+      "monitor_score_at_inspected_checkpoint_available": false,
+      "nonindependent_policy_evaluations": true,
+      "policy_abstention_count": 4,
+      "policy_alert_decision_count": 0,
+      "policy_evaluation_count": 16,
+      "record_hash": "6ffcc00dab0b76111c1391c3f27f20114aa0b31d3aae75a535a347ab9110e419",
+      "unique_base_trajectory_count": 4
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_d2.v1.policy_negative_audit"
+}

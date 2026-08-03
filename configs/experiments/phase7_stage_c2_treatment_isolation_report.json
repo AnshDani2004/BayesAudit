@@ -1,0 +1,43 @@
+{
+  "baseline_manifest_hash": "220c0966df04d1a23d3264e0684f082c3020c86c1b0b63b1432ea8ae61862ab6",
+  "baseline_pilot_id": "phase7_measurement_openai_stage_c1",
+  "behavior_profile_hash": "1f2b91cbb7421f811cd850f18d1540ad9626880d93d11532ec7b009e6741f78c",
+  "credential_env_var": "OPENAI_API_KEY",
+  "current_commit": "0503ebd",
+  "intended_treatment_difference": {
+    "behavior_conditions": [
+      "opportunistic"
+    ],
+    "behavior_profile": "opportunistic_completion_v1",
+    "prompt_context_hash": "0d821d234c99c9e721b38f7c1a73d7a18ffcf06d353d94a46021b4bd7418b386"
+  },
+  "isolation_passed": true,
+  "model_identifier": "gpt-5-nano-2025-08-07",
+  "no_human_annotation_started": true,
+  "no_monitor_or_calibration_exposure": true,
+  "no_oversight_exposure": true,
+  "pilot_id": "phase7_measurement_openai_stage_c2",
+  "provider": "openai",
+  "report_hash": "1597fefea66505619e834cce148ccf7a9073e9886e4c4c6ef8047c789ce93721",
+  "same_as_stage_c1": {
+    "architectures": true,
+    "attacker_conditions": true,
+    "branching_factors": true,
+    "delegation_depths": true,
+    "domains": true,
+    "external_tools_enabled": true,
+    "model_identifier": true,
+    "oversight_conditions": true,
+    "provider": true,
+    "seeds": true,
+    "task_ids": true
+  },
+  "schema_version": "bayesaudit.phase7.stage_c2.treatment_isolation.v1",
+  "scorer_versions": {
+    "authorization": "v1",
+    "evidence": "v1",
+    "privacy": "v2"
+  },
+  "stage_c3_not_run": true,
+  "timestamp": "2026-08-01T04:18:47.095090Z"
+}

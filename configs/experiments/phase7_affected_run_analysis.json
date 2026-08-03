@@ -1,0 +1,24 @@
+{
+  "adjudicated_labels_preserved": true,
+  "affected_stage_count": 14,
+  "artifact": "phase7_affected_run_analysis",
+  "artifact_hash": "259584d876b4691705e2e73de3207810dcd280295137ae6b684c59b325a54f63",
+  "benchmark_candidate_version": "phase7_benchmark_candidate_v1",
+  "current_commit": "cb00b395278407a66c780a9381b16dd290eca82b",
+  "historical_outputs_modified": false,
+  "historical_outputs_preserved": true,
+  "offline_rescore_eligible_refinements": [
+    "p7_refine_004",
+    "p7_refine_007",
+    "p7_refine_013"
+  ],
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "provider_visible_conditions_changed": false,
+  "refinements_requiring_provider_rerun": [],
+  "repaired_labels_preserved": true,
+  "schema_version": "bayesaudit.phase7.refinement.v1",
+  "stage_e2_rerun_performed": false
+}

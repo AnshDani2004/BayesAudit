@@ -1,0 +1,67 @@
+{
+  "artifact": "phase7_version_compatibility_matrix",
+  "artifact_hash": "5d7654800f825c69a620a6c6db90fad75b1d5ba2d0b684f319a5002d8d8bfccd",
+  "benchmark_candidate_version": "phase7_benchmark_candidate_v1",
+  "compatibility_matrix_result": "passed_with_documented_limitations",
+  "current_commit": "cb00b395278407a66c780a9381b16dd290eca82b",
+  "historical_outputs_modified": false,
+  "historical_outputs_relabelled_as_new_semantics": false,
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "rows": [
+    {
+      "adjudicated_label_preserved": true,
+      "comparable_for": [
+        "privacy:v2 offline rescoring",
+        "descriptive real-pilot evidence"
+      ],
+      "not_comparable_for": [
+        "privacy:v1 positive prevalence"
+      ],
+      "original_label_preserved": true,
+      "repaired_label_preserved": true,
+      "source_stage": "Stage C.1/C.1b"
+    },
+    {
+      "adjudicated_label_preserved": true,
+      "comparable_for": [
+        "observable_risk:v2 negative-control selection"
+      ],
+      "not_comparable_for": [
+        "positive-case prevention"
+      ],
+      "original_label_preserved": true,
+      "repaired_label_preserved": true,
+      "source_stage": "Stage C.2/C.2c"
+    },
+    {
+      "adjudicated_label_preserved": true,
+      "comparable_for": [
+        "real-negative specificity diagnostics"
+      ],
+      "not_comparable_for": [
+        "real-positive recall or calibration"
+      ],
+      "original_label_preserved": true,
+      "repaired_label_preserved": true,
+      "source_stage": "Stage D.1/D.2"
+    },
+    {
+      "adjudicated_label_preserved": true,
+      "comparable_for": [
+        "controlled synthetic positive-case adjudication"
+      ],
+      "not_comparable_for": [
+        "population prevalence",
+        "production readiness"
+      ],
+      "original_label_preserved": true,
+      "repaired_label_preserved": false,
+      "source_stage": "Stage E.2/E.3"
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.refinement.v1",
+  "stage_e2_rerun_performed": false
+}

@@ -1,0 +1,29 @@
+{
+  "artifact": "stage_e3_decision",
+  "artifact_hash": "737a4bcad17d56141a9ae3ca41e32ebcbcf97145b925f094dc61a0ae76d86788",
+  "current_commit": "3d2e22872a1d9e29460d5e9ab258704e65509dd8",
+  "external_human_annotation_performed": false,
+  "historical_stage_e2_outputs_modified": false,
+  "limitations": [
+    "small controlled synthetic sample",
+    "single provider model",
+    "developer adjudication, not independent human validation",
+    "violations were internal-only and corrected before final output",
+    "clean prevention was not established"
+  ],
+  "offline_repairs_performed": [],
+  "offline_repairs_required": false,
+  "path_gate": "A",
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "provider_rerun_required": false,
+  "schema_version": "bayesaudit.phase7.stage_e3.v1",
+  "stage_e2_historical_outputs_modified": false,
+  "stage_e2_rerun_performed": false,
+  "stage_e3_primary_decision": "positive_case_evidence_validated_with_limitations",
+  "stage_e3_readiness_decision": "ready_for_phase7_benchmark_refinement",
+  "validated_dataset_version": "phase7_stage_e3_validated_dataset_v1",
+  "validated_objective_positives": 17
+}

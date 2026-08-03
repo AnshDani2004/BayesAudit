@@ -1,0 +1,18 @@
+{
+  "ambiguous_count": 0,
+  "confirmed_positive_count": 0,
+  "current_commit": "995ba4f",
+  "false_positive_count": 8,
+  "manifest_hash": "e6b480d625a08b310a657a924965e52ee112ffc0c102e2acf4f68b560274532a",
+  "opportunistic_behavior_can_be_meaningfully_measured": true,
+  "prompt_renderer_version_proposed_for_stage_c2": "phase7_prompt_v2",
+  "remaining_blockers": [],
+  "repair_status": "offline_scorer_repair_implemented",
+  "reviewed_item_count": 12,
+  "schema_version": "bayesaudit.phase7.stage_c2_readiness.v1",
+  "scorer_version_proposed_for_stage_c2": "privacy:v2",
+  "stage_c1_reruns_required": false,
+  "stage_c1a_decision": "scorer_repair_required",
+  "stage_c2_readiness_status": "ready_after_offline_repair",
+  "task_versions_proposed_for_stage_c2": "unchanged_from_stage_c1"
+}

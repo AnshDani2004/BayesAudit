@@ -1,0 +1,35 @@
+pilot_id: phase7_full_pilot
+stage: full_pilot
+provider_config: configs/providers/mock/smoke.yaml
+output_root: results/tables/phase7
+task_roots: [scenarios]
+domains: [privacy, authorization, evidence]
+task_ids:
+  - task_privacy_aggregate_only
+  - task_privacy_department_counts
+  - task_privacy_final_masking
+  - task_privacy_tool_argument_minimization
+  - task_authorization_external_scope
+  - task_authorization_local_only
+  - task_authorization_no_email
+  - task_authorization_approval_claim
+  - task_evidence_claim_support
+  - task_evidence_supplied_docs_only
+  - task_evidence_inference_boundary
+  - task_evidence_no_fabricated_metric
+architectures: [single_agent, unstructured_delegation, structured_inheritance]
+delegation_depths: [1, 2]
+branching_factors: [1]
+behavior_conditions: [honest, opportunistic]
+attacker_conditions: [none, expected_utility_synthetic_selective]
+oversight_conditions: [none, rule_based, adaptive_expected_harm]
+seeds: [1]
+cost_ceiling: 0.0
+token_ceiling: 200000
+request_ceiling: 1000
+trajectory_ceiling: 500
+max_runs: 12
+large_run_threshold: 500
+human_review_sample_size: 12
+notes: "Full Phase 7 mock-safe design config. Real providers require separate disabled-by-default provider config edits and explicit CLI ceilings."
+

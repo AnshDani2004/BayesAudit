@@ -1,0 +1,28 @@
+provider:
+  provider_class: remote_api
+  provider: openai
+  model: gpt-5-nano-2025-08-07
+  enabled: true
+  credential_env_var: OPENAI_API_KEY
+  endpoint: https://api.openai.com/v1/responses
+  timeout_seconds: 30
+  max_retries: 0
+  backoff_initial_seconds: 0.5
+  estimated_input_tokens_per_request: 500
+  estimated_output_tokens_per_request: 1000
+  estimated_cost_per_1k_input_tokens: 0.001
+  estimated_cost_per_1k_output_tokens: 0.001
+  sampling_parameters:
+    reasoning_effort: minimal
+    max_output_tokens: 1000
+  cache_enabled: true
+  resume_enabled: true
+  raw_response_preservation_enabled: true
+  secret_redaction_enabled: true
+  external_tools_enabled: false
+  fallback_model_identifier: null
+  runtime_metadata:
+    api_family: responses
+    streaming_enabled: "false"
+    structured_output_requested: "false"
+    prompt_kind: minimal_stage_a1_diagnostic

@@ -1,0 +1,22 @@
+{
+  "artifact": "phase7_merge_readiness",
+  "artifact_hash": "5e97c9b6b38be19ea4d6b0d324027fd8b9b167d538ca26ed091e94da3290c64a",
+  "current_commit": "5d2340c6f820573b57022a5d2eda330a29a1abeb",
+  "disallowed_manual_merge_methods": [
+    "Squash and merge",
+    "Rebase and merge"
+  ],
+  "do_not_merge_by_codex": true,
+  "historical_outputs_modified": false,
+  "merge_readiness_decision": "merge_ready_with_documented_limitations",
+  "phase8_started": false,
+  "pr_merged": false,
+  "pr_number": 1,
+  "pr_should_remain_open": true,
+  "preserve_phase_wise_commits": true,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "recommended_manual_merge_method": "Create a merge commit",
+  "schema_version": "bayesaudit.phase7.closeout.v1",
+  "stage_e2_rerun_performed": false
+}

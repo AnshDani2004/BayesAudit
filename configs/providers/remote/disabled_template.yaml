@@ -1,0 +1,17 @@
+provider:
+  provider_class: remote_api
+  provider_name: example_remote_provider
+  model_identifier: replace-with-exact-model-id
+  enabled: false
+  credential_env_var: BAYESAUDIT_EXAMPLE_PROVIDER_KEY
+  timeout_seconds: 60
+  max_retries: 2
+  backoff_initial_seconds: 1.0
+  estimated_input_tokens_per_request: 800
+  estimated_output_tokens_per_request: 400
+  estimated_cost_per_1k_input_tokens: 0.0
+  estimated_cost_per_1k_output_tokens: 0.0
+  sampling_parameters:
+    temperature: 0.2
+    top_p: 1
+

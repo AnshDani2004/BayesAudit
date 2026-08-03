@@ -1,0 +1,130 @@
+{
+  "candidate_count": 12,
+  "manifest_hash": "c7af439324baac3adec4e901eb91e483558d1a584cc85c77d8d8651f7901d082",
+  "records": [
+    {
+      "architecture": "structured_inheritance",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_external_scope_structured_inheritance_depth1",
+      "depth": 1,
+      "domain": "authorization",
+      "match_id": "match_fc856fd6fa2bb07cf764",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_authorization_external_scope",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_external_scope_structured_inheritance_depth1"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_external_scope_structured_inheritance_depth2",
+      "depth": 2,
+      "domain": "authorization",
+      "match_id": "match_0d438fca3fc1f3387b47",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_authorization_external_scope",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_external_scope_structured_inheritance_depth2"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_external_scope_unstructured_delegation_depth1",
+      "depth": 1,
+      "domain": "authorization",
+      "match_id": "match_36124faf3ea6856b1a6a",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_authorization_external_scope",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_external_scope_unstructured_delegation_depth1"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_external_scope_unstructured_delegation_depth2",
+      "depth": 2,
+      "domain": "authorization",
+      "match_id": "match_29f6df20d2e5a655a443",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_authorization_external_scope",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_external_scope_unstructured_delegation_depth2"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_local_only_structured_inheritance_depth1",
+      "depth": 1,
+      "domain": "authorization",
+      "match_id": "match_dab498fe45b86db6d05f",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_authorization_local_only",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_local_only_structured_inheritance_depth1"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_local_only_structured_inheritance_depth2",
+      "depth": 2,
+      "domain": "authorization",
+      "match_id": "match_3c672002bf593cfa572a",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_authorization_local_only",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_local_only_structured_inheritance_depth2"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_authorization_local_only_unstructured_delegation_depth2",
+      "depth": 2,
+      "domain": "authorization",
+      "match_id": "match_82d345153512c5dd6f3b",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_authorization_local_only",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_authorization_local_only_unstructured_delegation_depth2"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_evidence_claim_support_structured_inheritance_depth1",
+      "depth": 1,
+      "domain": "evidence",
+      "match_id": "match_166f29b238a0fd6ded3a",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_evidence_claim_support",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_evidence_claim_support_structured_inheritance_depth1"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_evidence_claim_support_structured_inheritance_depth2",
+      "depth": 2,
+      "domain": "evidence",
+      "match_id": "match_0f74d47fa1d1ab37009a",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_evidence_claim_support",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_evidence_claim_support_structured_inheritance_depth2"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_evidence_claim_support_unstructured_delegation_depth1",
+      "depth": 1,
+      "domain": "evidence",
+      "match_id": "match_1d08a2b0f35d867024d1",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_evidence_claim_support",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_evidence_claim_support_unstructured_delegation_depth1"
+    },
+    {
+      "architecture": "unstructured_delegation",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_evidence_claim_support_unstructured_delegation_depth2",
+      "depth": 2,
+      "domain": "evidence",
+      "match_id": "match_6a4c209987b616c8d949",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_evidence_claim_support",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_evidence_claim_support_unstructured_delegation_depth2"
+    },
+    {
+      "architecture": "structured_inheritance",
+      "baseline_trajectory_id": "traj_phase7_measurement_openai_stage_c1_task_evidence_inference_boundary_structured_inheritance_depth1",
+      "depth": 1,
+      "domain": "evidence",
+      "match_id": "match_0a200b822c099f471ce8",
+      "selection_reason": "coverage fallback candidate",
+      "task_id": "task_evidence_inference_boundary",
+      "treatment_trajectory_id": "traj_phase7_measurement_openai_stage_c2_task_evidence_inference_boundary_structured_inheritance_depth1"
+    }
+  ],
+  "requires_separate_authorization": true,
+  "schema_version": "bayesaudit.phase7.stage_c3.candidate_manifest.v1",
+  "source_pilot_id": "phase7_measurement_openai_stage_c2",
+  "stage_c3_not_run": true
+}

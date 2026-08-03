@@ -53,6 +53,24 @@ from bayesaudit.monitoring.types import MonitorArtifact
 from bayesaudit.oversight.registry import load_policy_configs, policy_for_config
 from bayesaudit.oversight.replay import replay_policies
 from bayesaudit.oversight.types import WorkflowMode
+from bayesaudit.pilot.config import validate_provider_config
+from bayesaudit.pilot.lifecycle import (
+    authorize_pilot_provider_run,
+    build_real_annotation_sample,
+    classify_pilot_tasks,
+    estimate_pilot_cost,
+    generate_freeze_proposal,
+    inspect_provider_request,
+    plan_phase8,
+    run_measurement_pilot,
+    run_provider_connectivity,
+    run_real_oversight_pilot,
+    run_real_workflow_pilot,
+    summarize_real_pilot,
+)
+from bayesaudit.pilot.lifecycle import (
+    evaluate_monitor_transfer as evaluate_phase7_monitor_transfer,
+)
 from bayesaudit.providers.base import ProviderConfig, estimate_provider_cost
 from bayesaudit.runner import (
     _rewrite_normalized_tables,
@@ -269,6 +287,78 @@ def main() -> None:
 
     summarize_phase6 = subparsers.add_parser("summarize-phase6")
     summarize_phase6.add_argument("--config", type=Path, required=True)
+
+    validate_provider = subparsers.add_parser("validate-provider-config")
+    validate_provider.add_argument("--config", type=Path, required=True)
+
+    pilot_cost = subparsers.add_parser("estimate-pilot-cost")
+    pilot_cost.add_argument("--config", type=Path, required=True)
+
+    authorize_provider = subparsers.add_parser("authorize-provider-run")
+    authorize_provider.add_argument("--config", type=Path, required=True)
+    _add_provider_ceiling_args(authorize_provider)
+
+    connectivity = subparsers.add_parser("run-provider-connectivity")
+    connectivity.add_argument("--config", type=Path, required=True)
+    connectivity.add_argument("--dry-run", action="store_true")
+    _add_provider_ceiling_args(connectivity)
+
+    workflow_pilot = subparsers.add_parser("run-real-workflow-pilot")
+    workflow_pilot.add_argument("--config", type=Path, required=True)
+    workflow_pilot.add_argument("--dry-run", action="store_true")
+    workflow_pilot.add_argument("--domain-block", choices=["privacy", "authorization", "evidence"])
+    workflow_pilot.add_argument(
+        "--architecture-block",
+        choices=["unstructured_delegation", "structured_inheritance"],
+    )
+    _add_provider_ceiling_args(workflow_pilot)
+
+    measurement_pilot = subparsers.add_parser("run-measurement-pilot")
+    measurement_pilot.add_argument("--config", type=Path, required=True)
+    measurement_pilot.add_argument("--dry-run", action="store_true")
+    measurement_pilot.add_argument(
+        "--domain-block", choices=["privacy", "authorization", "evidence"]
+    )
+    measurement_pilot.add_argument("--depth-block", type=int, choices=[1, 2])
+    _add_provider_ceiling_args(measurement_pilot)
+
+    scorer_validation = subparsers.add_parser("evaluate-real-scorers")
+    scorer_validation.add_argument("--config", type=Path, required=True)
+
+    annotation_sample = subparsers.add_parser("build-real-annotation-sample")
+    annotation_sample.add_argument("--config", type=Path, required=True)
+
+    monitor_transfer = subparsers.add_parser("evaluate-monitor-transfer")
+    monitor_transfer.add_argument("--config", type=Path, required=True)
+    monitor_transfer.add_argument("--dry-run", action="store_true")
+
+    calibration_transfer = subparsers.add_parser("evaluate-calibration-transfer")
+    calibration_transfer.add_argument("--config", type=Path, required=True)
+    calibration_transfer.add_argument("--dry-run", action="store_true")
+
+    oversight_pilot = subparsers.add_parser("run-real-oversight-pilot")
+    oversight_pilot.add_argument("--config", type=Path, required=True)
+    oversight_pilot.add_argument("--dry-run", action="store_true")
+
+    summarize_pilot = subparsers.add_parser("summarize-real-pilot")
+    summarize_pilot.add_argument("--config", type=Path, required=True)
+
+    inspect_request = subparsers.add_parser("inspect-provider-request")
+    inspect_request.add_argument("--config", type=Path, required=True)
+    inspect_request.add_argument("--request-hash", required=True)
+
+    inspect_real_trajectory = subparsers.add_parser("inspect-real-trajectory")
+    inspect_real_trajectory.add_argument("--config", type=Path, required=True)
+    inspect_real_trajectory.add_argument("--trajectory-id", required=True)
+
+    classify_tasks = subparsers.add_parser("classify-pilot-tasks")
+    classify_tasks.add_argument("--config", type=Path, required=True)
+
+    freeze = subparsers.add_parser("generate-freeze-proposal")
+    freeze.add_argument("--config", type=Path, required=True)
+
+    phase8 = subparsers.add_parser("plan-phase8")
+    phase8.add_argument("--config", type=Path, required=True)
 
     args = parser.parse_args()
     if args.command == "validate-scenarios":
@@ -568,9 +658,94 @@ def main() -> None:
     elif args.command == "summarize-phase6":
         phase6_config = load_phase6_experiment_config(args.config)
         payload = run_attacker_defender_matrix(phase6_config, dry_run=True)
+    elif args.command == "validate-provider-config":
+        payload = validate_provider_config(args.config)
+    elif args.command == "estimate-pilot-cost":
+        payload = estimate_pilot_cost(args.config)
+    elif args.command == "authorize-provider-run":
+        payload = authorize_pilot_provider_run(
+            args.config,
+            allow_provider_calls=args.allow_provider_calls,
+            max_cost=args.max_cost,
+            max_tokens=args.max_tokens,
+            max_requests=args.max_requests,
+            max_trajectories=args.max_trajectories,
+            allow_large_run=args.allow_large_run,
+        )
+    elif args.command == "run-provider-connectivity":
+        payload = run_provider_connectivity(
+            args.config,
+            dry_run=args.dry_run,
+            allow_provider_calls=args.allow_provider_calls,
+            max_cost=args.max_cost,
+            max_tokens=args.max_tokens,
+            max_requests=args.max_requests,
+            max_trajectories=args.max_trajectories,
+            allow_large_run=args.allow_large_run,
+        )
+    elif args.command == "run-real-workflow-pilot":
+        payload = run_real_workflow_pilot(
+            args.config,
+            dry_run=args.dry_run,
+            allow_provider_calls=args.allow_provider_calls,
+            max_cost=args.max_cost,
+            max_tokens=args.max_tokens,
+            max_requests=args.max_requests,
+            max_trajectories=args.max_trajectories,
+            allow_large_run=args.allow_large_run,
+            domain_block=args.domain_block,
+            architecture_block=args.architecture_block,
+        )
+    elif args.command == "run-measurement-pilot" or args.command == "evaluate-real-scorers":
+        payload = run_measurement_pilot(
+            args.config,
+            dry_run=getattr(args, "dry_run", True),
+            allow_provider_calls=getattr(args, "allow_provider_calls", False),
+            max_cost=getattr(args, "max_cost", None),
+            max_tokens=getattr(args, "max_tokens", None),
+            max_requests=getattr(args, "max_requests", None),
+            max_trajectories=getattr(args, "max_trajectories", None),
+            allow_large_run=getattr(args, "allow_large_run", False),
+            domain_block=getattr(args, "domain_block", None),
+            depth_block=getattr(args, "depth_block", None),
+        )
+    elif args.command == "build-real-annotation-sample":
+        payload = build_real_annotation_sample(args.config)
+    elif (
+        args.command == "evaluate-monitor-transfer"
+        or args.command == "evaluate-calibration-transfer"
+    ):
+        payload = evaluate_phase7_monitor_transfer(args.config, dry_run=args.dry_run)
+    elif args.command == "run-real-oversight-pilot":
+        payload = run_real_oversight_pilot(args.config, dry_run=args.dry_run)
+    elif args.command == "summarize-real-pilot":
+        payload = summarize_real_pilot(args.config)
+    elif args.command == "inspect-provider-request":
+        payload = inspect_provider_request(args.config, args.request_hash)
+    elif args.command == "inspect-real-trajectory":
+        payload = {
+            "found": False,
+            "trajectory_id": args.trajectory_id,
+            "note": "real-provider trajectories are stored only after authorized pilot runs",
+        }
+    elif args.command == "classify-pilot-tasks":
+        payload = classify_pilot_tasks(args.config)
+    elif args.command == "generate-freeze-proposal":
+        payload = generate_freeze_proposal(args.config)
+    elif args.command == "plan-phase8":
+        payload = plan_phase8(args.config)
     else:
         raise AssertionError(args.command)
     print(json.dumps(payload, indent=2, sort_keys=True, default=str))
+
+
+def _add_provider_ceiling_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--allow-provider-calls", action="store_true")
+    parser.add_argument("--allow-large-run", action="store_true")
+    parser.add_argument("--max-cost", type=float)
+    parser.add_argument("--max-tokens", type=int)
+    parser.add_argument("--max-requests", type=int)
+    parser.add_argument("--max-trajectories", type=int)
 
 
 async def _replay_policies_cli(
@@ -637,18 +812,11 @@ def _compare_policies_payload(rows: list[dict[str, object]]) -> dict[str, object
         for metric in _dict_rows(metrics):
             metric_name = str(metric.get("metric_name"))
             metric_value = metric.get("value", 0.0)
-            value = (
-                float(metric_value)
-                if isinstance(metric_value, int | float | str)
-                else 0.0
-            )
+            value = float(metric_value) if isinstance(metric_value, int | float | str) else 0.0
             target[metric_name] = target.get(metric_name, 0.0) + value
     return {
         "policies": {
-            name: {
-                metric: value / counts[name]
-                for metric, value in sorted(metrics.items())
-            }
+            name: {metric: value / counts[name] for metric, value in sorted(metrics.items())}
             for name, metrics in sorted(grouped.items())
         },
         "policy_run_counts": counts,

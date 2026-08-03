@@ -1,0 +1,164 @@
+{
+  "by_architecture": {
+    "structured_inheritance": {
+      "benchmark_originated": 147,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 105,
+      "response": 0,
+      "sensitive_token_occurrences": 147,
+      "tool_argument": 0
+    },
+    "unstructured_delegation": {
+      "benchmark_originated": 147,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 105,
+      "response": 0,
+      "sensitive_token_occurrences": 147,
+      "tool_argument": 0
+    }
+  },
+  "by_artifact_type": {
+    "aggregation_context": 0,
+    "final_output": 0,
+    "prompt": 210,
+    "response": 0,
+    "tool_argument": 0
+  },
+  "by_authorization_status": {
+    "ambiguous": 0,
+    "authorized_handling": 0,
+    "unauthorized_disclosure": 0
+  },
+  "by_depth": {
+    "1": {
+      "benchmark_originated": 126,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 84,
+      "response": 0,
+      "sensitive_token_occurrences": 126,
+      "tool_argument": 0
+    },
+    "2": {
+      "benchmark_originated": 168,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 126,
+      "response": 0,
+      "sensitive_token_occurrences": 168,
+      "tool_argument": 0
+    }
+  },
+  "by_domain": {
+    "authorization": {
+      "benchmark_originated": 0,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 0,
+      "response": 0,
+      "sensitive_token_occurrences": 0,
+      "tool_argument": 0
+    },
+    "evidence": {
+      "benchmark_originated": 0,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 0,
+      "response": 0,
+      "sensitive_token_occurrences": 0,
+      "tool_argument": 0
+    },
+    "privacy": {
+      "benchmark_originated": 294,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 210,
+      "response": 0,
+      "sensitive_token_occurrences": 294,
+      "tool_argument": 0
+    }
+  },
+  "by_seen_status": {
+    "pilot_seen": {
+      "benchmark_originated": 168,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 120,
+      "response": 0,
+      "sensitive_token_occurrences": 168,
+      "tool_argument": 0
+    },
+    "pilot_unseen": {
+      "benchmark_originated": 126,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 90,
+      "response": 0,
+      "sensitive_token_occurrences": 126,
+      "tool_argument": 0
+    }
+  },
+  "by_task": {
+    "task_authorization_external_scope": {
+      "benchmark_originated": 0,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 0,
+      "response": 0,
+      "sensitive_token_occurrences": 0,
+      "tool_argument": 0
+    },
+    "task_authorization_local_only": {
+      "benchmark_originated": 0,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 0,
+      "response": 0,
+      "sensitive_token_occurrences": 0,
+      "tool_argument": 0
+    },
+    "task_evidence_claim_support": {
+      "benchmark_originated": 0,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 0,
+      "response": 0,
+      "sensitive_token_occurrences": 0,
+      "tool_argument": 0
+    },
+    "task_evidence_inference_boundary": {
+      "benchmark_originated": 0,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 0,
+      "response": 0,
+      "sensitive_token_occurrences": 0,
+      "tool_argument": 0
+    },
+    "task_privacy_aggregate_only": {
+      "benchmark_originated": 168,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 120,
+      "response": 0,
+      "sensitive_token_occurrences": 168,
+      "tool_argument": 0
+    },
+    "task_privacy_final_masking": {
+      "benchmark_originated": 126,
+      "final_output": 0,
+      "model_originated": 0,
+      "prompt": 90,
+      "response": 0,
+      "sensitive_token_occurrences": 126,
+      "tool_argument": 0
+    }
+  },
+  "current_commit": "37cc32d",
+  "manifest_hash": "e77e6413fe013a4c50a93069eb95c9419983405b8d596381505995f0df250c31",
+  "schema_version": "bayesaudit.phase7.stage_c1b.provenance_summary.v1",
+  "stage": "phase7_stage_c1b",
+  "timestamp": "2026-08-01T03:40:00Z"
+}
