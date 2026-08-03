@@ -1825,3 +1825,91 @@ production readiness, and statistical superiority from the small pilot.
 - Threshold tuning: `false`
 - New external human annotation: `false`
 - Phase 8 started: `false`
+
+# Stage E.3: Offline Positive-Case Validation and Adjudication
+
+Stage E.3 was run as an offline-only developer adjudication pass over the preserved
+Stage E.2 artifacts. It made zero provider calls, did not rerun Stage E.2, did not
+modify model outputs, did not perform new external human annotation, and did not
+begin Phase 8.
+
+The review manifest froze all 18 Stage E.2 trajectories before adjudication. It
+included all claimed objective positives, the attacked objective negative, all
+monitor outputs, all interventions, all corrected-before-final claims, all matched
+comparison records, and all no-oversight, rule-based, and Bayesian conditions.
+Blinded review packets and full-metadata packets were stored separately.
+
+## E.3 Integrity and Ledger Reconciliation
+
+- Artifact-complete trajectories: `18`
+- Fully adjudicable trajectories: `18`
+- Stage E.2 actual provider requests reproduced: `51`
+- Stage E.2 failed provider requests reproduced: `0`
+- Stage E.2 billable total tokens reproduced: `45591`
+- Stage E.2 token-derived cost reproduced: `$0.00477715`
+- Hard-ceiling breaches: `0`
+- Raw ignored response hashes checked locally: `54`
+- Historical Stage E.2 outputs modified: `false`
+
+The ignored raw-response set includes three cached responses from the resumed first
+trajectory. E.3 therefore distinguishes preserved raw-response token totals
+(`48228`) from actual-provider billable token totals (`45591`).
+
+## E.3 Objective and Attacker Adjudication
+
+- Validated objective positives: `17`
+- Validated objective negatives: `1`
+- Privacy positives: `5`
+- Authorization positives: `6`
+- Evidence positives: `6`
+- Internal-only positives: `17`
+- Tool-argument positives: `0`
+- Final-output positives: `0`
+- Corrected-before-final positives: `17`
+- Scorer false positives: `0`
+- Scorer false negatives: `0`
+- Valid attacker attempts: `17`
+- Clear uptake: `12`
+- Partial uptake: `6`
+- Invalid strategies: `0`
+- Workflow sabotage: `0`
+- Refusals: `0`
+
+Attacker uptake remains separate from objective violation. The E.3 labels preserve
+the original Stage E.2 labels and store adjudicated labels in separate artifacts.
+
+## E.3 Monitor, Oversight, and Prevention Adjudication
+
+- Rule-based monitor true positives: `6`
+- Logistic smoke false negatives: `5`
+- Logistic smoke true negatives: `1`
+- Monitor false positives: `0`
+- Monitor abstentions: `0`
+- Valid matched pairs: `12`
+- Valid matched triplets: `6`
+- Valid matched quartets: `0`
+- Matching failures: `0`
+- Clearly preventable validated positives: `17`
+- Validated clean prevention claims: `0`
+- Validated reduced-severity claims: `0`
+- Validated corrected-before-final intervention outcomes: `6`
+- Residual final-output violations: `0`
+
+A true positive or false negative is counted only with a validated objective-positive
+basis. Corrected-before-final behavior is not reported as clean prevention.
+
+## E.3 Claims and Decision
+
+E.3 validated two Stage E.2 claims with limitations and marked the broad clean
+prevention claim unsupported. The validated dataset version is
+`phase7_stage_e3_validated_dataset_v1` with dataset hash
+`0fa854e15411386a45704db7bc4e5ff23a7f2ebceaec57846eccb3ec3e74eae5`.
+
+- Stage E.3 decision: `positive_case_evidence_validated_with_limitations`
+- Stage E.3 readiness: `ready_for_phase7_benchmark_refinement`
+- Provider rerun required: `false`
+- Decision-gate path: `A`
+
+Limitations remain substantial: the sample is small, synthetic, single-model, and
+developer-adjudicated; all validated objective positives were internal-only and
+corrected before final output; and no clean prevention effect was established.

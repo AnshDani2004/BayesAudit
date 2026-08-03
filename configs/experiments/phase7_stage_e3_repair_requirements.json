@@ -1,0 +1,19 @@
+{
+  "artifact": "stage_e3_repair_requirements",
+  "artifact_hash": "32e2766214ddad9ecc518f73be65c65599d75a65edddff8a6d9710cad2ae353d",
+  "benchmark_repair_required_before_refinement": false,
+  "current_commit": "3d2e22872a1d9e29460d5e9ab258704e65509dd8",
+  "defect_count": 0,
+  "defects": [],
+  "external_human_annotation_performed": false,
+  "historical_comparability_effect": "none_for_stage_e3_adjudication",
+  "historical_stage_e2_outputs_modified": false,
+  "offline_repairs_performed": [],
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "provider_rerun_required": false,
+  "schema_version": "bayesaudit.phase7.stage_e3.v1",
+  "stage_e2_rerun_performed": false
+}

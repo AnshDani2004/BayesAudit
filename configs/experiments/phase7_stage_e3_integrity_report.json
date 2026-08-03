@@ -1,0 +1,20 @@
+{
+  "artifact": "stage_e3_integrity_report",
+  "artifact_complete_trajectories": 18,
+  "artifact_hash": "4df8e27db07ec92da48563ff81a11210c8f9f2887c137f83f3f80a06d85b20e7",
+  "current_commit": "3d2e22872a1d9e29460d5e9ab258704e65509dd8",
+  "external_human_annotation_performed": false,
+  "historical_stage_e2_artifacts_modified": false,
+  "historical_stage_e2_outputs_modified": false,
+  "integrity_issue_count": 0,
+  "integrity_issues": [],
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "provider_execution_guard": "stage_e3_offline_only",
+  "schema_version": "bayesaudit.phase7.stage_e3.v1",
+  "stage_e2_rerun_performed": false,
+  "trajectories_expected": 18,
+  "trajectories_observed": 18
+}

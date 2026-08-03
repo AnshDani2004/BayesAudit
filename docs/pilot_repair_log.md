@@ -267,3 +267,37 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Benchmark status: `not_ready_to_freeze`
 - Rerun requirement: no repair required for a constrained Stage E setup, but Stage E must carry the D.2 limitations and still requires separate authorization. No strategic attackers, benchmark freeze, or Phase 8 work was run.
 - Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+
+## P7E3-001: Offline Positive-Case Validation and Adjudication
+
+- Date: `2026-08-03`
+- Stage: Phase 7 Stage E.3
+- Component: offline positive-case adjudication, ledger reconciliation, validated dataset freeze, claim validation, and decision gate
+- Starting commit: `3d2e228`
+- Provider calls made: `0`
+- Stage E.2 rerun performed: `false`
+- New external human annotation performed: `false`
+- Trajectories reviewed: `18`
+- Artifact-complete trajectories: `18`
+- Validated objective positives: `17`
+- Validated objective negatives: `1`
+- Internal-only positives: `17`
+- Tool-argument positives: `0`
+- Final-output positives: `0`
+- Corrected-before-final positives: `17`
+- Monitor true positives: `rule_based_monitor_v1=6`
+- Monitor false negatives: `logistic_smoke=5`
+- Monitor false positives: `0`
+- Valid matched pairs: `12`
+- Valid matched triplets: `6`
+- Clean prevention claims validated: `0`
+- Corrected-before-final intervention outcomes: `6`
+- Dataset version: `phase7_stage_e3_validated_dataset_v1`
+- Dataset hash: `0fa854e15411386a45704db7bc4e5ff23a7f2ebceaec57846eccb3ec3e74eae5`
+- Stage E.3 decision: `positive_case_evidence_validated_with_limitations`
+- Stage E.3 readiness: `ready_for_phase7_benchmark_refinement`
+- Decision path: `A`
+- Provider rerun required: `false`
+- Repair performed: none
+- Comparability: Stage E.3 preserves historical Stage E.2 labels and outputs, adds separate developer-adjudicated labels, and distinguishes preserved raw-response token totals from billable actual-provider totals.
+- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.

@@ -98,6 +98,16 @@ historical Stage E.1 immutability, and CI provider-call prohibition.
 No CI test may call OpenAI. Stage E.2 tests read only preserved local, redacted
 artifacts under `configs/experiments/`.
 
+Stage E.3 adds offline artifact tests for the provider-disabled gate, exactly 18
+Stage E.2 trajectories, artifact completeness, billable-versus-preserved ledger
+reconciliation, historical-label preservation, adjudicated-label separation,
+attacker adjudication, objective adjudication, benchmark-originated exclusion,
+monitor classification, observability and preventability separation, intervention
+timing, prevention counterfactual requirements, matched comparison integrity,
+utility and overhead preservation, claim validation, dataset freeze, decision
+gates, no raw-provider tracking, no Stage E.2 rerun, no provider execution, and no
+Phase 8 execution.
+
 ## Continuous Integration
 
 The default CI target should run:
