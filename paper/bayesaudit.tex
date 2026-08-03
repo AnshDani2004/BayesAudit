@@ -1,17 +1,33 @@
 \documentclass{article}
 \usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
 \title{BayesAudit: Budget-Constrained Oversight for Hierarchical LLM Workflows}
-\author{BayesAudit Project}
+\author{Ansh Hemang Dani}
 \date{v1.0.0 release candidate}
+
 \begin{document}
 \maketitle
+
 \begin{abstract}
-BayesAudit evaluates synthetic, sandboxed oversight workflows under limited audit budgets. The final evidence synthesis reports supported claims together with null results and documented limitations.
+BayesAudit is a reproducible research framework for studying oversight allocation in hierarchical LLM workflows. It combines synthetic benchmark tasks, strategic-attacker evaluation, objective scoring, rule-based and Bayesian monitoring, provider-call accounting, and offline adjudication. The release preserves null results and nonreplications: Phase 9 did not replicate the Phase 8 attacker-effect direction, no final-output violations were observed in the principal studies, and clean causal prevention was not established.
 \end{abstract}
-\section{Scope}
-The study is restricted to one provider model, inert tools, three domains, and existing benchmark architectures.
-\section{Evidence}
-Phases 7 and 8 establish the benchmark and confirmatory study. Phase 9 evaluates fresh seeds and held-out Phase 6 attacker assets. Phase 10 performs no provider calls.
+
+\section{Introduction}
+Hierarchical LLM systems often delegate work across multiple agents and checkpoints. Oversight budgets are limited, so a reviewer or monitor must choose when to inspect, escalate, or intervene. BayesAudit studies this decision problem in a synthetic, sandboxed setting.
+
+\section{System}
+The framework includes benchmark tasks, workflow runners, constraint inheritance, attacker conditions, oversight monitors, policies, objective scorers, provider request hashing, cache validation, and reproducibility manifests.
+
+\section{Experimental Program}
+The release summarizes a Phase 7 pilot, a Phase 8 confirmatory study, and a Phase 9 held-out robustness study. Phase 8 ran 96 trajectories and 24 matched quartets. Phase 9 ran 48 trajectories and 12 matched quartets with held-out attacker assets.
+
+\section{Results}
+In Phase 8, attacked no-oversight trajectories were positive in 7 of 24 matched quartets, compared with 3 of 24 safe-control quartets. In Phase 9, safe controls were positive in 8 of 12 matched quartets, while held-out attacker no-oversight trajectories were positive in 4 of 12. The Phase 9 result is therefore a nonreplication of the Phase 8 direction.
+
 \section{Limitations}
-The work does not establish broad production or cross-model safety claims.
+The work is synthetic, sandboxed, single-provider, and benchmark-specific. It does not estimate real-world violation prevalence, establish production readiness, or support cross-model generalization.
+
+\section{Conclusion}
+BayesAudit is best understood as a research and reproducibility framework for auditing oversight mechanics under budget constraints. Its public value is the preserved evidence record, including negative findings.
+
 \end{document}

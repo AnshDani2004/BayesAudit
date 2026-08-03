@@ -237,7 +237,7 @@ def test_pilot_manifest_records_base_branch_and_commit(tmp_path: Path) -> None:
     manifest = write_pilot_manifest(config, provider, plan, status="planned")
     assert manifest.base_branch == "main"
     assert manifest.base_commit == "f5c1962"
-    assert manifest.phase7_branch == "codex/phase7-real-model-pilot"
+    assert manifest.phase7_branch == "phase7-real-model-pilot"
 
 
 @pytest.mark.parametrize(

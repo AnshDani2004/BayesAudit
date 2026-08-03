@@ -1,12 +1,12 @@
 {
   "artifact": "phase8_merge_readiness",
-  "artifact_hash": "16f956772fc05bf4c5d6646e35fe528e684d88a91236e72f9d999b0a3d25702c",
+  "artifact_hash": "5618fbc58e22c4142a9932fddf5ca2d0bc23e98cd03bb85713ea27cca25e8eb1",
   "current_commit": "4e5491805b842f8d5f216670c60014b4caea963c",
   "disallowed_manual_merge_methods": [
     "Squash and merge",
     "Rebase and merge"
   ],
-  "do_not_merge_by_codex": true,
+  "manual_merge_required": true,
   "exact_model": "gpt-5-nano-2025-08-07",
   "merge_readiness_decision": "merge_ready_with_documented_limitations",
   "phase9_started": false,

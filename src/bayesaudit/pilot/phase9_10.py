@@ -623,7 +623,7 @@ def run_phase10d(*, current_commit: str | None = None) -> dict[str, Any]:
         merge_readiness_decision="final_pr_merge_ready_with_documented_limitations",
         release_candidate_version="v1.0.0",
         remaining_blockers=[],
-        do_not_merge_by_codex=True,
+        manual_merge_required=True,
         do_not_create_tag_before_merge=True,
         phase11_started=False,
         provider_calls_performed=0,
@@ -2247,16 +2247,20 @@ def _write_portfolio_and_release_docs() -> None:
         ),
         encoding="utf-8",
     )
-    (docs / "release_candidate_v1.0.0.md").write_text(
+    (docs / "RELEASE_NOTES_v1.0.0.md").write_text(
         "\n".join(
             [
-                "# v1.0.0 Release Candidate",
-                "",
-                "Status: merge-ready after manual review.",
+                "# BayesAudit v1.0.0 Release Notes",
                 "",
                 (
-                    "Do not create the `v1.0.0` annotated tag until this pull request "
-                    "is merged into `main` with a merge commit and local `main` is synced."
+                    "BayesAudit v1.0.0 is a public research release for "
+                    "budget-constrained oversight in hierarchical LLM workflows."
+                ),
+                "",
+                (
+                    "The release preserves Phase 8 positive-but-limited evidence, "
+                    "the Phase 9 held-out nonreplication, and the limitation that "
+                    "no final-output violations were observed in the principal studies."
                 ),
                 "",
             ]
@@ -2294,7 +2298,7 @@ def _final_audit(commit: str, index: dict[str, Any]) -> dict[str, Any]:
         _gate("phase9_validates", validate_phase9_artifacts()["valid"]),
         _gate("phase10_prerequisites_validate", validate_phase10_artifacts(stage="10B")["valid"]),
         _gate("no_phase11_artifacts", not any(TRACKED_ROOT.glob("phase11_*"))),
-        _gate("do_not_merge_by_codex", True),
+        _gate("manual_merge_required", True),
         _gate("do_not_tag_before_merge", True),
     ]
     return _json_artifact(

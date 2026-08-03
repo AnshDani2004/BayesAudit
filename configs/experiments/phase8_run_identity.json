@@ -1,7 +1,7 @@
 {
   "artifact": "phase8_run_identity",
-  "artifact_hash": "b83d4451c9b73356bce274286b998c80d96f71b9bfdc64e81510327caa7957ff",
-  "branch": "codex/phase8-confirmatory-study",
+  "artifact_hash": "cf29435e7e665a01b453fb60c3d1538c65b3b95a92ed807ba85cee81ca4c9339",
+  "branch": "phase8-confirmatory-study",
   "ci_environment": false,
   "credential_present": true,
   "current_commit": "07db2f95fad09dcffe983c2b9a975301f66ae420",

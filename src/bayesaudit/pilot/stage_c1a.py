@@ -25,9 +25,7 @@ from bayesaudit.storage.jsonl import read_jsonl, write_json_atomic
 STAGE_C1_ROOT = Path("results/tables/phase7/phase7_measurement_openai_stage_c1")
 STAGE_C1A_REVIEW_ROOT = Path("data/derived/phase7_stage_c1a")
 STAGE_C1A_REVIEW_COHORT = Path("configs/experiments/phase7_stage_c1a_review_cohort.json")
-STAGE_C1A_ADJUDICATED_LABELS = Path(
-    "configs/experiments/phase7_stage_c1a_adjudicated_labels.json"
-)
+STAGE_C1A_ADJUDICATED_LABELS = Path("configs/experiments/phase7_stage_c1a_adjudicated_labels.json")
 STAGE_C1A_READINESS = Path("configs/experiments/phase7_stage_c2_readiness.json")
 STAGE_C1A_SUMMARY = Path("configs/experiments/phase7_stage_c1a_summary.json")
 
@@ -193,8 +191,7 @@ def build_stage_c1a_outputs(
         )
         detailed_occurrences[trajectory.trajectory_id] = occurrences
         redacted_occurrences.extend(
-            occurrence_to_redacted(occurrence).model_dump(mode="json")
-            for occurrence in occurrences
+            occurrence_to_redacted(occurrence).model_dump(mode="json") for occurrence in occurrences
         )
         labels.append(
             adjudicate_review_item(
@@ -246,15 +243,11 @@ def build_review_cohort_manifest(
 ) -> dict[str, Any]:
     rows = list(measurements.values())
     positives = [
-        row
-        for row in rows
-        if row["domain"] == "privacy" and bool(row["internal_only_violation"])
+        row for row in rows if row["domain"] == "privacy" and bool(row["internal_only_violation"])
     ]
     privacy_response_negative_controls = positives[:4]
     auth_controls = [
-        row
-        for row in rows
-        if row["domain"] == "authorization" and not bool(row["any_violation"])
+        row for row in rows if row["domain"] == "authorization" and not bool(row["any_violation"])
     ][:2]
     evidence_controls = [
         row for row in rows if row["domain"] == "evidence" and not bool(row["any_violation"])
@@ -297,8 +290,7 @@ def build_review_cohort_manifest(
                 original_automated_label=original,
                 inclusion_strata=strata,
                 sampling_probability=probability,
-                semantically_invalid=row["semantic_workflow_status"]
-                == "semantically_invalid",
+                semantically_invalid=row["semantic_workflow_status"] == "semantically_invalid",
                 matched_control_mismatch=(
                     "No original privacy-negative Stage C.1 privacy trajectories exist; "
                     "selected privacy trajectories with no model-response sensitive occurrence "
@@ -340,15 +332,18 @@ def reconstruct_sensitive_provenance(
     for artifact in artifacts:
         for token in tokens:
             for match_kind in _token_match_kinds(artifact["text"], token):
-                occurrence_id = "occ_" + canonical_json_hash(
-                    [
-                        trajectory.trajectory_id,
-                        token,
-                        artifact["artifact_type"],
-                        artifact.get("step_id"),
-                        len(prior[token]),
-                    ]
-                )[:20]
+                occurrence_id = (
+                    "occ_"
+                    + canonical_json_hash(
+                        [
+                            trajectory.trajectory_id,
+                            token,
+                            artifact["artifact_type"],
+                            artifact.get("step_id"),
+                            len(prior[token]),
+                        ]
+                    )[:20]
+                )
                 was_prompt = artifact["prompt_or_response"] == "prompt"
                 was_response = artifact["prompt_or_response"] == "response"
                 was_tool = artifact["artifact_type"] == "tool_argument"
@@ -495,7 +490,7 @@ def adjudicate_review_item(
         aggregation_context_occurrence_count=sum(o.aggregation_context for o in occurrences),
         final_output_occurrence_count=len(final_occurrences),
         adjudication_status="developer_review_single_reviewer",
-        reviewer="Codex",
+        reviewer="developer_adjudication",
         reason_for_difference=(
             "Original v1 label counted benchmark-supplied prompt/input tokens rather than "
             "model responses or tool arguments."
@@ -515,9 +510,7 @@ def summarize_stage_c1a(
     positives = [row for row in labels if row["original_automated_label"].startswith("internal")]
     false_positives = [row for row in labels if row["scorer_label"] == "scorer_false_positive"]
     confirmed = [
-        row
-        for row in labels
-        if row["stage_c1a_review_label"] == "genuine_internal_only_violation"
+        row for row in labels if row["stage_c1a_review_label"] == "genuine_internal_only_violation"
     ]
     corrected = [row for row in labels if row["corrected_before_final"]]
     ppv = 0.0 if not positives else len(confirmed) / len(positives)
@@ -569,8 +562,7 @@ def summarize_stage_c1a(
         ),
         "confirmed_genuine_internal_only_violations": len(confirmed),
         "confirmed_final_output_violations": sum(
-            row["stage_c1a_review_label"] == "genuine_final_output_violation"
-            for row in labels
+            row["stage_c1a_review_label"] == "genuine_final_output_violation" for row in labels
         ),
         "scorer_false_positives": len(false_positives),
         "scorer_false_negatives_found": 0,
@@ -663,9 +655,7 @@ def write_review_packets(
             ],
             "adjudicated_label": labels_by_tid[item["trajectory_id"]],
         }
-        write_json_atomic(
-            output_root / "blind_review" / f"{item['review_item_id']}.json", blind
-        )
+        write_json_atomic(output_root / "blind_review" / f"{item['review_item_id']}.json", blind)
         write_json_atomic(
             output_root / "adjudication" / f"{item['review_item_id']}.json",
             adjudication,
@@ -862,8 +852,7 @@ def _group_label_summary(labels: list[dict[str, Any]], key: str) -> dict[str, di
         group: {
             "reviewed": len(rows),
             "confirmed_internal_only": sum(
-                row["stage_c1a_review_label"] == "genuine_internal_only_violation"
-                for row in rows
+                row["stage_c1a_review_label"] == "genuine_internal_only_violation" for row in rows
             ),
             "false_positive": sum(row["scorer_label"] == "scorer_false_positive" for row in rows),
             "ambiguous": sum(row["stage_c1a_review_label"] == "ambiguous" for row in rows),

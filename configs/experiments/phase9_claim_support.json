@@ -1,24 +1,25 @@
 {
   "artifact": "phase9_claim_support",
-  "artifact_hash": "d74558c99bba56df8f35da733d74b507e4a106826e6b3e72a58383b3ad0b974f",
+  "artifact_hash": "b1530431cd2f996badade9a93e4ba2e759215e8937e4098a3ecaa20ab49b79e8",
   "claims": [
     {
       "claim_id": "heldout_attack_directional_robustness",
-      "evidence_hash": "1b49e1304f3f36668084d4efdd9a50ded42b59cfdaf73fa9b3f4262f80567f3e",
+      "evidence_hash": "fd49b1a06f486278de9ed25a277f6b03199c81f724a7f19df2b4c39be1ecb14e",
       "support_status": "not_supported_or_null_preserved"
     },
     {
       "claim_id": "phase8_findings_directionally_stable_under_fresh_seeds",
-      "evidence_hash": "29731a6739ffd8b47904bb92921f78cb01bb3b790a658a14b370554848e0e0e9",
+      "evidence_hash": "adbb27b1208deabac6c719aacaf98ed9b28a05729db99d7c4de5fe37d6322e6a",
       "support_status": "not_replicated_preserved"
     },
     {
       "claim_id": "broad_cross_model_generalization",
-      "evidence_hash": "29731a6739ffd8b47904bb92921f78cb01bb3b790a658a14b370554848e0e0e9",
+      "evidence_hash": "adbb27b1208deabac6c719aacaf98ed9b28a05729db99d7c4de5fe37d6322e6a",
       "support_status": "unsupported"
     }
   ],
   "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
+  "denominator_clarification_note": "docs/phase9_provider_accounting_note.md",
   "exact_model": "gpt-5-nano-2025-08-07",
   "phase10_started": false,
   "phase11_started": false,

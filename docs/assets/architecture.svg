@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="360" viewBox="0 0 980 360" role="img" aria-labelledby="title desc">
+<title id="title">BayesAudit system architecture</title>
+<desc id="desc">Synthetic tasks flow through hierarchical workflows, monitors, policies, adjudication, and evidence artifacts.</desc>
+<style>
+  .box { fill: #f7f9fb; stroke: #284b63; stroke-width: 2; rx: 10; }
+  .label { font: 16px sans-serif; fill: #17202a; }
+  .small { font: 13px sans-serif; fill: #34495e; }
+  .arrow { stroke: #2f6f73; stroke-width: 3; marker-end: url(#arrow); }
+</style>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2f6f73"/></marker></defs>
+<rect x="30" y="90" width="140" height="90" class="box"/><text x="100" y="125" text-anchor="middle" class="label">Synthetic</text><text x="100" y="148" text-anchor="middle" class="small">benchmark tasks</text>
+<rect x="220" y="90" width="150" height="90" class="box"/><text x="295" y="125" text-anchor="middle" class="label">Hierarchical</text><text x="295" y="148" text-anchor="middle" class="small">workflow engine</text>
+<rect x="420" y="40" width="150" height="90" class="box"/><text x="495" y="75" text-anchor="middle" class="label">Attacker or</text><text x="495" y="98" text-anchor="middle" class="small">safe control</text>
+<rect x="420" y="170" width="150" height="90" class="box"/><text x="495" y="205" text-anchor="middle" class="label">Constraint</text><text x="495" y="228" text-anchor="middle" class="small">inheritance</text>
+<rect x="620" y="90" width="140" height="90" class="box"/><text x="690" y="125" text-anchor="middle" class="label">Monitors and</text><text x="690" y="148" text-anchor="middle" class="small">policies</text>
+<rect x="810" y="90" width="140" height="90" class="box"/><text x="880" y="125" text-anchor="middle" class="label">Adjudication</text><text x="880" y="148" text-anchor="middle" class="small">and artifacts</text>
+<line x1="170" y1="135" x2="220" y2="135" class="arrow"/><line x1="370" y1="120" x2="420" y2="85" class="arrow"/><line x1="370" y1="150" x2="420" y2="215" class="arrow"/><line x1="570" y1="85" x2="620" y2="120" class="arrow"/><line x1="570" y1="215" x2="620" y2="150" class="arrow"/><line x1="760" y1="135" x2="810" y2="135" class="arrow"/>
+<text x="490" y="320" text-anchor="middle" class="small">All tasks and tools are synthetic and sandboxed; provider-backed runs use explicit gates, hashes, cache validation, and cost accounting.</text>
+</svg>

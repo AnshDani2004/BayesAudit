@@ -289,7 +289,7 @@ def test_phase8_closeout_and_merge_readiness_decisions() -> None:
         == "phase8_complete_with_documented_limitations_merge_ready"
     )
     assert closeout["remaining_blockers"] == []
-    assert closeout["do_not_merge_by_codex"] is True
+    assert closeout["manual_merge_required"] is True
     assert merge["recommended_manual_merge_method"] == "Create a merge commit"
     assert "Squash and merge" in merge["disallowed_manual_merge_methods"]
     assert "Rebase and merge" in merge["disallowed_manual_merge_methods"]

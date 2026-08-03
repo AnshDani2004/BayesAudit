@@ -101,8 +101,8 @@ def validate_phase7_closeout_artifacts() -> dict[str, Any]:
             errors.append(f"phase8 marker invalid: {path}")
     if PHASE7_MERGE_READINESS.exists():
         merge = read_json(PHASE7_MERGE_READINESS)
-        if merge.get("do_not_merge_by_codex") is not True:
-            errors.append("merge readiness must not execute merge")
+        if merge.get("manual_merge_required") is not True:
+            errors.append("merge readiness must require manual merge")
     return {"valid": not errors, "errors": errors}
 
 
@@ -247,7 +247,7 @@ def _build_final_claim_registry(current_commit: str) -> dict[str, Any]:
                 "wording": "The branch is merge-ready with documented limitations when CI passes.",
                 "status": "validated_with_limitation",
                 "evidence_artifact": str(PHASE7_MERGE_READINESS),
-                "limitation": "manual merge required; Codex did not merge",
+                "limitation": "manual merge required; automated agent did not merge",
             },
         ]
     )
@@ -365,7 +365,7 @@ def _build_merge_readiness(current_commit: str, closeout: dict[str, Any]) -> dic
         ),
         pr_number=1,
         pr_should_remain_open=True,
-        do_not_merge_by_codex=True,
+        manual_merge_required=True,
         recommended_manual_merge_method="Create a merge commit",
         disallowed_manual_merge_methods=["Squash and merge", "Rebase and merge"],
         preserve_phase_wise_commits=True,

@@ -225,10 +225,21 @@ def test_phase9_execution_summaries_stay_within_authorized_ceilings() -> None:
     token = _json(PHASE9_TOKEN_SUMMARY)
     cost = _json(PHASE9_COST_SUMMARY)
     decision = _json(PHASE9_EXECUTION_DECISION)
+    accounting = provider["provider_call_accounting"]
     assert provider["completed_trajectories"] == 48
     assert provider["provider_request_records"] == 144
     assert provider["provider_calls_performed"] == 144
     assert provider["cache_hits"] == 144
+    assert accounting["original_acquisition_provider_calls"] == 144
+    assert accounting["final_tracked_regeneration_provider_calls"] == 0
+    assert accounting["tracked_request_records"] == 144
+    assert accounting["tracked_cache_hit_records"] == 144
+    assert accounting["ignored_ledger_completed_rows_observed_during_public_hardening"] == 144
+    assert accounting["ignored_ledger_cached_rows_observed_during_public_hardening"] == 288
+    assert token["original_acquisition_provider_calls"] == 144
+    assert token["final_tracked_regeneration_provider_calls"] == 0
+    assert cost["original_acquisition_provider_calls"] == 144
+    assert cost["final_tracked_regeneration_provider_calls"] == 0
     assert token["total_tokens"] <= MAX_TOKENS
     assert Decimal(cost["token_derived_cost_usd"]) <= MAX_COST_USD
     assert decision["execution_decision"] == "phase9_execution_complete"
@@ -256,11 +267,22 @@ def test_phase9_primary_analysis_preserves_heldout_nonreplication() -> None:
     assert primary["pair_count"] == 12
     assert effect["safe_positive"] == 8
     assert effect["heldout_attacker_no_oversight_positive"] == 4
+    assert effect["safe_positive_matched_no_oversight_quartets"] == 8
+    assert effect["heldout_attacker_positive_matched_no_oversight_quartets"] == 4
     assert effect["paired_risk_difference"] == "-0.3333"
     assert effect["exact_mcnemar_p_value"] == "0.289062"
     assert monitor["objective_positive_pair_count"] == 4
     assert monitor["rule_based_alerts"] == 4
     assert monitor["bayesian_alerts"] == 0
+    assert monitor["matched_no_oversight_positive_quartet_denominator"] == 4
+    assert monitor["all_rule_based_trajectory_denominator"] == 12
+    assert monitor["all_bayesian_trajectory_denominator"] == 12
+    assert monitor["alerts_among_no_oversight_positive_matched_quartets"] == 4
+    assert monitor["bayesian_alerts_among_no_oversight_positive_matched_quartets"] == 0
+    assert monitor["true_positives_across_all_rule_based_trajectories"] == 7
+    assert monitor["false_positives_across_all_rule_based_trajectories"] == 5
+    assert monitor["true_positives_across_all_bayesian_trajectories"] == 0
+    assert monitor["false_negatives_across_all_bayesian_trajectories"] == 5
 
 
 def test_phase9_secondary_dataset_and_readiness_are_frozen() -> None:
@@ -327,7 +349,7 @@ def test_phase9_closeout_decision_and_report_are_merge_ready() -> None:
     assert closeout["phase10_started"] is False
     assert closeout["phase11_started"] is False
     assert "Phase 9 Held-Out Robustness Study" in report_text
-    assert "unsuitable for production-safety claims" in report_text
+    assert "not evidence of production readiness" in report_text
 
 
 def test_phase10a_artifacts_validate_when_present() -> None:
@@ -349,9 +371,9 @@ def test_phase10a_report_and_paper_sources_exist() -> None:
     report = FINAL_REPORT.read_text(encoding="utf-8")
     paper = PAPER_TEX.read_text(encoding="utf-8")
     assert "BayesAudit Final Report" in report
-    assert "unsuitable for production-safety claims" in report
+    assert "does not support production-safety claims" in report
     assert r"\title{BayesAudit:" in paper
-    assert "Phase 10 performs no provider calls" in paper
+    assert "Phase 9 did not replicate" in paper
 
 
 def test_phase10b_artifacts_validate_when_present() -> None:
@@ -374,19 +396,19 @@ def test_phase10b_cards_and_validation_script_exist() -> None:
     model = Path("docs/model_card.md").read_text(encoding="utf-8")
     script = Path("scripts/validate_release_candidate.sh").read_text(encoding="utf-8")
     assert "BayesAudit Benchmark Card" in benchmark
-    assert "production safety certification" in benchmark
+    assert "production-safety certification" in benchmark
     assert phase9.MODEL in model
     assert "python -m bayesaudit.cli validate-phase10" in script
 
 
 def test_phase10c_portfolio_and_release_candidate_docs_exist() -> None:
     portfolio = Path("docs/portfolio_summary.md").read_text(encoding="utf-8")
-    release = Path("docs/release_candidate_v1.0.0.md").read_text(encoding="utf-8")
+    release = Path("docs/RELEASE_NOTES_v1.0.0.md").read_text(encoding="utf-8")
     assert "BayesAudit Portfolio Summary" in portfolio
-    assert "final Phase 10 synthesis" in portfolio
-    assert "v1.0.0 Release Candidate" in release
-    assert "Do not create the `v1.0.0` annotated tag" in release
-    assert "merge commit" in release
+    assert "research engineering project" in portfolio
+    assert "BayesAudit v1.0.0 Release Notes" in release
+    assert "Phase 9 held-out nonreplication" in release
+    assert "offline reproduction" in release.lower()
 
 
 def test_phase10d_artifacts_validate_when_present() -> None:
@@ -407,7 +429,7 @@ def test_phase10d_final_audit_and_decision_are_merge_ready() -> None:
     assert (
         decision["merge_readiness_decision"] == "final_pr_merge_ready_with_documented_limitations"
     )
-    assert decision["do_not_merge_by_codex"] is True
+    assert decision["manual_merge_required"] is True
     assert decision["do_not_create_tag_before_merge"] is True
     assert decision["release_candidate_version"] == "v1.0.0"
     assert decision["phase11_started"] is False

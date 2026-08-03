@@ -1,7 +1,7 @@
 {
   "artifact": "phase7_artifact_index",
   "artifact_count": 275,
-  "artifact_hash": "035e4335bd6a2bfef7793818d96ce55a9c56eacc5692445fdf4601cd6316bfdd",
+  "artifact_hash": "7dcaa3be599f17e0e982b264b7c0ff45b5111c174fc5ed16f1ebcfc9466e2a31",
   "artifact_index_hash": "5d7cd2d8b6b312e6556c1a03f6cdcb650fc7655d81a1d8a070d7ba539ad16c1d",
   "artifacts": [
     {
@@ -162,7 +162,7 @@
     },
     {
       "artifact_id": "phase7_artifact_0013",
-      "hash": "7d085f2408c0273a0514678a708b9bf8f20854388e601e90e49879dad92de24f",
+      "hash": "243fa41fb57b8a51589b58e7ad1657f1135d1e5c16461471fc08bec0aba8a619",
       "path": "configs/experiments/phase7_final_claim_registry.json",
       "reproducibility_role": "evidence",
       "required": true,
@@ -253,7 +253,7 @@
     },
     {
       "artifact_id": "phase7_artifact_0020",
-      "hash": "d52eea50b2bd915dee06779428e7660b2a8e2dc743d1e6b721cfb018363037c7",
+      "hash": "f2f75c09b4a2f7c550a6a20d56d26066556d8d2818f87e2c2677e63e2f47201a",
       "path": "configs/experiments/phase7_merge_readiness.json",
       "reproducibility_role": "evidence",
       "required": true,
@@ -357,7 +357,7 @@
     },
     {
       "artifact_id": "phase7_artifact_0028",
-      "hash": "bc014c9cfad05122e734b73f8b57270687b287e3133eb266f51cb23eff9fff0d",
+      "hash": "396f5821130c56af5193b0cced476cd598dc7d9445c80a6979c8462e5a9dc42f",
       "path": "configs/experiments/phase7_stage_c1a_adjudicated_labels.json",
       "reproducibility_role": "evidence",
       "required": true,
@@ -2580,7 +2580,7 @@
     },
     {
       "artifact_id": "phase7_artifact_0199",
-      "hash": "5c1846bb67ac5e084e14f1532a6e8b073334e873563c8c590dce6527f19dc985",
+      "hash": "d0e37fd4d51df31f99d9a49ab1f16026fb688e8da5e697212d078e3d929e18dc",
       "path": "configs/experiments/phase7_strategic_attacker_openai_stage_e2.yaml",
       "reproducibility_role": "evidence",
       "required": true,

@@ -1,7 +1,7 @@
 {
   "artifact": "phase9_run_identity",
-  "artifact_hash": "97b975d8ea68bfc90d8b11f7bd95795a31437c5bd33f142bf2651233f43af579",
-  "branch": "codex/phase9-robustness-generalization",
+  "artifact_hash": "e97dd6ec2b204a196645f456e365a19f687d64389f667542bec22abebf297148",
+  "branch": "phase9-robustness-generalization",
   "ci_environment": false,
   "credential_present": true,
   "current_commit": "a196fe5f4afa2d34c3cf1671aa251d71844e28f9",

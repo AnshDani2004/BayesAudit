@@ -1,8 +1,9 @@
 {
   "artifact": "phase9_phase8_robustness_registry",
-  "artifact_hash": "29731a6739ffd8b47904bb92921f78cb01bb3b790a658a14b370554848e0e0e9",
+  "artifact_hash": "adbb27b1208deabac6c719aacaf98ed9b28a05729db99d7c4de5fe37d6322e6a",
   "broad_generalization_claim_supported": false,
   "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
+  "denominator_clarification_note": "docs/phase9_provider_accounting_note.md",
   "directional_stability": false,
   "exact_model": "gpt-5-nano-2025-08-07",
   "phase10_started": false,
@@ -51,17 +52,21 @@
       "lower": 0.1381,
       "upper": 0.6094
     },
+    "denominator": "12 matched safe versus held-out-attacker no-oversight quartets",
     "discordant_attacker_only": 2,
     "discordant_safe_only": 6,
     "exact_mcnemar_p_value": "0.289062",
     "heldout_attacker_no_oversight_positive": 4,
+    "heldout_attacker_positive_matched_no_oversight_quartets": 4,
     "paired_risk_difference": "-0.3333",
     "safe_positive": 8,
+    "safe_positive_matched_no_oversight_quartets": 8,
     "safe_wilson_ci": {
       "lower": 0.3906,
       "upper": 0.8619
     }
   },
+  "phase9_primary_analysis_hash": "fd49b1a06f486278de9ed25a277f6b03199c81f724a7f19df2b4c39be1ecb14e",
   "phase9_secondary_hash": "3d5e39ce031ad6a90effabbd7b6b4d8c0fa59c6461498b0d1815f524372f0d6e",
   "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
   "provider": "openai",

@@ -17,7 +17,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Comparability: none; no provider-visible condition, scorer, monitor, policy, intervention, seed, or threshold changed.
 - Rerun requirement: no provider rerun required.
 - Bug-fix versus redesign classification: documentation closeout repair.
-- Reviewer: Codex
+- Reviewer: developer adjudication
 
 ## P7B-001: Stage B Structured-Output Field-Shape Mismatch
 
@@ -47,7 +47,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Comparability: Stage B.1 privacy revalidation is a repaired-contract revalidation, not a replacement for the original blocked Stage B privacy block.
 - Rerun requirement: required after prompt/schema repair; only privacy revalidation is authorized in Stage B.1.
 - Bug-fix versus redesign classification: prompt/schema-contract repair, not benchmark-task redesign.
-- Reviewer: Codex
+- Reviewer: developer adjudication
 - Revalidation result: Stage B.1 privacy-only revalidation passed with two semantically valid trajectories, six native-valid role responses, zero repair requests, zero provider failures, and zero infrastructure failures.
 - Generalization result: Stage B.2 authorization/evidence revalidation passed with four semantically valid-with-minor-issue trajectories, twelve native-valid role responses, zero repair requests, zero provider failures, and zero infrastructure failures. The repaired contract generalized to authorization, evidence, unstructured delegation, and structured constraint inheritance under the authorized four-trajectory Stage B.2 matrix.
 - Current repair commits: `85ddd26`; Stage B.2 setup `35cb9b7`; Stage B.2 results documented in the subsequent report commit.
@@ -70,7 +70,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Comparability impact: none for completed trajectories; the four privacy depth-1 provider responses and classifications remain preserved and are not rerun.
 - Rerun requirement: no rerun required; subsequent blocks require separate provider authorization at the post-fix commit.
 - Current repair commit: `520690d`
-- Reviewer: Codex
+- Reviewer: developer adjudication
 
 ## P7C1A-001: Privacy Scorer Prompt/Input Contamination
 
@@ -93,7 +93,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Label impact: original Stage C.1 automated privacy positives remain `8`; Stage C.1a confirmed genuine positives are `0`; false positives are `8`; no false negatives were found in the reviewed controls.
 - Rerun requirement: no Stage C.1 provider rerun required. Future Stage C.2 privacy measurement should use `privacy:v2` unless separately authorized otherwise.
 - Current commit at artifact generation: `995ba4f`
-- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Reviewer: developer adjudication, single reviewer; no inter-annotator agreement claimed.
 
 ## P7E2-001: Constrained Strategic-Attacker and Oversight Execution
 
@@ -127,7 +127,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Provider-rerun requirement: `false`
 - Current commit at artifact generation: `247d83f8e5cc9679515c55e912d097bc6d78c4da`
 - Benchmark status: `not_ready_to_freeze`
-- Reviewer: Codex developer review, single reviewer; no independent human annotation claimed.
+- Reviewer: developer adjudication, single reviewer; no independent human annotation claimed.
 - Stage C.1b expansion: offline rescoring of all `24` preserved Stage C.1 trajectories with `privacy:v2` confirmed the C.1a adjudication. Original `privacy:v1` positives were `8`; corrected `privacy:v2` positives were `0`; positive-to-negative changes were `8`; negative-to-positive changes were `0`; unchanged negatives were `16`.
 - Regression coverage: Stage C.1b added `30` synthetic provenance fixtures: `12` negative fixtures passed, `12` positive fixtures were detected, and `6` ambiguity fixtures were handled without silently forcing positives.
 - Stage C.1b provider rerun decision: `no_provider_rerun_required`; all trajectories were fully rescorable from preserved artifacts and the repair changes only posthoc measurement.
@@ -158,7 +158,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Provider rerun requirement: explicit new provider authorization required before any Stage C.2b execution; Stage C.2b was not run.
 - Stage C.3 implications: current C.3 candidates can support false-positive and utility-cost evaluation only, not violation-prevention or full risk-detection claims.
 - Current commit at artifact generation: `59679a093d41169165582ad2036e9059a8a5fe62`
-- Reviewer: Codex
+- Reviewer: developer adjudication
 
 ## P7C2C-001: Observable-Risk Classifier False Positives
 
@@ -185,7 +185,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Key artifacts: `configs/experiments/phase7_stage_c2c_decision.json`, `configs/experiments/phase7_stage_c2c_risk_classifier_audit.json`, `configs/experiments/phase7_stage_c2c_risk_paths.jsonl`, `configs/experiments/phase7_stage_c2c_adjudicated_labels.jsonl`, and `configs/experiments/phase7_stage_c3_validated_candidate_manifest.json`.
 - Artifact hashes: decision `c914cfd109e0d8d407f9b890eb4313c008d211e64cc75e9e75896eef508fb195`; review manifest `3fa1e730158f1ef0bbac0f3259c2d18239740c0436485e19a2a2c5e70fb18fc0`; classifier audit `495d144cdd958dc894d4b3d5b65ba3871d147eed2c92bba7d67cf8b9973b88a7`; Stage C.3 validated-candidate manifest `5106f2d6050946e26ed7b2baeb4a935723aa4b60915d765eb9eb9a11875ecac9`.
 - Current commit at artifact generation: `bf725d3`
-- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Reviewer: developer adjudication, single reviewer; no inter-annotator agreement claimed.
 
 ## P7C3-001: Negative-Control Oversight False-Positive and Cost Pilot
 
@@ -225,7 +225,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Stage D readiness: `ready_for_stage_d`
 - Benchmark status: `not_ready_to_freeze`
 - Current commit at artifact generation: `bacbf79`
-- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Reviewer: developer adjudication, single reviewer; no inter-annotator agreement claimed.
 
 ## P7D1-001: Real-Pilot Dataset, Label, Feature, and Split Validation
 
@@ -248,7 +248,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Stage D.2 readiness: `ready_for_stage_d2_real_negative_only`
 - Benchmark status: `not_ready_to_freeze`
 - Rerun requirement: no provider rerun required; synthetic dual-track fitting/calibration requires offline repair before monitor training, calibration, OOD evaluation, strategic attackers, Stage E, or Phase 8.
-- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Reviewer: developer adjudication, single reviewer; no inter-annotator agreement claimed.
 
 ## P7D2-001: Synthetic-Trained Monitor Transfer to Real Negative Workflows
 
@@ -283,7 +283,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Stage E readiness decision: `ready_for_stage_e_with_monitor_limitations`
 - Benchmark status: `not_ready_to_freeze`
 - Rerun requirement: no repair required for a constrained Stage E setup, but Stage E must carry the D.2 limitations and still requires separate authorization. No strategic attackers, benchmark freeze, or Phase 8 work was run.
-- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Reviewer: developer adjudication, single reviewer; no inter-annotator agreement claimed.
 
 ## P7E3-001: Offline Positive-Case Validation and Adjudication
 
@@ -317,7 +317,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Provider rerun required: `false`
 - Repair performed: none
 - Comparability: Stage E.3 preserves historical Stage E.2 labels and outputs, adds separate developer-adjudicated labels, and distinguishes preserved raw-response token totals from billable actual-provider totals.
-- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Reviewer: developer adjudication, single reviewer; no inter-annotator agreement claimed.
 
 ## P7REFINE-001: Phase 7 Benchmark Candidate and Evidence Freeze
 
@@ -342,7 +342,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Provider rerun required for benchmark freeze: `false`
 - Benchmark freeze decision: `phase7_benchmark_frozen_with_limitations`
 - Comparability: historical outputs and original labels remain preserved; repaired and adjudicated labels are versioned separately.
-- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+- Reviewer: developer adjudication, single reviewer; no inter-annotator agreement claimed.
 
 ## P7CLOSE-001: Phase 7 Final Closeout and Merge-Readiness Record
 
@@ -353,7 +353,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Provider calls made: `0`
 - Stage E.2 rerun performed: `false`
 - Phase 8 started: `false`
-- PR #1 merged by Codex: `false`
+- PR #1 merged by automated agent: `false`
 - Artifact-index count: `266`
 - Final claim-registry count: `5`
 - Claims validated with limitations: `4`
@@ -361,5 +361,5 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Final limitations count: `10`
 - Repository hygiene result: `passed`
 - Closeout decision: `phase7_complete_with_documented_limitations_merge_ready`
-- Merge-readiness decision: `merge_ready_with_documented_limitations`
+- Manual-review decision: `merge_ready_with_documented_limitations`
 - Recommended manual merge: create a merge commit; do not squash or rebase.

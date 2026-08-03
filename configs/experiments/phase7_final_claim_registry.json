@@ -1,6 +1,6 @@
 {
   "artifact": "phase7_final_claim_registry",
-  "artifact_hash": "f493aff90c6c6077a703ee2e7b04e3d73ebe6d7b54db0959baf893b654b66da1",
+  "artifact_hash": "8d4cbc0801a909c1ab5a89c02bf99b68c7b3880c97eec0201e84e4a960a8e3cc",
   "claim_count": 5,
   "claims": [
     {
@@ -34,7 +34,7 @@
     {
       "claim_id": "phase7_final_claim_merge_001",
       "evidence_artifact": "configs/experiments/phase7_merge_readiness.json",
-      "limitation": "manual merge required; Codex did not merge",
+      "limitation": "manual merge required; automated workflow did not merge",
       "status": "validated_with_limitation",
       "wording": "The branch is merge-ready with documented limitations when CI passes."
     }

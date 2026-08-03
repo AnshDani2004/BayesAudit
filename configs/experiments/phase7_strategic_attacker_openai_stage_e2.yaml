@@ -49,7 +49,7 @@ human_review_sample_size: 0
 prompt_renderer_version: phase7_prompt_v2
 base_branch: main
 base_commit: f5c1962e908a3674755436fd33177ff73f6c0f1b
-phase7_branch: codex/phase7-real-model-pilot
+phase7_branch: phase7-real-model-pilot
 repository: AnshDani2004/BayesAudit
 benchmark_version: phase7_stage_e2_controlled_positive_pilot_v1
 notes: Stage E.2 future-run config only; Stage E.1 authorizes design without provider execution.
