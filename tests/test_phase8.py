@@ -17,21 +17,32 @@ from bayesaudit.pilot.phase8 import (
     MAX_REQUESTS,
     MAX_TOKENS,
     MAX_TRAJECTORIES,
+    PHASE8_ATTACKER_ADJUDICATION,
     PHASE8_AUTHORIZATION,
+    PHASE8_CONFIRMATORY_DECISION,
     PHASE8_COST_SUMMARY,
+    PHASE8_DATASET_MANIFEST,
     PHASE8_EXECUTION_DECISION,
     PHASE8_EXECUTION_PROTOCOL,
+    PHASE8_INTEGRITY_REPORT,
     PHASE8_JSON_ARTIFACTS_A,
+    PHASE8_MATCHED_ANALYSIS,
     PHASE8_MATRIX,
+    PHASE8_MONITOR_ADJUDICATION,
+    PHASE8_OBJECTIVE_ADJUDICATION,
+    PHASE8_POLICY_ADJUDICATION,
+    PHASE8_PREVENTION_ADJUDICATION,
     PHASE8_PROTOCOL,
     PHASE8_PROTOCOL_DECISION,
     PHASE8_REQUEST_SUMMARIES,
+    PHASE8_REVIEW_MANIFEST,
     PHASE8_SAP,
     PHASE8_SEED_MANIFEST,
     PHASE8_TOKEN_SUMMARY,
     PHASE8_TRAJECTORY_SUMMARIES,
     PHASE8_WAVE_SUMMARIES,
     PROVIDER,
+    validate_phase8_analysis_artifacts,
     validate_phase8_execution_artifacts,
     validate_phase8_protocol_artifacts,
 )
@@ -195,4 +206,55 @@ def test_phase8_execution_summaries_stay_within_authorized_ceilings() -> None:
     assert token["total_tokens"] <= 500000
     assert Decimal(cost["token_derived_cost_usd"]) <= Decimal("0.20")
     assert decision["execution_decision"] == "phase8_execution_complete"
+    assert decision["phase9_started"] is False
+
+
+def test_phase8_analysis_artifacts_validate_when_present() -> None:
+    assert validate_phase8_analysis_artifacts() == {"valid": True, "errors": []}
+
+
+def test_phase8_offline_adjudication_includes_all_planned_trajectories() -> None:
+    for path in [
+        PHASE8_ATTACKER_ADJUDICATION,
+        PHASE8_OBJECTIVE_ADJUDICATION,
+        PHASE8_MONITOR_ADJUDICATION,
+        PHASE8_POLICY_ADJUDICATION,
+        PHASE8_PREVENTION_ADJUDICATION,
+    ]:
+        rows = _jsonl(path)
+        assert len(rows) == 96
+        assert {row["condition_id"] for row in rows} == {
+            row["condition_id"] for row in _json(PHASE8_MATRIX)["records"]
+        }
+
+
+def test_phase8_analysis_is_provider_disabled_and_reconciled() -> None:
+    review = _json(PHASE8_REVIEW_MANIFEST)
+    integrity = _json(PHASE8_INTEGRITY_REPORT)
+    assert review["provider_execution_guard"] == "phase8c_offline_only"
+    assert review["provider_ledger_count_before"] == review["provider_ledger_count_after"]
+    assert review["provider_calls_performed"] == 0
+    assert integrity["all_planned_trajectories_represented"] is True
+    assert integrity["intent_to_evaluate_trajectories"] == 96
+
+
+def test_phase8_confirmatory_analysis_records_predeclared_outputs() -> None:
+    analysis = _json(PHASE8_MATCHED_ANALYSIS)
+    dataset = _json(PHASE8_DATASET_MANIFEST)
+    decision = _json(PHASE8_CONFIRMATORY_DECISION)
+    assert analysis["pair_count"] == 24
+    assert "exact_mcnemar_p_value" in analysis["controlled_attack_effect"]
+    assert analysis["monitor_comparison"]["objective_positive_pair_count"] >= 0
+    assert dataset["dataset_version"] == phase8.PHASE8_DATASET_VERSION
+    assert decision["confirmatory_evidence_decision"] in {
+        "confirmatory_evidence_validated",
+        "confirmatory_evidence_validated_with_limitations",
+        "confirmatory_attack_effect_not_replicated",
+        "confirmatory_evidence_inconclusive",
+    }
+    assert decision["phase9_readiness"] in {
+        "ready_for_phase9_robustness",
+        "ready_for_phase9_with_limitations",
+        "additional_phase8_provider_run_required",
+    }
     assert decision["phase9_started"] is False

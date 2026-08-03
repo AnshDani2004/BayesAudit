@@ -417,6 +417,7 @@ def run_phase8_offline_adjudication(*, current_commit: str | None = None) -> dic
         provider_ledger_count_before=before,
         provider_ledger_count_after=before,
         review_manifest_hash=canonical_json_hash(review_rows),
+        provider_calls_performed=0,
     )
     write_json_atomic(PHASE8_REVIEW_MANIFEST, review_manifest)
     for review in review_rows:

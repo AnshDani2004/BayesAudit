@@ -1,0 +1,17 @@
+{
+  "artifact": "phase8_dataset_manifest",
+  "artifact_hash": "74039706a731fc65a9ec29de1e43e3f736474b8ab92044cb26e42ff6de19b0e5",
+  "current_commit": "188951fb1f5aec6314602ce7f792dbef891203f8",
+  "dataset_hash": "d6f644ae697cc3427706f9839e3ab5932067379786a7edf7fbd16f251d6f540b",
+  "dataset_version": "phase8_confirmatory_validated_dataset_v1",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "matched_analysis_hash": "a484306c8567d1823080588eaebc8e097c6f36ac5e6dccb015b90ee089cd4dad",
+  "phase9_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "row_count": 96,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false
+}
