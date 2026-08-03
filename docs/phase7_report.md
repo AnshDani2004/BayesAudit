@@ -1913,3 +1913,56 @@ prevention claim unsupported. The validated dataset version is
 Limitations remain substantial: the sample is small, synthetic, single-model, and
 developer-adjudicated; all validated objective positives were internal-only and
 corrected before final output; and no clean prevention effect was established.
+
+# Phase 7 Benchmark Refinement and Evidence Freeze
+
+Because Stage E.3 followed decision Path A, Phase 7 benchmark refinement proceeded
+offline. The refinement did not alter historical experiments, provider-visible
+inputs, model outputs, tasks, prompts, attackers, policies, monitors, thresholds,
+seeds, or intervention wording.
+
+## Refinement Scope
+
+The benchmark candidate is `phase7_benchmark_candidate_v1`. It consolidates known
+Phase 7 repairs and limitations: OpenAI raw-output extraction, token-derived cost
+accounting, role-specific structured-output schemas, `privacy:v2`,
+`observable_risk:v2`, opportunistic attacker limitations, Stage C.3 negative-only
+limits, Stage D.1 real-negative-only limits, Stage D.2 monitor-transfer limits,
+Stage E.1 attacker-design limits, Stage E.2 controlled-positive limits, and Stage
+E.3 developer adjudication labels.
+
+Refinement classification:
+
+- Documentation-only refinements: `8`
+- Derived-label-only refinements: `1`
+- Scorer-version refinements: `1`
+- Classifier-version refinements: `1`
+- Schema/parser refinements: `1`
+- Infrastructure refinements: `2`
+- Task-semantic refinements: `0`
+- Prompt-semantic refinements: `0`
+- Attacker-semantic refinements: `0`
+- Monitor or policy runtime refinements: `0`
+
+No refinement requires a provider rerun for the Phase 7 claims being merged.
+Future confirmatory provider reruns are recommended only for a separately
+authorized larger study.
+
+## Evidence Package
+
+The Phase 7 evidence package references 10 tracked artifacts and excludes raw
+ignored provider responses. It includes real-model pilot manifests, provider and
+cost ledgers by reference, corrected Stage C.1 labels, Stage C.2 treatment
+findings, Stage C.3 negative-policy findings, Stage D.1/D.2 evidence, Stage E.1
+design manifests, Stage E.2 execution summaries, the Stage E.3 validated dataset,
+claim support, repair log, compatibility matrix, limitations, and reproducibility
+hashes.
+
+- Benchmark manifest hash: `d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be`
+- Evidence package hash: `74940826bba7f991715e350b84165f0109a053dac9e4b8e1927b34fc4655f85a`
+- Benchmark freeze decision: `phase7_benchmark_frozen_with_limitations`
+
+The frozen-with-limitations status means the benchmark is reproducible and
+scientifically usable for the explicitly bounded Phase 7 claims. It does not imply
+production readiness, population prevalence estimates, broad real-world robustness,
+or general causal superiority of an oversight policy.

@@ -108,6 +108,14 @@ utility and overhead preservation, claim validation, dataset freeze, decision
 gates, no raw-provider tracking, no Stage E.2 rerun, no provider execution, and no
 Phase 8 execution.
 
+Benchmark refinement adds offline tests for historical-version preservation,
+versioned benchmark candidate creation, refinement classification, compatibility
+matrix integrity, historical/repaired/adjudicated label preservation, offline
+rescore eligibility, provider-rerun requirement logic, no silent task, prompt,
+attacker, scorer, monitor, policy, or intervention replacement, evidence-package
+integrity, benchmark-manifest hash stability, frozen-with-limitations decision
+logic, no provider execution, and no Phase 8 execution.
+
 ## Continuous Integration
 
 The default CI target should run:

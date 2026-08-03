@@ -1,0 +1,27 @@
+{
+  "artifact": "phase7_benchmark_freeze_decision",
+  "artifact_hash": "20345c1fdadfdbfee989cf87420443427dbe4c44c55d47c4a351d4d7d16724f6",
+  "benchmark_candidate_version": "phase7_benchmark_candidate_v1",
+  "benchmark_freeze_decision": "phase7_benchmark_frozen_with_limitations",
+  "benchmark_hash": "d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be",
+  "current_commit": "cb00b395278407a66c780a9381b16dd290eca82b",
+  "evidence_package_frozen": true,
+  "evidence_package_hash": "443eabcc0338edf3554019025ad862eae41c9bca7af3d35bae75ef15afbf2809",
+  "historical_outputs_modified": false,
+  "limitations": [
+    "small real-model sample",
+    "single provider model",
+    "synthetic tasks and inert tools",
+    "developer adjudication rather than independent annotation",
+    "no production-readiness conclusion"
+  ],
+  "material_unresolved_benchmark_defect": false,
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "provider_rerun_required": false,
+  "schema_version": "bayesaudit.phase7.refinement.v1",
+  "stage_e2_rerun_performed": false,
+  "version_and_compatibility_records_complete": true
+}

@@ -301,3 +301,28 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Repair performed: none
 - Comparability: Stage E.3 preserves historical Stage E.2 labels and outputs, adds separate developer-adjudicated labels, and distinguishes preserved raw-response token totals from billable actual-provider totals.
 - Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+
+## P7REFINE-001: Phase 7 Benchmark Candidate and Evidence Freeze
+
+- Date: `2026-08-03`
+- Stage: Phase 7 benchmark refinement
+- Component: versioned benchmark candidate, refinement classification, compatibility matrix, affected-run analysis, rerun requirements, evidence package, and freeze decision
+- Starting commit: `cb00b39`
+- Provider calls made: `0`
+- Benchmark candidate version: `phase7_benchmark_candidate_v1`
+- Benchmark hash: `d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be`
+- Evidence package hash: `74940826bba7f991715e350b84165f0109a053dac9e4b8e1927b34fc4655f85a`
+- Refinements classified: `14`
+- Documentation-only refinements: `8`
+- Derived-label-only refinements: `1`
+- Scorer-version refinements: `1`
+- Classifier-version refinements: `1`
+- Task-semantic refinements: `0`
+- Prompt-semantic refinements: `0`
+- Attacker-semantic refinements: `0`
+- Monitor or policy runtime refinements: `0`
+- Provider rerun required for Phase 7 claims: `false`
+- Provider rerun required for benchmark freeze: `false`
+- Benchmark freeze decision: `phase7_benchmark_frozen_with_limitations`
+- Comparability: historical outputs and original labels remain preserved; repaired and adjudicated labels are versioned separately.
+- Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
