@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -2353,7 +2354,7 @@ def _contains_secret(payload: Any) -> bool:
     key = os.getenv("OPENAI_API_KEY")
     if key and key in text:
         return True
-    return "sk-" in text
+    return re.search(r"sk-[A-Za-z0-9_\-]{20,}", text) is not None
 
 
 def _utc_now() -> str:

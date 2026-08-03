@@ -1,0 +1,52 @@
+{
+  "architecture_manifest_hash": "f2210671b133c065e0a8a1d503242c8247f6f0386d97fb25f42abd76649b95ea",
+  "artifact": "run_identity",
+  "artifact_hash": "b6d7b2c89fc32ebf94e602204567e9a30505510b8608c97454956a368b730086",
+  "attacker_manifest_hash": "f5edae1f06bee4739428269bfc2ae32843a574b68d0cb1f44ffb8452ec09cb8d",
+  "authorization_record_hash": "251ecc30764b09c7abdc803b6ef9f7aaf11f65116fd406ae489f722764de2b64",
+  "benchmark_repair_started": false,
+  "benchmark_status": "not_ready_to_freeze",
+  "calibration_fitting_occurred": false,
+  "ci_environment": false,
+  "credential_env_var": "OPENAI_API_KEY",
+  "credential_present": true,
+  "credential_value_recorded": false,
+  "current_commit": "247d83f8e5cc9679515c55e912d097bc6d78c4da",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "execution_protocol_hash": "cac0dd89a7faeef33c5bdfa9f9210a0ccabde5558559ec9d9e66c91d11443af0",
+  "experiment_config_hash": "fbbbc2cee673ba7170cb01832fbdba5fb14fd4f0c45045ce33be388c25b2fe47",
+  "immutable_after_first_provider_call": true,
+  "intervention_hash": "2110d5bfb83e8720333390d2364d9136c0fb67e855fd058a87bb3134d3e4e290",
+  "matrix_manifest_hash": "f51ed85b889908ce6931aef404826d331b3248e574d88a5075448c5418aee3b0",
+  "monitor_manifest_hash": "17c13f7011761cf1d81c4f71a7e04eb8efd4c0706a7390d2a59531dbe3973420",
+  "monitor_retraining_occurred": false,
+  "new_external_human_annotation_occurred": false,
+  "phase8_started": false,
+  "policy_manifest_hash": "40861156d50848c60d4be2bab5072da038e41485e22d180ef121208445108fe2",
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "prompt_hashes": {
+    "template": "3d4f6f685325071f9e09a132c7eed5aa4e5ac770cc5dfd7b0b81b6c9e2def8d9"
+  },
+  "provider": "openai",
+  "provider_calls_made_stage_e1": 0,
+  "provider_config_hash": "ef77e06e41c455b52fa570c0ec232aa7c42a88b147e830a1534eca08d86fa387",
+  "run_id": "phase7_stage_e2_13134e0d19bdafca",
+  "schema_hashes": {
+    "response": "0daaf47da3f068b5cebda9dd1ebfaff4a838555d6d4747be03384755ab9b14e2"
+  },
+  "schema_version": "bayesaudit.phase7.stage_e2.v1",
+  "scorer_hashes": {
+    "authorization": "12fb001176dfc74b921497bd26d7a91b5696e85d09a9c557ef5238eef66100df",
+    "evidence": "13a185b2457f2519f677889419dc0da1fac61fcbea764cb94c1ceb06f1e5074c",
+    "privacy": "ca0e67869e2d14d7807219d7c9ff5e051b947656aa23474aa64208d6e711ecd8"
+  },
+  "scorer_versions": {
+    "authorization": "authorization:v1",
+    "evidence": "evidence:v1",
+    "privacy": "privacy:v2"
+  },
+  "stage_e3_was_run": false,
+  "start_timestamp": "2026-08-03T01:34:02.463906+00:00",
+  "task_manifest_hash": "752dcfb85f0063257cc347fe4df79230820668a45a94b3147c38dec323483130",
+  "threshold_tuning_occurred": false
+}

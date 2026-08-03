@@ -1,0 +1,26 @@
+{
+  "artifact": "stage_e3_readiness",
+  "artifact_hash": "ca6016110dc4169acd5d3a045bf70c837ad8392626eec7e27fe82c404b001524",
+  "benchmark_repair_started": false,
+  "benchmark_status": "not_ready_to_freeze",
+  "calibration_fitting_occurred": false,
+  "current_commit": "247d83f8e5cc9679515c55e912d097bc6d78c4da",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "limitations": [
+    "Stage E.2 is synthetic, sandboxed, and small.",
+    "Domain and policy comparisons are descriptive only.",
+    "Prevention claims require matched no-oversight support."
+  ],
+  "monitor_retraining_occurred": false,
+  "new_external_human_annotation_occurred": false,
+  "phase8_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_made_stage_e1": 0,
+  "provider_rerun_required": false,
+  "schema_version": "bayesaudit.phase7.stage_e2.v1",
+  "stage_e2_primary_decision": "controlled_positive_case_evaluation_validated_with_limitations",
+  "stage_e3_readiness_decision": "ready_for_stage_e3_full_validation",
+  "stage_e3_was_run": false,
+  "threshold_tuning_occurred": false
+}

@@ -71,6 +71,33 @@ Stage D.1 adds 589 focused offline tests for source inventory, integrity reports
 
 Stage D.2 adds 173 focused offline tests for frozen monitor inventory, missing-artifact exclusions, adapter determinism, leakage denial, real-negative metric limitations, checkpoint and trajectory score schema, abstention, negative calibration, descriptive score shift, feature drift, workflow-invalid and policy-negative audit separation, monitor comparison, Stage E recommendation, decision-branch coverage, and hard no-provider/no-fit/no-Stage-E guards.
 
+Stage E.1 adds 19 focused offline tests for strategic-attacker design readiness,
+frozen Stage E.2 matrix construction, task and attacker selection, monitor
+preflight, cost ceilings, authorization, and no-provider/no-Stage-E execution
+guards.
+
+Stage E.2 adds 129 artifact-only tests. They validate frozen Stage E.1 readiness
+loading, matrix hash integrity, exactly 18 conditions, no extra condition
+generation, frozen tasks, task versions, scenario hashes, attacker families,
+primitives, seeds, architectures, depths, insertion points, oversight conditions,
+monitor versions, parameter hashes, threshold hashes, abstention hashes, policy
+versions, intervention hash, scorer versions, authorization, credential redaction,
+request/token/cost/trajectory ceilings, raw-first persistence, exact cache matching,
+invalid-cache rejection, bounded schema repair and transient retry, no
+outcome-based rerun, provider/token/cost ledger reconciliation, attacker-uptake and
+strategy-validity classifications, leakage rejection, objective-positive
+classification by domain, internal/tool/final/corrected-before-final distinctions,
+monitor alert and abstention calculations, first-alert timing, false negatives,
+false positives, zero-positive metric guards, audit and intervention budgets,
+policy information boundaries, intervention timing, prevention logic, matched
+pair/triplet/quartet comparisons, treatment isolation, utility/workflow/constraint
+deltas, token and cost overhead, subgroup reporting, small-denominator warnings,
+decision branches, Stage E.3 isolation, no benchmark repair, no Phase 8 execution,
+historical Stage E.1 immutability, and CI provider-call prohibition.
+
+No CI test may call OpenAI. Stage E.2 tests read only preserved local, redacted
+artifacts under `configs/experiments/`.
+
 ## Continuous Integration
 
 The default CI target should run:
