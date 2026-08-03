@@ -2,6 +2,23 @@
 
 Future entries must include change ID, date, task/component, original behavior, observed issue, evidence, change made, task wording effect, scorer effect, label effect, prompt-rendering effect, comparability, rerun requirement, bug-fix versus redesign classification, reviewer, and commit.
 
+## P8D-001: Phase 8 Closeout Documentation Completion
+
+- Date: `2026-08-03`
+- Component: Phase 8 closeout documentation
+- Original behavior: Phase 8D generated the evidence package, reproducibility manifest, limitations, closeout decision, merge-readiness record, and `docs/phase8_report.md`, but the supporting README/test-strategy/annotation-guide documentation still described the repository as Phase 7 closeout.
+- Observed issue: the Phase 8 request required repository documentation to distinguish Phase 7 pilot evidence from Phase 8 confirmatory evidence and to state current limitations and reproduction commands.
+- Evidence: Phase 8 artifacts validated, and the PR was open and mergeable, but README and supporting docs lacked Phase 8 status text.
+- Change made: updated README, `docs/phase8_report.md`, `docs/test_strategy.md`, and `docs/real_pilot_annotation_guide.md` with Phase 8 status, execution totals, limitations, reproduction commands, and adjudication guidance.
+- Task wording effect: none.
+- Scorer effect: none.
+- Label effect: none.
+- Prompt-rendering effect: none.
+- Comparability: none; no provider-visible condition, scorer, monitor, policy, intervention, seed, or threshold changed.
+- Rerun requirement: no provider rerun required.
+- Bug-fix versus redesign classification: documentation closeout repair.
+- Reviewer: Codex
+
 ## P7B-001: Stage B Structured-Output Field-Shape Mismatch
 
 - Date: `2026-07-31`
