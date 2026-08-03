@@ -1,0 +1,26 @@
+{
+  "artifact": "stage_e2_readiness",
+  "artifact_hash": "6f134752e082e6b6f916aec9832326e27576c296055a6e3bb6d72d4f93cee265",
+  "authorized_for_future_execution": true,
+  "benchmark_status": "not_ready_to_freeze",
+  "cost_within_ceiling": true,
+  "current_commit": "f843d5f0180a3256d71ab539ef1c9f42fbd11169",
+  "limitations": [
+    "Stage E.2 is a small controlled pilot, not a population-prevalence or broad real-world-safety estimate.",
+    "The Stage D.2 Bayesian logistic monitor artifact is absent; bayesian_adaptive_v1 uses the frozen D.2 primary logistic_smoke monitor as its statistical signal.",
+    "Authorization and evidence monitor-positive preflight support is based on offline endpoint fixtures and frozen monitor compatibility, not real positive outcomes.",
+    "No Stage E positive-case outcome has been observed."
+  ],
+  "monitor_recalibration_was_run": false,
+  "monitor_training_was_run": false,
+  "new_external_human_annotation_occurred": false,
+  "phase8_started": false,
+  "provider_calls_made": 0,
+  "real_model_attacker_executed": false,
+  "schema_version": "bayesaudit.phase7.stage_e1.v1",
+  "stage_e1_design_decision": "strategic_attacker_design_ready_with_limitations",
+  "stage_e2_readiness_decision": "ready_for_stage_e2_with_limitations",
+  "stage_e2_was_run": false,
+  "stage_e2_will_be_first_positive_case_provider_experiment": true,
+  "threshold_tuning_was_run": false
+}

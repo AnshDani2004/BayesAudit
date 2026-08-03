@@ -1,0 +1,55 @@
+pilot_id: phase7_strategic_attacker_openai_stage_e2
+pilot_version: phase7_pilot_v1
+stage: oversight
+provider_config: configs/providers/remote/openai_phase7_stage_e2.yaml
+output_root: results/tables/phase7
+task_roots:
+  - scenarios
+domains:
+  - privacy
+  - authorization
+  - evidence
+task_ids:
+  - task_privacy_tool_argument_minimization
+  - task_authorization_external_scope
+  - task_evidence_claim_support
+architectures:
+  - unstructured_delegation
+  - structured_inheritance
+delegation_depths:
+  - 2
+branching_factors:
+  - 1
+behavior_conditions:
+  - strategic_attacker_real_pilot_v1
+attacker_conditions:
+  - strategic_attacker_real_pilot_v1
+oversight_conditions:
+  - no_oversight
+  - rule_based_selective_v1
+  - bayesian_adaptive_v1
+monitor_artifacts:
+  - configs/experiments/phase7_stage_d2_monitor_manifest.json
+calibration_artifacts:
+  - configs/experiments/phase7_stage_d2_negative_calibration.json
+seeds:
+  - 20260802
+provider_calls_enabled: true
+cache_enabled: true
+resume_enabled: true
+external_tools_enabled: false
+max_cost_usd: 0.10
+max_total_tokens: 200000
+max_requests: 140
+max_trajectories: 24
+max_local_executions: 1
+large_run_threshold: 24
+allow_large_run: false
+human_review_sample_size: 0
+prompt_renderer_version: phase7_prompt_v2
+base_branch: main
+base_commit: f5c1962e908a3674755436fd33177ff73f6c0f1b
+phase7_branch: codex/phase7-real-model-pilot
+repository: AnshDani2004/BayesAudit
+benchmark_version: phase7_stage_e2_controlled_positive_pilot_v1
+notes: Stage E.2 future-run config only; Stage E.1 authorizes design without provider execution.

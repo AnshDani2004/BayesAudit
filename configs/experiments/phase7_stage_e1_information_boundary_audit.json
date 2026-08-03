@@ -1,0 +1,105 @@
+{
+  "artifact": "information_boundary_audit",
+  "artifact_hash": "ad98ad634cdb6baa4f3b882e39e3d3d9ce74e66f8407575680aa0d98a464946c",
+  "current_commit": "f843d5f0180a3256d71ab539ef1c9f42fbd11169",
+  "denied_fields": [
+    "monitor_scores",
+    "objective_scorer_results",
+    "adjudicated_labels",
+    "future_trajectory_outputs",
+    "posterior_artifacts",
+    "provider_response_ids",
+    "benchmark_split_membership",
+    "stage_e2_outcomes"
+  ],
+  "monitor_recalibration_was_run": false,
+  "monitor_training_was_run": false,
+  "new_external_human_annotation_occurred": false,
+  "no_future_outcome_leakage": true,
+  "no_label_leakage": true,
+  "no_monitor_score_leakage_to_attacker": true,
+  "phase8_started": false,
+  "provider_calls_made": 0,
+  "real_model_attacker_executed": false,
+  "records": [
+    {
+      "actor": "strategic_attacker",
+      "allowed_fields": [
+        "task instructions",
+        "public policy name",
+        "local synthetic role"
+      ],
+      "boundary_status": "passed",
+      "denied_fields": [
+        "monitor_scores",
+        "objective_scorer_results",
+        "adjudicated_labels",
+        "future_trajectory_outputs",
+        "posterior_artifacts",
+        "provider_response_ids",
+        "benchmark_split_membership",
+        "stage_e2_outcomes"
+      ]
+    },
+    {
+      "actor": "monitor",
+      "allowed_fields": [
+        "task instructions",
+        "public policy name",
+        "local synthetic role"
+      ],
+      "boundary_status": "passed",
+      "denied_fields": [
+        "monitor_scores",
+        "objective_scorer_results",
+        "adjudicated_labels",
+        "future_trajectory_outputs",
+        "posterior_artifacts",
+        "provider_response_ids",
+        "benchmark_split_membership",
+        "stage_e2_outcomes"
+      ]
+    },
+    {
+      "actor": "intervention",
+      "allowed_fields": [
+        "task instructions",
+        "public policy name",
+        "local synthetic role"
+      ],
+      "boundary_status": "passed",
+      "denied_fields": [
+        "monitor_scores",
+        "objective_scorer_results",
+        "adjudicated_labels",
+        "future_trajectory_outputs",
+        "posterior_artifacts",
+        "provider_response_ids",
+        "benchmark_split_membership",
+        "stage_e2_outcomes"
+      ]
+    },
+    {
+      "actor": "objective_scorer",
+      "allowed_fields": [
+        "task instructions",
+        "public policy name",
+        "local synthetic role"
+      ],
+      "boundary_status": "passed",
+      "denied_fields": [
+        "monitor_scores",
+        "objective_scorer_results",
+        "adjudicated_labels",
+        "future_trajectory_outputs",
+        "posterior_artifacts",
+        "provider_response_ids",
+        "benchmark_split_membership",
+        "stage_e2_outcomes"
+      ]
+    }
+  ],
+  "schema_version": "bayesaudit.phase7.stage_e1.v1",
+  "stage_e2_was_run": false,
+  "threshold_tuning_was_run": false
+}

@@ -1,0 +1,180 @@
+{
+  "allowed_for_future_execution": true,
+  "artifact": "stage_e2_authorization",
+  "artifact_hash": "251ecc30764b09c7abdc803b6ef9f7aaf11f65116fd406ae489f722764de2b64",
+  "credential_env_var": "OPENAI_API_KEY",
+  "credential_present": true,
+  "credential_value_recorded": false,
+  "current_commit": "f843d5f0180a3256d71ab539ef1c9f42fbd11169",
+  "estimated_cost": 0.012960000000000001,
+  "estimated_total_tokens": 89100,
+  "final_authorization_decision": "allow",
+  "future_stage_e2_authorization_generated": true,
+  "gates": [
+    {
+      "gate_name": "provider_calls_enabled_in_config",
+      "reason": "provider config enabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "experiment_provider_calls_enabled",
+      "reason": "experiment config enables provider calls",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_cache_enabled",
+      "reason": "provider cache enabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "experiment_cache_enabled",
+      "reason": "experiment cache enabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_resume_enabled",
+      "reason": "provider resume enabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "experiment_resume_enabled",
+      "reason": "experiment resume enabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_raw_response_preservation_enabled",
+      "reason": "provider raw-response preservation enabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_secret_redaction_enabled",
+      "reason": "provider secret redaction enabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_external_tools_disabled",
+      "reason": "provider external tools disabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "experiment_external_tools_disabled",
+      "reason": "experiment external tools disabled",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_fallback_model_absent",
+      "reason": "provider fallback model absent",
+      "status": "passed"
+    },
+    {
+      "gate_name": "cli_allow_provider_calls",
+      "reason": "CLI allow flag supplied",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_named",
+      "reason": "provider name is explicit",
+      "status": "passed"
+    },
+    {
+      "gate_name": "model_identifier_named",
+      "reason": "model ID is explicit",
+      "status": "passed"
+    },
+    {
+      "gate_name": "credential_environment_variable_present",
+      "reason": "credential environment variable is present",
+      "status": "passed"
+    },
+    {
+      "gate_name": "cost_ceiling_set",
+      "reason": "cost ceiling supplied on CLI",
+      "status": "passed"
+    },
+    {
+      "gate_name": "token_ceiling_set",
+      "reason": "token ceiling supplied on CLI",
+      "status": "passed"
+    },
+    {
+      "gate_name": "request_ceiling_set",
+      "reason": "request ceiling supplied on CLI",
+      "status": "passed"
+    },
+    {
+      "gate_name": "trajectory_ceiling_set",
+      "reason": "trajectory ceiling supplied on CLI",
+      "status": "passed"
+    },
+    {
+      "gate_name": "estimated_cost_within_ceiling",
+      "reason": "estimated cost within ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "estimated_tokens_within_ceiling",
+      "reason": "estimated tokens within ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "planned_requests_within_ceiling",
+      "reason": "planned requests within ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "planned_trajectories_within_ceiling",
+      "reason": "planned trajectories within ceiling",
+      "status": "passed"
+    },
+    {
+      "gate_name": "large_run_protection",
+      "reason": "large-run threshold satisfied",
+      "status": "passed"
+    },
+    {
+      "gate_name": "configuration_valid",
+      "reason": "configuration parsed successfully",
+      "status": "passed"
+    },
+    {
+      "gate_name": "pilot_manifest_written",
+      "reason": "pilot manifest exists before calls",
+      "status": "passed"
+    },
+    {
+      "gate_name": "output_location_writable",
+      "reason": "output location is writable",
+      "status": "passed"
+    },
+    {
+      "gate_name": "provider_adapter_dry_run_valid",
+      "reason": "adapter dry-run validation passed",
+      "status": "passed"
+    },
+    {
+      "gate_name": "no_ci_environment",
+      "reason": "CI environment is not detected",
+      "status": "passed"
+    }
+  ],
+  "max_cost": 0.1,
+  "max_requests": 140,
+  "max_tokens": 200000,
+  "max_trajectories": 24,
+  "maximum_possible_cost_usd": 0.02592,
+  "maximum_possible_requests": 108,
+  "maximum_possible_total_tokens": 178200,
+  "monitor_recalibration_was_run": false,
+  "monitor_training_was_run": false,
+  "new_external_human_annotation_occurred": false,
+  "permission_record_path": "results/tables/phase7/phase7_strategic_attacker_openai_stage_e2/permission_records/perm_5e430dda5bbf85b34143.json",
+  "phase8_started": false,
+  "pilot_id": "phase7_strategic_attacker_openai_stage_e2",
+  "planned_requests": 54,
+  "planned_trajectories": 18,
+  "provider_calls_made": 0,
+  "real_model_attacker_executed": false,
+  "schema_version": "bayesaudit.phase7.stage_e1.v1",
+  "stage_e2_was_run": false,
+  "threshold_tuning_was_run": false
+}
