@@ -429,7 +429,7 @@ def test_phase10d_final_audit_and_decision_are_merge_ready() -> None:
     assert (
         decision["merge_readiness_decision"] == "final_pr_merge_ready_with_documented_limitations"
     )
-    assert decision["do_not_merge_by_codex"] is True
+    assert decision["manual_merge_required"] is True
     assert decision["do_not_create_tag_before_merge"] is True
     assert decision["release_candidate_version"] == "v1.0.0"
     assert decision["phase11_started"] is False

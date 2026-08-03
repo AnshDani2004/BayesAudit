@@ -108,9 +108,9 @@ def test_phase7_repository_hygiene_audit_passes() -> None:
 def test_phase7_readme_and_report_match_closeout_status() -> None:
     readme = Path("README.md").read_text(encoding="utf-8")
     report = Path("docs/phase7_report.md").read_text(encoding="utf-8")
-    assert "phase7_benchmark_frozen_with_limitations" in readme
-    assert "Phase 7 did not establish" in readme
-    assert "validate_phase7_closeout_artifacts" in readme
+    assert "Phase 7 built and stress-tested" in readme
+    assert "production readiness" in readme
+    assert "validate-phase10" in readme
     assert "Phase 7 Final Closeout" in report
     assert "phase7_complete_with_documented_limitations_merge_ready" in report
 

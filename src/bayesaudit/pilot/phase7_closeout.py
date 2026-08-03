@@ -247,7 +247,7 @@ def _build_final_claim_registry(current_commit: str) -> dict[str, Any]:
                 "wording": "The branch is merge-ready with documented limitations when CI passes.",
                 "status": "validated_with_limitation",
                 "evidence_artifact": str(PHASE7_MERGE_READINESS),
-                "limitation": "manual merge required; Codex did not merge",
+                "limitation": "manual merge required; automated agent did not merge",
             },
         ]
     )

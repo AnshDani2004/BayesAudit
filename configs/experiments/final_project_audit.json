@@ -1,6 +1,6 @@
 {
   "artifact": "final_project_audit",
-  "artifact_hash": "a3e20036aff827c20ddea1d2c9da82be23406bcadd117dafe7edd1cd262d8912",
+  "artifact_hash": "411c26a577442ab7043b8bfb64add870941a84c5c20b36df098b4ae6441cb2d2",
   "artifact_index_hash": "f031607fef4ad5602fa0928ac454ac886273bf8f6e3750a9d704d7bbe8f4b5e1",
   "audit_decision": "passed_with_documented_limitations",
   "audit_version": "bayesaudit_v1_final_audit",
@@ -20,7 +20,7 @@
       "status": "passed"
     },
     {
-      "gate_name": "do_not_merge_by_codex",
+      "gate_name": "manual_merge_required",
       "status": "passed"
     },
     {
@@ -28,10 +28,12 @@
       "status": "passed"
     }
   ],
+  "manual_merge_required": true,
   "phase11_started": false,
   "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
   "provider": "openai",
   "provider_calls_performed": 0,
+  "public_hardening_metadata_note": "agent-specific merge language replaced in current final artifacts",
   "public_hardening_repair_note": "docs/phase9_provider_accounting_note.md",
   "real_external_tools_enabled": false,
   "schema_version": "bayesaudit.phase9_10.v1",

@@ -1,10 +1,11 @@
 {
   "artifact": "final_project_decision",
-  "artifact_hash": "54a3e03010aa23d3514c3df74351616f26ab133e81082c6088c32dff13e38711",
+  "artifact_hash": "3f4af6ae2c44562bfaa55938c1e6304c9b928b01445264066d3add9ab214def6",
   "current_commit": "ab15525d3c9a56efa979ffcef9cce6d7a0c676b0",
   "do_not_create_tag_before_merge": true,
-  "do_not_merge_by_codex": true,
   "exact_model": "gpt-5-nano-2025-08-07",
+  "manual_merge_required": true,
+  "manual_merge_required_provenance": "replaces legacy agent-specific merge-control field during public hardening",
   "merge_readiness_decision": "final_pr_merge_ready_with_documented_limitations",
   "phase10_completion_decision": "bayesaudit_project_complete_with_documented_limitations",
   "phase11_started": false,

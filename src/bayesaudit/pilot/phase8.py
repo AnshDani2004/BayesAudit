@@ -477,9 +477,7 @@ def validate_phase8_analysis_artifacts() -> dict[str, Any]:
             if row.get("record_hash") != expected:
                 errors.append(f"record hash mismatch: {path}")
     decision = (
-        read_json(PHASE8_CONFIRMATORY_DECISION)
-        if PHASE8_CONFIRMATORY_DECISION.exists()
-        else {}
+        read_json(PHASE8_CONFIRMATORY_DECISION) if PHASE8_CONFIRMATORY_DECISION.exists() else {}
     )
     if decision.get("phase9_started") is not False:
         errors.append("Phase 9 marker invalid")
@@ -629,9 +627,7 @@ def validate_phase8_artifacts() -> dict[str, Any]:
     return {"valid": not errors, "errors": errors}
 
 
-def _build_matrix(
-    seeds: list[int], current_commit: str, phase7: dict[str, Any]
-) -> dict[str, Any]:
+def _build_matrix(seeds: list[int], current_commit: str, phase7: dict[str, Any]) -> dict[str, Any]:
     phase7_records = read_json(Path("configs/experiments/phase7_stage_e2_matrix_manifest.json"))[
         "records"
     ]
@@ -861,12 +857,11 @@ def _build_authorization(
     estimated_output_tokens = planned_requests * 260
     estimated_total = estimated_input_tokens + estimated_output_tokens
     pricing = load_pricing_record(PROVIDER, MODEL)
-    estimated_cost = (
-        Decimal(estimated_input_tokens) * pricing.input_price_per_million_tokens / Decimal(1000000)
-        + Decimal(estimated_output_tokens)
-        * pricing.output_price_per_million_tokens
-        / Decimal(1000000)
-    )
+    estimated_cost = Decimal(
+        estimated_input_tokens
+    ) * pricing.input_price_per_million_tokens / Decimal(1000000) + Decimal(
+        estimated_output_tokens
+    ) * pricing.output_price_per_million_tokens / Decimal(1000000)
     gates = [
         _gate("protocol_decision_eligible", True),
         _gate("frozen_hashes_validate", True),
@@ -1281,9 +1276,7 @@ def _build_execution_summaries(
 
 
 def _review_row(condition: dict[str, Any], trajectory: dict[str, Any] | None) -> dict[str, Any]:
-    artifact_complete = (
-        trajectory is not None and trajectory.get("execution_status") == "completed"
-    )
+    artifact_complete = trajectory is not None and trajectory.get("execution_status") == "completed"
     return {
         "condition": condition,
         "trajectory": trajectory,
@@ -1408,9 +1401,7 @@ def _prevention_adjudication(review: dict[str, Any]) -> dict[str, Any]:
     condition = review["condition"]
     trajectory = review["trajectory"] or {}
     prevention = (
-        trajectory.get("prevention", {})
-        if isinstance(trajectory.get("prevention"), dict)
-        else {}
+        trajectory.get("prevention", {}) if isinstance(trajectory.get("prevention"), dict) else {}
     )
     return _row_artifact(
         "phase8_prevention_adjudication",
@@ -1598,7 +1589,7 @@ def _write_phase8_report(confirmatory: dict[str, Any], closeout: dict[str, Any])
                 f"Phase 9 readiness: `{confirmatory['phase9_readiness']}`.",
                 f"Closeout decision: `{closeout['closeout_decision']}`.",
                 "",
-                "Codex must not merge this PR. Use a manual merge commit after review.",
+                "Manual repository review was required before merge.",
                 "",
             ]
         ),
@@ -1614,11 +1605,7 @@ def _phase7_inputs() -> dict[str, Any]:
         PHASE8_TRACKED_ROOT / "phase7_stage_e3_validated_negative_dataset.jsonl",
     ]
     phase7_seeds = sorted(
-        {
-            int(row["seed"])
-            for path in phase7_real_seed_paths
-            for row in _rows_with_seed(path)
-        }
+        {int(row["seed"]) for path in phase7_real_seed_paths for row in _rows_with_seed(path)}
     )
     return {
         "required_ancestor": PHASE7_REQUIRED_ANCESTOR,

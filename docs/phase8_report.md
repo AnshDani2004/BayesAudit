@@ -88,4 +88,4 @@ separately and is not treated as validated oversight prevention.
 - Phase 9 readiness: `ready_for_phase9_with_limitations`
 - Final closeout decision: `phase8_complete_with_documented_limitations_merge_ready`
 
-Codex must not merge this PR. Use a manual merge commit after review.
+Manual repository review was required before merge.

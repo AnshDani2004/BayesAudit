@@ -6,7 +6,7 @@ Repository:
 
 - Base branch: `main`
 - Base commit: `f5c1962`
-- Phase 7 branch: `codex/phase7-real-model-pilot`
+- Phase 7 historical development branch recorded in archived artifacts
 - PR: `#1`
 - CI status before empirical authorization: green
 
@@ -51,7 +51,7 @@ Current empirical status:
 ## Stage A: Real-Provider Connectivity
 
 - Date: `2026-07-31`
-- Branch: `codex/phase7-real-model-pilot`
+- Historical development branch recorded in archived artifacts
 - Base commit: `f5c1962`
 - Starting commit: `055009a`
 - Stage A execution commit: `be0e693`
@@ -93,7 +93,7 @@ Current empirical status:
 ## Stage A.1: Response Diagnostic and Connectivity Retry
 
 - Date: `2026-07-31`
-- Branch: `codex/phase7-real-model-pilot`
+- Historical development branch recorded in archived artifacts
 - Starting commit: `7b31e00`
 - Stage A.1 repair commit: `fee7e2a`
 - Provider: `openai`
@@ -166,7 +166,7 @@ Stage B was started on `2026-07-31` and stopped after the privacy domain block, 
 
 Configuration:
 
-- Branch: `codex/phase7-real-model-pilot`
+- Historical development branch recorded in archived artifacts
 - Starting commit: `44114ec`
 - Stage B harness and execution commit: `8189e5a`
 - Provider: `openai`
@@ -2017,7 +2017,7 @@ freeze with limitations, and merge readiness with limitations.
 ## Closeout Decision
 
 - Phase 7 closeout decision: `phase7_complete_with_documented_limitations_merge_ready`
-- Merge-readiness decision: `merge_ready_with_documented_limitations`
+- Manual-review decision: `merge_ready_with_documented_limitations`
 - Remaining blockers: none for the documented Phase 7 claims
 - Recommended manual merge method: `Create a merge commit`
 

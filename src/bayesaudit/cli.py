@@ -7,6 +7,7 @@ import asyncio
 import json
 from pathlib import Path
 
+from bayesaudit import __version__
 from bayesaudit.adaptive.bayesian import BetaBernoulliRiskState
 from bayesaudit.adaptive.policies import (
     expected_harm_policy,
@@ -150,6 +151,7 @@ def _dict_rows(rows: object) -> list[dict[str, object]]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="bayesaudit")
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     validate = subparsers.add_parser("validate-scenarios")

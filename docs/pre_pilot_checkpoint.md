@@ -4,7 +4,7 @@ Repository: `AnshDani2004/BayesAudit`
 
 Default branch: `main`
 
-Phase 7 implementation branch: `codex/phase7-real-model-pilot`
+Phase 7 historical development branch recorded in archived artifacts
 
 Pre-pilot base commit: `f5c1962`
 

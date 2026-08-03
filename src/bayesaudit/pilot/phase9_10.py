@@ -623,7 +623,7 @@ def run_phase10d(*, current_commit: str | None = None) -> dict[str, Any]:
         merge_readiness_decision="final_pr_merge_ready_with_documented_limitations",
         release_candidate_version="v1.0.0",
         remaining_blockers=[],
-        do_not_merge_by_codex=True,
+        manual_merge_required=True,
         do_not_create_tag_before_merge=True,
         phase11_started=False,
         provider_calls_performed=0,
@@ -2294,7 +2294,7 @@ def _final_audit(commit: str, index: dict[str, Any]) -> dict[str, Any]:
         _gate("phase9_validates", validate_phase9_artifacts()["valid"]),
         _gate("phase10_prerequisites_validate", validate_phase10_artifacts(stage="10B")["valid"]),
         _gate("no_phase11_artifacts", not any(TRACKED_ROOT.glob("phase11_*"))),
-        _gate("do_not_merge_by_codex", True),
+        _gate("manual_merge_required", True),
         _gate("do_not_tag_before_merge", True),
     ]
     return _json_artifact(
