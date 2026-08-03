@@ -1,8 +1,9 @@
 {
   "artifact": "phase9_phase10_readiness",
-  "artifact_hash": "9e00951d161bc271a80bfb8e7890cbed78ad8ae35955891af396aab048d2de21",
+  "artifact_hash": "69b69b74fc0f816f81ff73980032074f81c415f15b89f6a6011cd954cbaa042e",
   "current_commit": "226906d856f4aa2542d51ef3814ef487c0ac023a",
   "evidence_decision": "phase9_null_or_nonreplication_preserved_with_limitations",
+  "evidence_decision_hash": "386381d51de04fc59b6253a4346ad30b3eb9ebe5993a8e954d94f2e82f163d82",
   "exact_model": "gpt-5-nano-2025-08-07",
   "phase10_readiness": "ready_for_phase10_with_documented_limitations",
   "phase10_started": false,

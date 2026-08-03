@@ -1,7 +1,7 @@
 {
   "artifact": "final_project_audit",
-  "artifact_hash": "4d61b968bcd4aeb66e786c3d7426723c9ab84a0ea629b3461426920809571fce",
-  "artifact_index_hash": "6420becc7ec285cfd8286ccb372f451733030215c9f8b249e1a09fb370e936be",
+  "artifact_hash": "a3e20036aff827c20ddea1d2c9da82be23406bcadd117dafe7edd1cd262d8912",
+  "artifact_index_hash": "f031607fef4ad5602fa0928ac454ac886273bf8f6e3750a9d704d7bbe8f4b5e1",
   "audit_decision": "passed_with_documented_limitations",
   "audit_version": "bayesaudit_v1_final_audit",
   "current_commit": "ab15525d3c9a56efa979ffcef9cce6d7a0c676b0",
@@ -32,6 +32,7 @@
   "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
   "provider": "openai",
   "provider_calls_performed": 0,
+  "public_hardening_repair_note": "docs/phase9_provider_accounting_note.md",
   "real_external_tools_enabled": false,
   "schema_version": "bayesaudit.phase9_10.v1",
   "secret_exposed": false

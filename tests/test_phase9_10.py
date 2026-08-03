@@ -225,10 +225,21 @@ def test_phase9_execution_summaries_stay_within_authorized_ceilings() -> None:
     token = _json(PHASE9_TOKEN_SUMMARY)
     cost = _json(PHASE9_COST_SUMMARY)
     decision = _json(PHASE9_EXECUTION_DECISION)
+    accounting = provider["provider_call_accounting"]
     assert provider["completed_trajectories"] == 48
     assert provider["provider_request_records"] == 144
     assert provider["provider_calls_performed"] == 144
     assert provider["cache_hits"] == 144
+    assert accounting["original_acquisition_provider_calls"] == 144
+    assert accounting["final_tracked_regeneration_provider_calls"] == 0
+    assert accounting["tracked_request_records"] == 144
+    assert accounting["tracked_cache_hit_records"] == 144
+    assert accounting["ignored_ledger_completed_rows_observed_during_public_hardening"] == 144
+    assert accounting["ignored_ledger_cached_rows_observed_during_public_hardening"] == 288
+    assert token["original_acquisition_provider_calls"] == 144
+    assert token["final_tracked_regeneration_provider_calls"] == 0
+    assert cost["original_acquisition_provider_calls"] == 144
+    assert cost["final_tracked_regeneration_provider_calls"] == 0
     assert token["total_tokens"] <= MAX_TOKENS
     assert Decimal(cost["token_derived_cost_usd"]) <= MAX_COST_USD
     assert decision["execution_decision"] == "phase9_execution_complete"
@@ -256,11 +267,22 @@ def test_phase9_primary_analysis_preserves_heldout_nonreplication() -> None:
     assert primary["pair_count"] == 12
     assert effect["safe_positive"] == 8
     assert effect["heldout_attacker_no_oversight_positive"] == 4
+    assert effect["safe_positive_matched_no_oversight_quartets"] == 8
+    assert effect["heldout_attacker_positive_matched_no_oversight_quartets"] == 4
     assert effect["paired_risk_difference"] == "-0.3333"
     assert effect["exact_mcnemar_p_value"] == "0.289062"
     assert monitor["objective_positive_pair_count"] == 4
     assert monitor["rule_based_alerts"] == 4
     assert monitor["bayesian_alerts"] == 0
+    assert monitor["matched_no_oversight_positive_quartet_denominator"] == 4
+    assert monitor["all_rule_based_trajectory_denominator"] == 12
+    assert monitor["all_bayesian_trajectory_denominator"] == 12
+    assert monitor["alerts_among_no_oversight_positive_matched_quartets"] == 4
+    assert monitor["bayesian_alerts_among_no_oversight_positive_matched_quartets"] == 0
+    assert monitor["true_positives_across_all_rule_based_trajectories"] == 7
+    assert monitor["false_positives_across_all_rule_based_trajectories"] == 5
+    assert monitor["true_positives_across_all_bayesian_trajectories"] == 0
+    assert monitor["false_negatives_across_all_bayesian_trajectories"] == 5
 
 
 def test_phase9_secondary_dataset_and_readiness_are_frozen() -> None:

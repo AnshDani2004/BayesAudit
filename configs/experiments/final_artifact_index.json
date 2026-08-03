@@ -1,10 +1,10 @@
 {
   "artifact": "final_artifact_index",
   "artifact_count": 266,
-  "artifact_hash": "6420becc7ec285cfd8286ccb372f451733030215c9f8b249e1a09fb370e936be",
+  "artifact_hash": "f031607fef4ad5602fa0928ac454ac886273bf8f6e3750a9d704d7bbe8f4b5e1",
   "artifacts": [
     {
-      "hash": "b29507ee9db0a2a16bf0036bc3f8cdfb5a1c822f40b2b61740d4d085752c2cbc",
+      "hash": "074dcd12dbfa26c3b20fe1e16aff4e9dda25a5ab045a125326e19a824eb8533d",
       "path": "configs/experiments/final_claim_registry.json"
     },
     {
@@ -16,7 +16,7 @@
       "path": "configs/experiments/final_reproducibility_manifest.json"
     },
     {
-      "hash": "8a5feef44512930f539affbc320f9142770694bbe4d6767eee041b3d9e0a17b1",
+      "hash": "29b66cb4fc42099f85a9ac995c71af0c04476c13d20e9ba463de5f4e2b64f0e4",
       "path": "configs/experiments/final_statistical_synthesis.json"
     },
     {
@@ -900,7 +900,7 @@
       "path": "configs/experiments/phase9_authorization.json"
     },
     {
-      "hash": "285bd2a2029d4cad7c77d1f0709b277a73929ba38557c97b8b66c25d87e0c1aa",
+      "hash": "92ce1558306fecdec7c2dd7370e6d0337b2ce61483f3be57b96524e77a3b1cbb",
       "path": "configs/experiments/phase9_claim_support.json"
     },
     {
@@ -908,19 +908,19 @@
       "path": "configs/experiments/phase9_closeout_decision.json"
     },
     {
-      "hash": "c06a74012a10c23f89760366cc05978fc070839424069fd9665ddba287b80320",
+      "hash": "fc10cc276769862011f38dad358779600568a4f1ddf12b4ad6e4c69867fc7693",
       "path": "configs/experiments/phase9_cost_summary.json"
     },
     {
-      "hash": "283a7a45a497943e8bd4641390d2e77fb328dbd0bb0dd66922f93ccf1e983d90",
+      "hash": "4fc40176864657f637f912f9a663bd4df33b6f559d6d13f5b6772d0c951dcd3e",
       "path": "configs/experiments/phase9_dataset_manifest.json"
     },
     {
-      "hash": "29fe60bf9e6b1d7e0ab90caf7a76569412a133dab42d434551bd3ea0842fcec4",
+      "hash": "91c3f4e6a91a12be2d569def92c51ac5edd3e526343f2198a8fad1681082c6bd",
       "path": "configs/experiments/phase9_evidence_decision.json"
     },
     {
-      "hash": "245cf1f2e4732fb976fe9e05bcc9de37eb81ddd69fbf92511d0d068260b274ff",
+      "hash": "36f2f220cb3f81eab65b0ab5c8571c7569de57ba7024fd340495b4f498b8e7d9",
       "path": "configs/experiments/phase9_evidence_package_manifest.json"
     },
     {
@@ -928,7 +928,7 @@
       "path": "configs/experiments/phase9_execution_decision.json"
     },
     {
-      "hash": "1d5b6ed338a54e1c9d31193f0af51e9d470e3cdcd5b72ccbe0cb529308a613e7",
+      "hash": "5b1eeba7c47cd3806a2a607e41772f99fbc4dde88e0538c28b0974538d1929c7",
       "path": "configs/experiments/phase9_execution_ledger.json"
     },
     {
@@ -968,11 +968,11 @@
       "path": "configs/experiments/phase9_objective_adjudication.jsonl"
     },
     {
-      "hash": "8fada5e54331216a243d3744c9139d86ecc3e64068a4ee0654d33c04727b1ee1",
+      "hash": "7b660840212223e27885e227c547df0d69e5695a6eb8dd9198bfdd696cdb03b3",
       "path": "configs/experiments/phase9_phase10_readiness.json"
     },
     {
-      "hash": "6834ef0597c140a4129f0a4ef267a68366a0e66136a42d1c5a60395f13a470ec",
+      "hash": "4a9556a76b3154184bcac3b79aefb237800cc212c2b217c5cb0b15d571b2bc00",
       "path": "configs/experiments/phase9_phase8_robustness_registry.json"
     },
     {
@@ -992,7 +992,7 @@
       "path": "configs/experiments/phase9_prevention_adjudication.jsonl"
     },
     {
-      "hash": "12e7cd7c763c9f4007e0dbfac37922ef836c52fbaa52755c5b0e0118239de3c9",
+      "hash": "d7f7e9964c337b6ebeff30a7e0943d21d690469ff443605af435961627c85747",
       "path": "configs/experiments/phase9_primary_analysis.json"
     },
     {
@@ -1008,7 +1008,7 @@
       "path": "configs/experiments/phase9_provider_request_summaries.jsonl"
     },
     {
-      "hash": "a8c7ee5d33216f1145f6fd8956e1485a6ce4d3fcdd1a98deaf6b4e7e8d196d8b",
+      "hash": "d9951cab9708d4bc134cdb3bb6507ed64b9588f97179c28520e1b8e627384d74",
       "path": "configs/experiments/phase9_provider_summary.json"
     },
     {
@@ -1048,7 +1048,7 @@
       "path": "configs/experiments/phase9_threshold_sensitivity_plan.json"
     },
     {
-      "hash": "2067463b3661aca8d38fd6435e960cc892d4ed3958c7faecf1904450a90e9201",
+      "hash": "f01a055afb806e41df6cbac41d651a7ccda10bb657f1c8060d5b9e790627cd68",
       "path": "configs/experiments/phase9_token_summary.json"
     },
     {
@@ -1075,6 +1075,7 @@
   "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
   "provider": "openai",
   "provider_calls_performed": 0,
+  "public_hardening_repair_note": "docs/phase9_provider_accounting_note.md",
   "real_external_tools_enabled": false,
   "schema_version": "bayesaudit.phase9_10.v1",
   "secret_exposed": false
