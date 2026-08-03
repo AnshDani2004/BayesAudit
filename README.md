@@ -28,6 +28,8 @@ BayesAudit implements an end-to-end empirical workflow for oversight research:
 
 ## System Overview
 
+![BayesAudit system architecture](docs/assets/architecture.svg)
+
 ```mermaid
 flowchart LR
     A["Synthetic benchmark tasks"] --> B["Hierarchical workflow engine"]
@@ -81,6 +83,8 @@ BayesAudit is a research prototype, not a production safety system. All tasks an
 - [Provider/model card](docs/model_and_provider_card.md): provider integration, request controls, cache semantics, and model scope.
 - [Oversight policy card](docs/oversight_policy_card.md): monitors, policies, budgets, and out-of-scope use.
 - [Attacker card](docs/attacker_card.md): synthetic attacker families and held-out attacker design.
+- [Final results table](docs/tables/final_results.md): compact denominators and outcomes.
+- [Experiment inventory](docs/tables/experiment_inventory.md): trajectories, requests, tokens, and cost.
 - [Phase 8 report](docs/phase8_report.md): confirmatory study record.
 - [Phase 9 report](docs/phase9_report.md): held-out robustness and nonreplication record.
 - [Reproducibility guide](docs/reproducibility.md): offline validators, provider-backed rerun gates, and artifact lineage.
@@ -114,7 +118,8 @@ python -m bayesaudit.cli validate-phase10
 Provider-backed runs are gated and should be treated as explicit experiments, not default setup:
 
 ```bash
-export OPENAI_API_KEY=...
+read -s OPENAI_API_KEY
+export OPENAI_API_KEY
 python -m bayesaudit.cli run-phase9-provider \
   --allow-provider-calls \
   --max-cost 0.12 \

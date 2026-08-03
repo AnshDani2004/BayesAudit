@@ -1,0 +1,15 @@
+title = "BayesAudit Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Known artifact hash fields that are not credentials."
+regexes = [
+  '''"token_hash"\s*:\s*"[a-f0-9]{64}"''',
+  '''"match_key_hash"\s*:\s*"[a-f0-9]{64}"''',
+  '''"token_ledger_hash"\s*:\s*"[a-f0-9]{64}"''',
+]
+paths = [
+  '''configs/experiments/.*\.jsonl?''',
+]

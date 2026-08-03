@@ -2247,16 +2247,20 @@ def _write_portfolio_and_release_docs() -> None:
         ),
         encoding="utf-8",
     )
-    (docs / "release_candidate_v1.0.0.md").write_text(
+    (docs / "RELEASE_NOTES_v1.0.0.md").write_text(
         "\n".join(
             [
-                "# v1.0.0 Release Candidate",
-                "",
-                "Status: merge-ready after manual review.",
+                "# BayesAudit v1.0.0 Release Notes",
                 "",
                 (
-                    "Do not create the `v1.0.0` annotated tag until this pull request "
-                    "is merged into `main` with a merge commit and local `main` is synced."
+                    "BayesAudit v1.0.0 is a public research release for "
+                    "budget-constrained oversight in hierarchical LLM workflows."
+                ),
+                "",
+                (
+                    "The release preserves Phase 8 positive-but-limited evidence, "
+                    "the Phase 9 held-out nonreplication, and the limitation that "
+                    "no final-output violations were observed in the principal studies."
                 ),
                 "",
             ]

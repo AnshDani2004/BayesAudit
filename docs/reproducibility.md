@@ -25,7 +25,8 @@ python -m bayesaudit.cli validate-phase10
 Provider-backed reproduction is optional and should be run only with explicit ceilings:
 
 ```bash
-export OPENAI_API_KEY=...
+read -s OPENAI_API_KEY
+export OPENAI_API_KEY
 python -m bayesaudit.cli run-phase9-provider \
   --allow-provider-calls \
   --max-cost 0.12 \

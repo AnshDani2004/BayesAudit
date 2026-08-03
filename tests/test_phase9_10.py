@@ -403,12 +403,12 @@ def test_phase10b_cards_and_validation_script_exist() -> None:
 
 def test_phase10c_portfolio_and_release_candidate_docs_exist() -> None:
     portfolio = Path("docs/portfolio_summary.md").read_text(encoding="utf-8")
-    release = Path("docs/release_candidate_v1.0.0.md").read_text(encoding="utf-8")
+    release = Path("docs/RELEASE_NOTES_v1.0.0.md").read_text(encoding="utf-8")
     assert "BayesAudit Portfolio Summary" in portfolio
     assert "research engineering project" in portfolio
-    assert "v1.0.0 Release Candidate" in release
-    assert "Do not create the `v1.0.0` annotated tag" in release
-    assert "merge commit" in release
+    assert "BayesAudit v1.0.0 Release Notes" in release
+    assert "Phase 9 held-out nonreplication" in release
+    assert "offline reproduction" in release.lower()
 
 
 def test_phase10d_artifacts_validate_when_present() -> None:

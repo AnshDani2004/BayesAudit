@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="220" viewBox="0 0 900 220" role="img" aria-label="BayesAudit experimental program">
+<style>.box{fill:#fbfaf7;stroke:#3d405b;stroke-width:2;rx:10}.title{font:18px sans-serif;fill:#222}.text{font:13px sans-serif;fill:#444}.arrow{stroke:#3d405b;stroke-width:3;marker-end:url(#a)}</style>
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#3d405b"/></marker></defs>
+<rect x="30" y="50" width="230" height="110" class="box"/><text x="145" y="84" text-anchor="middle" class="title">Pilot</text><text x="145" y="112" text-anchor="middle" class="text">provider gates, benchmark freeze</text><text x="145" y="134" text-anchor="middle" class="text">strategic attacker construct</text>
+<rect x="335" y="50" width="230" height="110" class="box"/><text x="450" y="84" text-anchor="middle" class="title">Confirmatory Study</text><text x="450" y="112" text-anchor="middle" class="text">96 trajectories, 24 quartets</text><text x="450" y="134" text-anchor="middle" class="text">positive but limited attack effect</text>
+<rect x="640" y="50" width="230" height="110" class="box"/><text x="755" y="84" text-anchor="middle" class="title">Held-Out Robustness</text><text x="755" y="112" text-anchor="middle" class="text">48 trajectories, 12 quartets</text><text x="755" y="134" text-anchor="middle" class="text">effect did not replicate</text>
+<line x1="260" y1="105" x2="335" y2="105" class="arrow"/><line x1="565" y1="105" x2="640" y2="105" class="arrow"/>
+</svg>
