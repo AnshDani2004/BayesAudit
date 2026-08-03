@@ -1,0 +1,23 @@
+{
+  "absolute_user_path_tracked": false,
+  "api_key_tracked": false,
+  "artifact": "phase7_repository_hygiene_audit",
+  "artifact_hash": "9ec61ede42c99d763bc6988c0bd66a320d504be9113c5390b995e5511e958f01",
+  "authorization_header_tracked": false,
+  "current_commit": "5d2340c6f820573b57022a5d2eda330a29a1abeb",
+  "generated_binary_or_temp_tracked": false,
+  "gitignore_covers_raw_provider_outputs": true,
+  "historical_outputs_modified": false,
+  "internal_artifact_index_count": 275,
+  "json_yaml_parse_failures": [],
+  "local_cache_tracked": false,
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "raw_provider_response_tracked": false,
+  "repository_hygiene_result": "passed",
+  "schema_version": "bayesaudit.phase7.closeout.v1",
+  "secret_shaped_token_tracked": false,
+  "stage_e2_rerun_performed": false
+}

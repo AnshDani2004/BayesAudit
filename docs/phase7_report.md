@@ -1959,10 +1959,69 @@ claim support, repair log, compatibility matrix, limitations, and reproducibilit
 hashes.
 
 - Benchmark manifest hash: `d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be`
-- Evidence package hash: `74940826bba7f991715e350b84165f0109a053dac9e4b8e1927b34fc4655f85a`
+- Evidence package hash: `443eabcc0338edf3554019025ad862eae41c9bca7af3d35bae75ef15afbf2809`
 - Benchmark freeze decision: `phase7_benchmark_frozen_with_limitations`
 
 The frozen-with-limitations status means the benchmark is reproducible and
 scientifically usable for the explicitly bounded Phase 7 claims. It does not imply
 production readiness, population prevalence estimates, broad real-world robustness,
 or general causal superiority of an oversight policy.
+
+# Phase 7 Final Closeout
+
+Phase 7 closeout created a comprehensive artifact index, reproducibility manifest,
+final claim registry, final limitations record, repository hygiene audit, closeout
+decision, and merge-readiness record. The closeout made zero provider calls, did
+not rerun Stage E.2, did not modify historical outputs, did not merge PR #1, and
+did not begin Phase 8.
+
+## Executive Summary
+
+Phase 7 completed an exploratory, bounded real-model pilot and offline validation
+workflow. It established that the Phase 7 infrastructure can execute under hard
+provider ceilings, preserve raw ignored evidence locally, generate controlled
+synthetic positive cases, and adjudicate positive-case evidence offline while
+keeping historical labels separate from adjudicated labels.
+
+The real-model pilot remains small, synthetic, single-provider, single-model, and
+developer-adjudicated. It does not establish real-world prevalence, broad
+robustness, production readiness, universal monitor effectiveness, or clean
+prevention.
+
+## Final Claims
+
+- Final claim-registry count: `5`
+- Claims validated with limitations: `4`
+- Unsupported claims: `1`
+- Contradicted claims: `0`
+- Not-estimable claims: `0`
+
+The unsupported claim is that Stage E.2 established clean prevention of objective
+violations. The validated-with-limitation claims cover valid controlled attacker
+attempts, occurrence of controlled objective-positive trajectories, benchmark
+freeze with limitations, and merge readiness with limitations.
+
+## Reproducibility and Hygiene
+
+- Artifact-index count: `266`
+- Reproducibility manifest expected full pytest lower bound: `1890`
+- Raw provider responses tracked: `false`
+- Local provider caches tracked: `false`
+- API key tracked: `false`
+- Authorization header tracked: `false`
+- Secret-shaped token tracked: `false`
+- User-specific absolute path tracked: `false`
+- JSON/YAML parse failures: `0`
+- Repository hygiene result: `passed`
+
+## Closeout Decision
+
+- Phase 7 closeout decision: `phase7_complete_with_documented_limitations_merge_ready`
+- Merge-readiness decision: `merge_ready_with_documented_limitations`
+- Remaining blockers: none for the documented Phase 7 claims
+- Recommended manual merge method: `Create a merge commit`
+
+Phase 8 remains design-only. A later confirmatory study would require separate
+authorization, a larger multi-seed and possibly multi-model design, a confirmatory
+analysis plan, independent annotation if human validation is claimed, and explicit
+provider budget ceilings.

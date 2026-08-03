@@ -116,6 +116,12 @@ attacker, scorer, monitor, policy, or intervention replacement, evidence-package
 integrity, benchmark-manifest hash stability, frozen-with-limitations decision
 logic, no provider execution, and no Phase 8 execution.
 
+Phase 7 closeout adds offline tests for artifact-index completeness,
+reproducibility-manifest commands and expected counts, final claim-registry
+consistency, final limitation coverage, repository hygiene, README/report status
+consistency, closeout decision, merge-readiness decision, no automatic merge, no
+provider execution, no Stage E.2 rerun, and no Phase 8 execution.
+
 ## Continuous Integration
 
 The default CI target should run:

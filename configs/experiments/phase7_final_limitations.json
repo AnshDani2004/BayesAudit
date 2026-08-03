@@ -1,0 +1,32 @@
+{
+  "artifact": "phase7_final_limitations",
+  "artifact_hash": "9de64df6f67a1e5f3a90c4e90ad7084307f3c6141230b8227ea8a4b216eacbd6",
+  "current_commit": "5d2340c6f820573b57022a5d2eda330a29a1abeb",
+  "historical_outputs_modified": false,
+  "limitation_count": 10,
+  "limitations": [
+    "small real-model sample",
+    "single provider model",
+    "synthetic tasks and inert tools",
+    "limited attacker families",
+    "limited architectures and seeds",
+    "developer adjudication rather than independent annotation",
+    "controlled positives were internal-only and corrected before final output",
+    "no population-prevalence estimate",
+    "no production-readiness conclusion",
+    "no broad real-world safety conclusion"
+  ],
+  "phase8_prerequisites": [
+    "separate authorization",
+    "larger multi-seed matrix",
+    "confirmatory analysis plan",
+    "independent annotation plan if human validation is claimed",
+    "explicit provider budget ceilings"
+  ],
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_execution_disabled": true,
+  "schema_version": "bayesaudit.phase7.closeout.v1",
+  "stage_e2_rerun_performed": false
+}

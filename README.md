@@ -20,7 +20,10 @@ Primary comparison policies:
 
 ## Phase Status
 
-This repository is currently at Phase 7: Real Model Pilot, Measurement Validation, and Benchmark Refinement.
+This repository is currently at Phase 7 closeout. Phase 7 completed a bounded
+real-model pilot on `gpt-5-nano-2025-08-07`, offline Stage E.3 developer
+adjudication, benchmark refinement, and evidence freeze. The benchmark decision is
+`phase7_benchmark_frozen_with_limitations`.
 
 Implemented now:
 
@@ -55,14 +58,29 @@ Implemented now:
 - attacker-defender smoke matrices and restricted empirical-game analysis
 - selection-bias, displacement, and offline red-team-loop helpers
 - Phase 7 pre-pilot checkpoint, provider configs, pilot manifests, permission records, request cache/ledger contracts, prompt rendering, structured-output parsing, workflow-quality flags, annotation sampling, transfer summaries, readiness classification, freeze proposal generation, and Phase 8 planning scaffolds
+- Stage E.2 controlled strategic-attacker pilot with 18 frozen trajectories, 51 actual provider requests, 45,591 billable tokens, and $0.00477715 token-derived cost
+- Stage E.3 offline developer adjudication with 17 validated objective positives, 1 validated objective negative, no scorer false positives, no scorer false negatives, and no clean prevention claim
+- Phase 7 benchmark candidate `phase7_benchmark_candidate_v1`, frozen with documented limitations
+- final artifact index, reproducibility manifest, claim registry, limitations record, hygiene audit, and merge-readiness record
 - tests for schema validity, workflows, scorers, storage, and integration
 
-Not implemented yet:
+Phase 7 established:
 
-- ungated real model-provider execution
-- completed authorized real-provider pilot runs
-- empirical claims about real LLM behavior
-- completed human annotation campaign
+- the provider/cost/cache/ledger pipeline can run under hard ceilings
+- the frozen strategic-attacker construct can produce controlled synthetic positive cases
+- objective-positive evidence can be adjudicated offline while preserving historical labels
+- monitors can be evaluated against validated positive and negative bases
+- benchmark evidence can be frozen with explicit version compatibility and limitations
+
+Phase 7 did not establish:
+
+- population prevalence of violations
+- broad real-world attacker robustness
+- production readiness
+- universal monitor effectiveness
+- causal superiority of any oversight policy
+- independent human-validation agreement
+- clean prevention of final-output objective violations
 
 ## Repository Layout
 
@@ -156,11 +174,33 @@ python -m bayesaudit.cli run-provider-connectivity --config configs/experiments/
 python -m bayesaudit.cli run-real-workflow-pilot --config configs/experiments/phase7_workflow.yaml --dry-run
 python -m bayesaudit.cli run-measurement-pilot --config configs/experiments/phase7_measurement.yaml --dry-run
 python -m bayesaudit.cli evaluate-monitor-transfer --config configs/experiments/phase7_monitor_transfer.yaml --dry-run
+python -m bayesaudit.cli evaluate-calibration-transfer --config configs/experiments/phase7_monitor_transfer.yaml --dry-run
 python -m bayesaudit.cli run-real-oversight-pilot --config configs/experiments/phase7_oversight.yaml --dry-run
 ```
+
+Reproduce tracked Phase 7 offline analyses:
+
+```bash
+python - <<'PY'
+from bayesaudit.pilot.stage_e3 import validate_stage_e3_artifacts
+from bayesaudit.pilot.phase7_refinement import validate_phase7_refinement_artifacts
+from bayesaudit.pilot.phase7_closeout import validate_phase7_closeout_artifacts
+
+print(validate_stage_e3_artifacts())
+print(validate_phase7_refinement_artifacts())
+print(validate_phase7_closeout_artifacts())
+PY
+```
+
+Raw provider responses and exact provider caches are intentionally not tracked.
+Local raw Phase 7 provider artifacts belong under `results/tables/phase7/`, which
+is ignored except for placeholder files. Provider execution remains gated by
+explicit authorization, hard request/token/cost/trajectory ceilings, credential
+Boolean recording only, raw-first persistence, cache validation, and CI tests that
+must never call a remote provider.
 
 ## Research Integrity
 
 BayesAudit must not report fabricated findings. Hypotheses, primary metrics, and confirmatory analyses are recorded before main-study execution. Pilot results may be used to repair tasks and scorers, but main benchmark changes after preregistration freeze must be documented as deviations.
 
-All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and attacker-defender outputs are synthetic mock-model artifacts. Phase 7 introduces real-provider pilot infrastructure, but default configs and CI remain mock-safe and credential-free. Real-provider results may be created only through explicitly authorized commands with hard cost, token, request, and trajectory ceilings, and must be labeled exploratory pilot data.
+All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and attacker-defender outputs are synthetic mock-model artifacts. Phase 7 includes bounded exploratory real-provider pilot results, but default configs and CI remain mock-safe and credential-free. Future provider runs require separate explicit authorization with hard cost, token, request, and trajectory ceilings, and must be labeled exploratory unless a new confirmatory protocol authorizes stronger claims.

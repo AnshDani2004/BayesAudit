@@ -1,0 +1,76 @@
+{
+  "artifact": "phase7_reproducibility_manifest",
+  "artifact_hash": "763bfe88688f822a224ce0c3b70a29d4c5ee0d43f9ed818e1825339b53c554e3",
+  "config_hashes": {
+    "artifact_index_hash": "5d7cd2d8b6b312e6556c1a03f6cdcb650fc7655d81a1d8a070d7ba539ad16c1d",
+    "benchmark_hash": "d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be",
+    "evidence_package_hash": "443eabcc0338edf3554019025ad862eae41c9bca7af3d35bae75ef15afbf2809"
+  },
+  "current_commit": "5d2340c6f820573b57022a5d2eda330a29a1abeb",
+  "dataset_hashes": {
+    "stage_e3_dataset_hash": "0fa854e15411386a45704db7bc4e5ff23a7f2ebceaec57846eccb3ec3e74eae5"
+  },
+  "expected_full_pytest_count": 1886,
+  "expected_full_pytest_count_lower_bound": 1886,
+  "expected_major_artifact_counts": {
+    "phase7_artifact_index": 275,
+    "stage_e2_trajectories": 18,
+    "stage_e3_validated_negative_dataset": 1,
+    "stage_e3_validated_positive_dataset": 17
+  },
+  "full_test_command": "python -m pytest -q",
+  "historical_outputs_modified": false,
+  "installation_command": "python -m pip install -e \".[dev]\"",
+  "known_platform_sensitive_behavior": [
+    "local ignored raw provider responses may be absent in CI",
+    "package patch versions may differ across developer machines"
+  ],
+  "mock_safe_dry_run_commands": [
+    "python -m bayesaudit.cli estimate-pilot-cost --config configs/experiments/phase7_connectivity.yaml",
+    "python -m bayesaudit.cli run-provider-connectivity --config configs/experiments/phase7_connectivity.yaml --dry-run",
+    "python -m bayesaudit.cli run-real-workflow-pilot --config configs/experiments/phase7_workflow.yaml --dry-run",
+    "python -m bayesaudit.cli run-measurement-pilot --config configs/experiments/phase7_measurement.yaml --dry-run",
+    "python -m bayesaudit.cli evaluate-monitor-transfer --config configs/experiments/phase7_monitor_transfer.yaml --dry-run",
+    "python -m bayesaudit.cli evaluate-calibration-transfer --config configs/experiments/phase7_monitor_transfer.yaml --dry-run",
+    "python -m bayesaudit.cli run-real-oversight-pilot --config configs/experiments/phase7_oversight.yaml --dry-run"
+  ],
+  "observed_python_version": "3.10.13",
+  "package_versions": {
+    "duckdb": "1.5.4",
+    "matplotlib": "3.10.9",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "pyarrow": "24.0.0",
+    "pydantic": "2.13.4",
+    "pytest": "9.0.3"
+  },
+  "phase8_started": false,
+  "pr_merged": false,
+  "provider_calls_performed": 0,
+  "provider_disabled_analysis_commands": [
+    "python -c from bayesaudit.pilot.stage_e3 import validate_stage_e3_artifacts; print(validate_stage_e3_artifacts())",
+    "python -c from bayesaudit.pilot.phase7_refinement import validate_phase7_refinement_artifacts; print(validate_phase7_refinement_artifacts())",
+    "python -c from bayesaudit.pilot.phase7_closeout import validate_phase7_closeout_artifacts; print(validate_phase7_closeout_artifacts())"
+  ],
+  "provider_execution_disabled": true,
+  "python_version_requirement": ">=3.10",
+  "schema_version": "bayesaudit.phase7.closeout.v1",
+  "secret_handling_requirements": [
+    "record credential presence only as Boolean",
+    "never commit API keys or Authorization headers",
+    "keep raw provider outputs and caches ignored"
+  ],
+  "stage_e2_rerun_performed": false,
+  "static_check_commands": [
+    "python -m ruff check .",
+    "python -m mypy --no-incremental src tests",
+    "python -m compileall -q src tests scripts"
+  ],
+  "validator_commands": [
+    "python -m bayesaudit.cli validate-scenarios --root scenarios",
+    "python -m bayesaudit.cli validate-envelopes",
+    "python -m bayesaudit.cli validate-policies",
+    "python -m bayesaudit.cli validate-attackers",
+    "python -m bayesaudit.cli validate-attacks"
+  ]
+}

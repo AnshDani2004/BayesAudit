@@ -311,7 +311,7 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Provider calls made: `0`
 - Benchmark candidate version: `phase7_benchmark_candidate_v1`
 - Benchmark hash: `d78130580fd36e29bf01b60668263187c5730223a8d95934d5511163fbdc67be`
-- Evidence package hash: `74940826bba7f991715e350b84165f0109a053dac9e4b8e1927b34fc4655f85a`
+- Evidence package hash: `443eabcc0338edf3554019025ad862eae41c9bca7af3d35bae75ef15afbf2809`
 - Refinements classified: `14`
 - Documentation-only refinements: `8`
 - Derived-label-only refinements: `1`
@@ -326,3 +326,23 @@ Future entries must include change ID, date, task/component, original behavior, 
 - Benchmark freeze decision: `phase7_benchmark_frozen_with_limitations`
 - Comparability: historical outputs and original labels remain preserved; repaired and adjudicated labels are versioned separately.
 - Reviewer: Codex developer review, single reviewer; no inter-annotator agreement claimed.
+
+## P7CLOSE-001: Phase 7 Final Closeout and Merge-Readiness Record
+
+- Date: `2026-08-03`
+- Stage: Phase 7 closeout
+- Component: artifact index, reproducibility manifest, final claim registry, limitations record, repository hygiene audit, closeout decision, and merge-readiness record
+- Starting commit: `5d2340c`
+- Provider calls made: `0`
+- Stage E.2 rerun performed: `false`
+- Phase 8 started: `false`
+- PR #1 merged by Codex: `false`
+- Artifact-index count: `266`
+- Final claim-registry count: `5`
+- Claims validated with limitations: `4`
+- Unsupported claims: `1`
+- Final limitations count: `10`
+- Repository hygiene result: `passed`
+- Closeout decision: `phase7_complete_with_documented_limitations_merge_ready`
+- Merge-readiness decision: `merge_ready_with_documented_limitations`
+- Recommended manual merge: create a merge commit; do not squash or rebase.
