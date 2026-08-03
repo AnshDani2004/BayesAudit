@@ -12,7 +12,10 @@ from bayesaudit.pilot.phase9_10 import (
     ARCHITECTURES,
     CONDITIONS,
     DOMAINS,
+    FINAL_ARTIFACT_INDEX,
+    FINAL_AUDIT,
     FINAL_CLAIM_REGISTRY,
+    FINAL_DECISION,
     FINAL_FIGURES_MANIFEST,
     FINAL_REPORT,
     FINAL_REPRODUCIBILITY,
@@ -384,3 +387,27 @@ def test_phase10c_portfolio_and_release_candidate_docs_exist() -> None:
     assert "v1.0.0 Release Candidate" in release
     assert "Do not create the `v1.0.0` annotated tag" in release
     assert "merge commit" in release
+
+
+def test_phase10d_artifacts_validate_when_present() -> None:
+    assert validate_phase10_artifacts(stage="10D") == {"valid": True, "errors": []}
+
+
+def test_phase10d_final_audit_and_decision_are_merge_ready() -> None:
+    index = _json(FINAL_ARTIFACT_INDEX)
+    audit = _json(FINAL_AUDIT)
+    decision = _json(FINAL_DECISION)
+    assert index["artifact_count"] > 100
+    assert audit["audit_decision"] == "passed_with_documented_limitations"
+    assert all(gate["status"] == "passed" for gate in audit["gate_results"])
+    assert (
+        decision["phase10_completion_decision"]
+        == "bayesaudit_project_complete_with_documented_limitations"
+    )
+    assert (
+        decision["merge_readiness_decision"] == "final_pr_merge_ready_with_documented_limitations"
+    )
+    assert decision["do_not_merge_by_codex"] is True
+    assert decision["do_not_create_tag_before_merge"] is True
+    assert decision["release_candidate_version"] == "v1.0.0"
+    assert decision["phase11_started"] is False

@@ -660,7 +660,7 @@ def validate_phase10_artifacts(*, stage: str = "10D") -> dict[str, Any]:
     for path in required:
         if not path.exists():
             errors.append(f"missing Phase 10 artifact: {path}")
-    for path in [p for p in required if p.suffix == ".json"]:
+    for path in [p for p in required if p.suffix == ".json" and p.exists()]:
         payload = read_json(path)
         expected = canonical_json_hash(
             {key: value for key, value in payload.items() if key != "artifact_hash"}
@@ -2292,7 +2292,7 @@ def _final_artifact_index(commit: str) -> dict[str, Any]:
 def _final_audit(commit: str, index: dict[str, Any]) -> dict[str, Any]:
     checks = [
         _gate("phase9_validates", validate_phase9_artifacts()["valid"]),
-        _gate("phase10_stage10d_validates", validate_phase10_artifacts(stage="10D")["valid"]),
+        _gate("phase10_prerequisites_validate", validate_phase10_artifacts(stage="10B")["valid"]),
         _gate("no_phase11_artifacts", not any(TRACKED_ROOT.glob("phase11_*"))),
         _gate("do_not_merge_by_codex", True),
         _gate("do_not_tag_before_merge", True),
