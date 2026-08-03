@@ -1,0 +1,166 @@
+{
+  "artifact": "phase9_evidence_package_manifest",
+  "artifact_count": 37,
+  "artifact_hash": "7f0ad8750dc32e92fb19b0548b05d3a13a04e2f404691598716e937910f64293",
+  "artifacts": [
+    {
+      "hash": "b9e2d78627e86bba5d569782052798bbbe77af94ddc4c82b3338c2d9d123138d",
+      "path": "configs/experiments/phase9_protocol.json"
+    },
+    {
+      "hash": "19c9ddabd7e410933daa3e4c9a297c595cefc162049d0be8e7b018bffa21e184",
+      "path": "configs/experiments/phase9_heldout_attack_matrix.json"
+    },
+    {
+      "hash": "6b3f2e36f98868c7702187dbeaf9d38398ea4437795b3b6f5926a53d1eeeb490",
+      "path": "configs/experiments/phase9_statistical_analysis_plan.json"
+    },
+    {
+      "hash": "bbee2b17087d107d17d3f3e50719449650867ed70a16818d9f9daee5f0cb1b4e",
+      "path": "configs/experiments/phase9_seed_manifest.json"
+    },
+    {
+      "hash": "346b6b46cc9d6fde1b837697a39e581ca0b64c6bf3eee0433594c9d2bf1730da",
+      "path": "configs/experiments/phase9_heldout_attacker_manifest.json"
+    },
+    {
+      "hash": "a631579d2e7b5489df7cb60bd0b0c5cc5d1a068eee127ff562f873eadbb026c1",
+      "path": "configs/experiments/phase9_threshold_sensitivity_plan.json"
+    },
+    {
+      "hash": "90e9ca871e48aab96be84a1e3a264a26824e4c19396e18d8fccca661bcf16914",
+      "path": "configs/experiments/phase9_policy_replay_plan.json"
+    },
+    {
+      "hash": "0af2efdb92241af1383308e6a00a3f589834719f7b80a7fc515cd9656134f975",
+      "path": "configs/experiments/phase9_execution_protocol.json"
+    },
+    {
+      "hash": "d3678ab9a8ce4dc76353d04afd4ef1cefc52ddc180ff21bf42686c7ca06b3434",
+      "path": "configs/experiments/phase9_authorization.json"
+    },
+    {
+      "hash": "d4bcb7220d4254b6dc15204426f00ab302efe9d55c7d1037c7e1f01ac2ecf0e0",
+      "path": "configs/experiments/phase9_protocol_decision.json"
+    },
+    {
+      "hash": "5a1a925debfcb2b820436eb0653061049ba7b9914d694041c90f51a34c8e113c",
+      "path": "configs/experiments/phase9_run_identity.json"
+    },
+    {
+      "hash": "1d5b6ed338a54e1c9d31193f0af51e9d470e3cdcd5b72ccbe0cb529308a613e7",
+      "path": "configs/experiments/phase9_execution_ledger.json"
+    },
+    {
+      "hash": "a8c7ee5d33216f1145f6fd8956e1485a6ce4d3fcdd1a98deaf6b4e7e8d196d8b",
+      "path": "configs/experiments/phase9_provider_summary.json"
+    },
+    {
+      "hash": "2067463b3661aca8d38fd6435e960cc892d4ed3958c7faecf1904450a90e9201",
+      "path": "configs/experiments/phase9_token_summary.json"
+    },
+    {
+      "hash": "c06a74012a10c23f89760366cc05978fc070839424069fd9665ddba287b80320",
+      "path": "configs/experiments/phase9_cost_summary.json"
+    },
+    {
+      "hash": "ab030430b710d9109fd0c0588f87a3070a34b5e4036c85f40b18cb42013b2f74",
+      "path": "configs/experiments/phase9_execution_decision.json"
+    },
+    {
+      "hash": "959ac17af7808a969c7c4c7aa24af18bbc668965149aa87465f075148291bbb7",
+      "path": "configs/experiments/phase9_review_manifest.json"
+    },
+    {
+      "hash": "98290b62693d3c655f22c0fbbdaf4733e46c9cf874012537b0642907feba3f5c",
+      "path": "configs/experiments/phase9_integrity_report.json"
+    },
+    {
+      "hash": "9c2e061756dca9eacac3221376e044ee1305c68904e8a649519b0d75ee1cdbc0",
+      "path": "configs/experiments/phase9_threshold_sensitivity.json"
+    },
+    {
+      "hash": "db4d2e8f47b083fdb17b213906573e851060959f30983c1a20aabca2bbd5ada6",
+      "path": "configs/experiments/phase9_policy_replay.json"
+    },
+    {
+      "hash": "12e7cd7c763c9f4007e0dbfac37922ef836c52fbaa52755c5b0e0118239de3c9",
+      "path": "configs/experiments/phase9_primary_analysis.json"
+    },
+    {
+      "hash": "8e7ff46355ee11c8a731c90c563e3b184808fb5e5b4fe8cd7752591033924cca",
+      "path": "configs/experiments/phase9_secondary_analysis.json"
+    },
+    {
+      "hash": "6834ef0597c140a4129f0a4ef267a68366a0e66136a42d1c5a60395f13a470ec",
+      "path": "configs/experiments/phase9_phase8_robustness_registry.json"
+    },
+    {
+      "hash": "285bd2a2029d4cad7c77d1f0709b277a73929ba38557c97b8b66c25d87e0c1aa",
+      "path": "configs/experiments/phase9_claim_support.json"
+    },
+    {
+      "hash": "283a7a45a497943e8bd4641390d2e77fb328dbd0bb0dd66922f93ccf1e983d90",
+      "path": "configs/experiments/phase9_dataset_manifest.json"
+    },
+    {
+      "hash": "6303befb7da40d831c46c80f10e129e8fa3e2fe6e565875dbce3fb2536229172",
+      "path": "configs/experiments/phase9_repair_requirements.json"
+    },
+    {
+      "hash": "29fe60bf9e6b1d7e0ab90caf7a76569412a133dab42d434551bd3ea0842fcec4",
+      "path": "configs/experiments/phase9_evidence_decision.json"
+    },
+    {
+      "hash": "8fada5e54331216a243d3744c9139d86ecc3e64068a4ee0654d33c04727b1ee1",
+      "path": "configs/experiments/phase9_phase10_readiness.json"
+    },
+    {
+      "hash": "3b09c01b598c7c49b5745753296f991781e9aef424430b7bfd6f3e28f9f083d6",
+      "path": "configs/experiments/phase9_attacker_adjudication.jsonl"
+    },
+    {
+      "hash": "b6495cbc1d8f48692ab147a891ad2e7603185ca3ba2cfc30076b74061b05e7a6",
+      "path": "configs/experiments/phase9_objective_adjudication.jsonl"
+    },
+    {
+      "hash": "4742199c537922d76c5d95d2fa8fa8f93b1f14303030e0221470c2d444061023",
+      "path": "configs/experiments/phase9_monitor_adjudication.jsonl"
+    },
+    {
+      "hash": "09c642b7375139bf91a28f5a6d73951664802b78eab4c98c050fae47bfc8b79e",
+      "path": "configs/experiments/phase9_policy_adjudication.jsonl"
+    },
+    {
+      "hash": "641606b86dfff0e68520874d31403c09ba286c68c1d8f79e9554ba8ffa2b8103",
+      "path": "configs/experiments/phase9_intervention_adjudication.jsonl"
+    },
+    {
+      "hash": "adb516532d86ed089d16cd51a5ef79cf4af610a2e80a5f94774ca360409f5544",
+      "path": "configs/experiments/phase9_prevention_adjudication.jsonl"
+    },
+    {
+      "hash": "e4fa196e84a47ec4db5773b94ec6f4f312ee48e7ac630c0d1f467d77478bf961",
+      "path": "configs/experiments/phase9_matched_quartet_audit.jsonl"
+    },
+    {
+      "hash": "8b18e68c51fc479829b183b7ad6277b573911adb864e94003311401e02fd4f16",
+      "path": "configs/experiments/phase9_validated_positive_dataset.jsonl"
+    },
+    {
+      "hash": "e84bdb7a0582e0e0c31de39c352b9bda70472b0ebe09a44390e517911c0716ab",
+      "path": "configs/experiments/phase9_validated_negative_dataset.jsonl"
+    }
+  ],
+  "current_commit": "3599f148e92ddd7caf68a4ef4d24754f26ebcb85",
+  "evidence_package_version": "phase9_robustness_evidence_package_v1",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase10_started": false,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

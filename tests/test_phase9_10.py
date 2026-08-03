@@ -20,11 +20,14 @@ from bayesaudit.pilot.phase9_10 import (
     PHASE9_ATTACKER_MANIFEST,
     PHASE9_AUTHORIZATION,
     PHASE9_CLAIM_SUPPORT,
+    PHASE9_CLOSEOUT_DECISION,
     PHASE9_COST_SUMMARY,
     PHASE9_DATASET_MANIFEST,
     PHASE9_EVIDENCE_DECISION,
+    PHASE9_EVIDENCE_PACKAGE,
     PHASE9_EXECUTION_DECISION,
     PHASE9_EXECUTION_PROTOCOL,
+    PHASE9_LIMITATIONS,
     PHASE9_MATCHED_QUARTET_AUDIT,
     PHASE9_MATRIX,
     PHASE9_MONITOR_ADJUDICATION,
@@ -38,6 +41,8 @@ from bayesaudit.pilot.phase9_10 import (
     PHASE9_PROTOCOL,
     PHASE9_PROTOCOL_DECISION,
     PHASE9_PROVIDER_SUMMARY,
+    PHASE9_REPORT,
+    PHASE9_REPRODUCIBILITY,
     PHASE9_REQUEST_SUMMARIES,
     PHASE9_SAP,
     PHASE9_SECONDARY_ANALYSIS,
@@ -47,6 +52,8 @@ from bayesaudit.pilot.phase9_10 import (
     PHASE9_TRAJECTORY_SUMMARIES,
     PHASE9_WAVE_SUMMARIES,
     validate_phase9_analysis_artifacts,
+    validate_phase9_artifacts,
+    validate_phase9_closeout_artifacts,
     validate_phase9_execution_artifacts,
     validate_phase9_protocol_artifacts,
 )
@@ -278,3 +285,35 @@ def test_phase9_sensitivity_and_policy_replay_are_offline_only() -> None:
         "frozen_phase9_policy_one_audit",
         "deterministic_final_checkpoint",
     }
+
+
+def test_phase9_closeout_artifacts_validate_when_present() -> None:
+    assert validate_phase9_closeout_artifacts() == {"valid": True, "errors": []}
+    assert validate_phase9_artifacts() == {"valid": True, "errors": []}
+
+
+def test_phase9_evidence_package_and_reproducibility_are_frozen() -> None:
+    evidence = _json(PHASE9_EVIDENCE_PACKAGE)
+    reproducibility = _json(PHASE9_REPRODUCIBILITY)
+    limitations = _json(PHASE9_LIMITATIONS)
+    assert evidence["evidence_package_version"] == "phase9_robustness_evidence_package_v1"
+    assert evidence["artifact_count"] == 37
+    assert "python -m bayesaudit.cli validate-phase9" in reproducibility["validation_commands"]
+    assert reproducibility["provider_rerun_required"] is False
+    assert limitations["limitation_count"] == len(limitations["limitations"])
+    assert "single provider model" in limitations["limitations"]
+
+
+def test_phase9_closeout_decision_and_report_are_merge_ready() -> None:
+    closeout = _json(PHASE9_CLOSEOUT_DECISION)
+    report_text = PHASE9_REPORT.read_text(encoding="utf-8")
+    assert (
+        closeout["phase9_closeout_decision"]
+        == "phase9_complete_with_documented_limitations_merge_ready"
+    )
+    assert closeout["phase10_readiness"] == "ready_for_phase10_with_documented_limitations"
+    assert closeout["provider_rerun_required"] is False
+    assert closeout["phase10_started"] is False
+    assert closeout["phase11_started"] is False
+    assert "Phase 9 Held-Out Robustness Study" in report_text
+    assert "unsuitable for production-safety claims" in report_text
