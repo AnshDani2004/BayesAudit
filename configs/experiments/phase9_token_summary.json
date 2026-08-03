@@ -1,0 +1,19 @@
+{
+  "artifact": "phase9_token_summary",
+  "artifact_hash": "9679fa98d9a186e4bb290d635462e103c86fdc82abf808f9bf780ec188b7ad82",
+  "cached_input_tokens": 0,
+  "current_commit": "a196fe5f4afa2d34c3cf1671aa251d71844e28f9",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "input_tokens": 138167,
+  "maximum_total_tokens": 300000,
+  "output_tokens": 26526,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "reasoning_tokens": 0,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false,
+  "total_tokens": 164693
+}

@@ -1,0 +1,24 @@
+{
+  "artifact": "phase9_provider_summary",
+  "artifact_hash": "c0abbc462827a487ecbe26b53a1960dea4b788aaa33fd08395a91a9bd4e0522b",
+  "cache_hits": 144,
+  "completed_trajectories": 48,
+  "current_commit": "a196fe5f4afa2d34c3cf1671aa251d71844e28f9",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "executed_trajectories": 48,
+  "execution_status_counts": {
+    "completed": 48
+  },
+  "failed_trajectories": 0,
+  "phase11_started": false,
+  "planned_provider_requests": 144,
+  "planned_trajectories": 48,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 144,
+  "provider_request_records": 144,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false,
+  "stopped_before_ceiling_breach": false
+}

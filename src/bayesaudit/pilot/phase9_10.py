@@ -1354,6 +1354,7 @@ def _build_run_identity(
         "start_timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "credential_present": bool(os.environ.get(CREDENTIAL_ENV_VAR)),
         "ci_environment": _ci_environment(),
+        "phase11_started": False,
     }
     run_id = "phase9_" + canonical_json_hash(payload)[:16]
     return _json_artifact("phase9_run_identity", current_commit=commit, run_id=run_id, **payload)
@@ -1371,6 +1372,7 @@ def _execution_summaries(
     decision: str,
 ) -> dict[Path, dict[str, Any]]:
     by_status = Counter(row["execution_status"] for row in trajectory_rows)
+    actual_provider_calls = _actual_phase9_provider_calls()
     provider = _json_artifact(
         "phase9_provider_summary",
         current_commit=commit,
@@ -1380,10 +1382,11 @@ def _execution_summaries(
         failed_trajectories=failures,
         planned_provider_requests=MAX_TRAJECTORIES * len(STEP_KINDS),
         provider_request_records=len(request_rows),
-        provider_calls_performed=sum(1 for row in request_rows if row["cache_status"] == "miss"),
+        provider_calls_performed=actual_provider_calls,
         cache_hits=sum(1 for row in request_rows if row["cache_status"] == "hit"),
         execution_status_counts=dict(by_status),
         stopped_before_ceiling_breach=stopped,
+        phase11_started=False,
     )
     token = _json_artifact(
         "phase9_token_summary",
@@ -1395,6 +1398,7 @@ def _execution_summaries(
         total_tokens=totals["total_tokens"],
         maximum_total_tokens=MAX_TOKENS,
         provider_calls_performed=0,
+        phase11_started=False,
     )
     cost = _json_artifact(
         "phase9_cost_summary",
@@ -1403,6 +1407,7 @@ def _execution_summaries(
         maximum_token_derived_cost_usd=str(MAX_COST_USD),
         pricing_table_version=PRICING_TABLE_VERSION,
         provider_calls_performed=0,
+        phase11_started=False,
     )
     ledger = _json_artifact(
         "phase9_execution_ledger",
@@ -1430,7 +1435,7 @@ def _execution_summaries(
         execution_decision=decision,
         completed_trajectories=completed,
         failed_trajectories=failures,
-        provider_calls_performed=0,
+        provider_calls_performed=actual_provider_calls,
         phase10_started=False,
         phase11_started=False,
     )
@@ -1441,6 +1446,18 @@ def _execution_summaries(
         PHASE9_EXECUTION_LEDGER: ledger,
         PHASE9_EXECUTION_DECISION: execution_decision,
     }
+
+
+def _actual_phase9_provider_calls() -> int:
+    ledger = IGNORED_ROOT / "provider_request_ledger.jsonl"
+    if not ledger.exists():
+        return 0
+    rows = [
+        row
+        for row in read_jsonl(ledger)
+        if row.get("status") == "completed" and row.get("request_hash")
+    ]
+    return len({str(row["request_hash"]) for row in rows})
 
 
 def _review_row(condition: dict[str, Any], trajectory: dict[str, Any] | None) -> dict[str, Any]:

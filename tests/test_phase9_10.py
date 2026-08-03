@@ -19,18 +19,30 @@ from bayesaudit.pilot.phase9_10 import (
     PHASE9_A_JSON,
     PHASE9_ATTACKER_MANIFEST,
     PHASE9_AUTHORIZATION,
+    PHASE9_COST_SUMMARY,
+    PHASE9_EXECUTION_DECISION,
     PHASE9_EXECUTION_PROTOCOL,
     PHASE9_MATRIX,
     PHASE9_PROTOCOL,
     PHASE9_PROTOCOL_DECISION,
+    PHASE9_PROVIDER_SUMMARY,
+    PHASE9_REQUEST_SUMMARIES,
     PHASE9_SAP,
     PHASE9_SEED_MANIFEST,
+    PHASE9_TOKEN_SUMMARY,
+    PHASE9_TRAJECTORY_SUMMARIES,
+    PHASE9_WAVE_SUMMARIES,
+    validate_phase9_execution_artifacts,
     validate_phase9_protocol_artifacts,
 )
 
 
 def _json(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
+
+
+def _jsonl(path: Path) -> list[dict[str, Any]]:
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
 
 
 def test_phase9_protocol_artifacts_validate() -> None:
@@ -144,5 +156,48 @@ def test_phase9_protocol_decision_and_no_phase10_or_phase11() -> None:
     assert "do not begin Phase 11" in protocol["prohibited_actions"]
     assert decision["protocol_decision"] == "phase9_protocol_frozen_with_limitations"
     assert decision["gate_1_passed"] is True
+    assert decision["phase10_started"] is False
+    assert decision["phase11_started"] is False
+
+
+def test_phase9_execution_artifacts_validate_when_present() -> None:
+    assert validate_phase9_execution_artifacts() == {"valid": True, "errors": []}
+
+
+def test_phase9_execution_covers_exact_frozen_matrix() -> None:
+    matrix_ids = {row["condition_id"] for row in _json(PHASE9_MATRIX)["records"]}
+    trajectories = _jsonl(PHASE9_TRAJECTORY_SUMMARIES)
+    executed_ids = {row["condition_id"] for row in trajectories}
+    assert len(trajectories) == 48
+    assert executed_ids == matrix_ids
+    assert {row["execution_status"] for row in trajectories} == {"completed"}
+    assert sum(row["provider_requests"] for row in trajectories) == 144
+
+
+def test_phase9_execution_requests_and_waves_reconcile() -> None:
+    requests = _jsonl(PHASE9_REQUEST_SUMMARIES)
+    trajectories = _jsonl(PHASE9_TRAJECTORY_SUMMARIES)
+    waves = _jsonl(PHASE9_WAVE_SUMMARIES)
+    assert len(requests) == 144
+    assert len(waves) == 3
+    assert [row["wave_id"] for row in waves] == ["wave_0", "wave_1", "wave_2"]
+    assert [row["expected_trajectories"] for row in waves] == [4, 20, 24]
+    assert all(row["raw_first_persistence"] is True for row in requests)
+    assert all(len(row["request_hashes"]) == 3 for row in trajectories)
+    assert all(len(row["raw_response_hashes"]) == 3 for row in trajectories)
+
+
+def test_phase9_execution_summaries_stay_within_authorized_ceilings() -> None:
+    provider = _json(PHASE9_PROVIDER_SUMMARY)
+    token = _json(PHASE9_TOKEN_SUMMARY)
+    cost = _json(PHASE9_COST_SUMMARY)
+    decision = _json(PHASE9_EXECUTION_DECISION)
+    assert provider["completed_trajectories"] == 48
+    assert provider["provider_request_records"] == 144
+    assert provider["provider_calls_performed"] == 144
+    assert provider["cache_hits"] == 144
+    assert token["total_tokens"] <= MAX_TOKENS
+    assert Decimal(cost["token_derived_cost_usd"]) <= MAX_COST_USD
+    assert decision["execution_decision"] == "phase9_execution_complete"
     assert decision["phase10_started"] is False
     assert decision["phase11_started"] is False
