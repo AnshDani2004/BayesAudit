@@ -1,0 +1,14 @@
+{
+  "artifact": "phase8_cost_summary",
+  "artifact_hash": "950fd1b51578fcaa26d23c2906ccca9f26b1850a04466fbbb6d43b84e123a9f0",
+  "current_commit": "07db2f95fad09dcffe983c2b9a975301f66ae420",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "maximum_token_derived_cost_usd": "0.20",
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase8.confirmatory.v1",
+  "secret_exposed": false,
+  "token_derived_cost_usd": "0.03363020"
+}

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import re
 import subprocess
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
@@ -1038,7 +1039,6 @@ def _execute_phase8_condition(
             "completed" if not failure_rows and len(parsed_steps) == 3 else "provider_failed"
         ),
         semantic_status=measurement["workflow_status"],
-        structured_output_status=measurement["structured_output_status"],
         measurement_status=measurement["measurement_eligibility"],
         monitor=monitor,
         policy=policy,
@@ -1926,7 +1926,9 @@ def _ci_environment() -> bool:
 def _contains_secret(payload: Any) -> bool:
     text = json.dumps(payload, sort_keys=True, default=str)
     credential = os.environ.get(CREDENTIAL_ENV_VAR, "not-set")
-    return "sk-" in text or "Bearer " in text or credential in text
+    api_key_shaped = re.search(r"\bsk-[A-Za-z0-9_-]{16,}", text) is not None
+    credential_present = bool(credential and credential != "not-set" and credential in text)
+    return api_key_shaped or "Bearer " in text or credential_present
 
 
 def _reset_jsonl(paths: list[Path]) -> None:

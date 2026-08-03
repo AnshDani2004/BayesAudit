@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 import json
 from collections import Counter, defaultdict
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, cast
 
@@ -17,20 +18,31 @@ from bayesaudit.pilot.phase8 import (
     MAX_TOKENS,
     MAX_TRAJECTORIES,
     PHASE8_AUTHORIZATION,
+    PHASE8_COST_SUMMARY,
+    PHASE8_EXECUTION_DECISION,
     PHASE8_EXECUTION_PROTOCOL,
     PHASE8_JSON_ARTIFACTS_A,
     PHASE8_MATRIX,
     PHASE8_PROTOCOL,
     PHASE8_PROTOCOL_DECISION,
+    PHASE8_REQUEST_SUMMARIES,
     PHASE8_SAP,
     PHASE8_SEED_MANIFEST,
+    PHASE8_TOKEN_SUMMARY,
+    PHASE8_TRAJECTORY_SUMMARIES,
+    PHASE8_WAVE_SUMMARIES,
     PROVIDER,
+    validate_phase8_execution_artifacts,
     validate_phase8_protocol_artifacts,
 )
 
 
 def _json(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
+
+
+def _jsonl(path: Path) -> list[dict[str, Any]]:
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
 
 
 def test_phase8_protocol_artifacts_validate() -> None:
@@ -146,3 +158,41 @@ def test_phase8_provider_execution_is_not_disabled_in_source_but_closeout_is_gua
     assert "run_phase8_provider_execution" in source
     assert "Phase 8 provider execution is disabled in CI" in source
     assert "run_phase9" not in source
+
+
+def test_phase8_execution_artifacts_validate_when_present() -> None:
+    assert validate_phase8_execution_artifacts() == {"valid": True, "errors": []}
+
+
+def test_phase8_execution_covers_exact_frozen_matrix() -> None:
+    matrix_ids = {row["condition_id"] for row in _json(PHASE8_MATRIX)["records"]}
+    trajectories = _jsonl(PHASE8_TRAJECTORY_SUMMARIES)
+    executed_ids = {row["condition_id"] for row in trajectories}
+    assert len(trajectories) == 96
+    assert executed_ids == matrix_ids
+    assert {row["execution_status"] for row in trajectories} == {"completed"}
+    assert sum(row["provider_requests"] for row in trajectories) == 288
+    assert sum(row["provider_calls_performed"] for row in trajectories) <= 288
+
+
+def test_phase8_execution_requests_and_waves_reconcile() -> None:
+    requests = _jsonl(PHASE8_REQUEST_SUMMARIES)
+    trajectories = _jsonl(PHASE8_TRAJECTORY_SUMMARIES)
+    waves = _jsonl(PHASE8_WAVE_SUMMARIES)
+    assert len(requests) == 288
+    assert len(waves) == 4
+    assert [row["wave_id"] for row in waves] == ["wave_0", "wave_1", "wave_2", "wave_3"]
+    assert [row["expected_trajectories"] for row in waves] == [4, 20, 48, 24]
+    assert all(row["raw_first_persistence"] is True for row in requests)
+    assert all(len(row["request_hashes"]) == 3 for row in trajectories)
+    assert all(len(row["raw_response_hashes"]) == 3 for row in trajectories)
+
+
+def test_phase8_execution_summaries_stay_within_authorized_ceilings() -> None:
+    token = _json(PHASE8_TOKEN_SUMMARY)
+    cost = _json(PHASE8_COST_SUMMARY)
+    decision = _json(PHASE8_EXECUTION_DECISION)
+    assert token["total_tokens"] <= 500000
+    assert Decimal(cost["token_derived_cost_usd"]) <= Decimal("0.20")
+    assert decision["execution_decision"] == "phase8_execution_complete"
+    assert decision["phase9_started"] is False
