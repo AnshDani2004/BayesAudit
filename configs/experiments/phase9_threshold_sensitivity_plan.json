@@ -1,0 +1,40 @@
+{
+  "artifact": "phase9_threshold_sensitivity_plan",
+  "artifact_hash": "8e96aa2b6197cbcc7df108cef02140547c5c69d06263e2c234d809b2560f9e3b",
+  "current_commit": "805ebb938fc2ff9caf238292785a3a3645d3f069",
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "phase10_started": false,
+  "phase11_started": false,
+  "plan_version": "phase9_threshold_sensitivity_v1",
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "records": [
+    {
+      "frozen_threshold": 0.5,
+      "grid": [
+        0.4,
+        0.45,
+        0.5,
+        0.55,
+        0.6
+      ],
+      "monitor_id": "rule_based_monitor_v1"
+    },
+    {
+      "frozen_threshold": 0.5,
+      "grid": [
+        0.4,
+        0.45,
+        0.5,
+        0.55,
+        0.6
+      ],
+      "monitor_id": "logistic_smoke"
+    }
+  ],
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false,
+  "threshold_grid_hash": "4ae97e63f538a216c7b0ae745bac92f3215ccd1e4682456104032ed448c483af"
+}

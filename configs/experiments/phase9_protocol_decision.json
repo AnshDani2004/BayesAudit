@@ -1,0 +1,22 @@
+{
+  "artifact": "phase9_protocol_decision",
+  "artifact_hash": "680324ccbf48fbe34af665af645c71740f23f09525e3489302e1fb705dd047cb",
+  "current_commit": "805ebb938fc2ff9caf238292785a3a3645d3f069",
+  "documented_limitations": [
+    "single provider model",
+    "synthetic sandboxed benchmark",
+    "held-out attackers are selected from smoke-level Phase 6 assets",
+    "cross-model validation is not tested"
+  ],
+  "exact_model": "gpt-5-nano-2025-08-07",
+  "gate_1_passed": true,
+  "phase10_started": false,
+  "phase11_started": false,
+  "pricing_table_version": "openai_gpt5_nano_2025_08_07_usd_2026_07_31_v1",
+  "protocol_decision": "phase9_protocol_frozen_with_limitations",
+  "provider": "openai",
+  "provider_calls_performed": 0,
+  "real_external_tools_enabled": false,
+  "schema_version": "bayesaudit.phase9_10.v1",
+  "secret_exposed": false
+}

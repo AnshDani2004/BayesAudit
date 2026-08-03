@@ -79,6 +79,19 @@ from bayesaudit.pilot.phase8 import (
     validate_phase8_artifacts,
     validate_phase8_protocol_artifacts,
 )
+from bayesaudit.pilot.phase9_10 import (
+    freeze_phase9_protocol,
+    run_phase9_closeout,
+    run_phase9_offline_adjudication,
+    run_phase9_provider_execution,
+    run_phase10a,
+    run_phase10b,
+    run_phase10c,
+    run_phase10d,
+    validate_phase9_artifacts,
+    validate_phase9_protocol_artifacts,
+    validate_phase10_artifacts,
+)
 from bayesaudit.providers.base import ProviderConfig, estimate_provider_cost
 from bayesaudit.runner import (
     _rewrite_normalized_tables,
@@ -386,6 +399,27 @@ def main() -> None:
 
     validate_phase8 = subparsers.add_parser("validate-phase8")
     validate_phase8.add_argument("--protocol-only", action="store_true")
+
+    subparsers.add_parser("freeze-phase9-protocol")
+
+    phase9_provider = subparsers.add_parser("run-phase9-provider")
+    phase9_provider.add_argument("--allow-provider-calls", action="store_true")
+    phase9_provider.add_argument("--max-cost", type=float, required=True)
+    phase9_provider.add_argument("--max-tokens", type=int, required=True)
+    phase9_provider.add_argument("--max-requests", type=int, required=True)
+    phase9_provider.add_argument("--max-trajectories", type=int, required=True)
+
+    subparsers.add_parser("adjudicate-phase9")
+    subparsers.add_parser("closeout-phase9")
+
+    validate_phase9 = subparsers.add_parser("validate-phase9")
+    validate_phase9.add_argument("--protocol-only", action="store_true")
+
+    subparsers.add_parser("phase10a")
+    subparsers.add_parser("phase10b")
+    subparsers.add_parser("phase10c")
+    subparsers.add_parser("phase10d")
+    subparsers.add_parser("validate-phase10")
 
     args = parser.parse_args()
     if args.command == "validate-scenarios":
@@ -791,6 +825,46 @@ def main() -> None:
             if args.protocol_only
             else validate_phase8_artifacts()
         )
+    elif args.command == "freeze-phase9-protocol":
+        payload = freeze_phase9_protocol()
+    elif args.command == "run-phase9-provider":
+        if not args.allow_provider_calls:
+            payload = {
+                "valid": False,
+                "errors": ["--allow-provider-calls is required for Phase 9 provider execution"],
+            }
+        elif (
+            args.max_cost != 0.12
+            or args.max_tokens != 300000
+            or args.max_requests != 300
+            or args.max_trajectories != 48
+        ):
+            payload = {
+                "valid": False,
+                "errors": ["Phase 9 hard ceilings must be exactly the user-authorized values"],
+            }
+        else:
+            payload = run_phase9_provider_execution()
+    elif args.command == "adjudicate-phase9":
+        payload = run_phase9_offline_adjudication()
+    elif args.command == "closeout-phase9":
+        payload = run_phase9_closeout()
+    elif args.command == "validate-phase9":
+        payload = (
+            validate_phase9_protocol_artifacts()
+            if args.protocol_only
+            else validate_phase9_artifacts()
+        )
+    elif args.command == "phase10a":
+        payload = run_phase10a()
+    elif args.command == "phase10b":
+        payload = run_phase10b()
+    elif args.command == "phase10c":
+        payload = run_phase10c()
+    elif args.command == "phase10d":
+        payload = run_phase10d()
+    elif args.command == "validate-phase10":
+        payload = validate_phase10_artifacts()
     else:
         raise AssertionError(args.command)
     print(json.dumps(payload, indent=2, sort_keys=True, default=str))
