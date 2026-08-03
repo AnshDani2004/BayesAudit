@@ -1,243 +1,138 @@
 # BayesAudit
 
-Adaptive, budget-constrained oversight for hierarchical LLM agents.
+BayesAudit is a reproducible research framework for studying budget-constrained oversight in hierarchical LLM workflows.
 
-BayesAudit is an open-source research project for studying when a human or automated monitor should inspect, interrupt, or escalate a hierarchical LLM workflow under a limited oversight budget. The core outcome is not a chatbot or dashboard; it is a reproducible empirical benchmark, policy interface, and analysis pipeline for measuring trajectory-level constraint violations.
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![Tests](https://img.shields.io/badge/tests-1937%20passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Status](https://img.shields.io/badge/status-v1.0.0%20release%20candidate-orange)
 
-## Research Focus
+## Why BayesAudit
 
-BayesAudit studies how safety constraints weaken or fail as tasks are delegated through agent hierarchies, and whether Bayesian adaptive auditing can reduce undetected severity-weighted harm at equal oversight cost. The project compares single-agent workflows, unstructured delegation, structured constraint inheritance, and verified constraint inheritance across honest, opportunistic, and strategic agent behavior.
+Modern LLM systems increasingly split work across planners, workers, tool-callers, and reviewers. That hierarchy creates a practical oversight problem: inspecting every step is expensive, but inspecting too little can miss constraint violations that appear in intermediate reasoning, delegated instructions, tool arguments, or final answers.
 
-Primary comparison policies:
+BayesAudit studies that tradeoff in a controlled research setting. It asks when a monitor should inspect, escalate, or intervene under a limited oversight budget, and how much evidence is needed before making claims about safety behavior. The project is intentionally synthetic and sandboxed: tasks, tools, attacks, and external actions are inert so the framework can measure oversight mechanics without creating real-world side effects.
 
-- no oversight
-- random auditing
-- fixed checkpoints
-- rule-based risk scoring
-- LLM-judge monitoring
-- Bayesian adaptive oversight
-- oracle auditing for evaluation upper bounds only
+## What I Built
 
-## Phase Status
+BayesAudit implements an end-to-end empirical workflow for oversight research:
 
-This repository is currently at Phase 8 closeout. Phase 7 completed a bounded
-real-model pilot on `gpt-5-nano-2025-08-07`, offline Stage E.3 developer
-adjudication, benchmark refinement, and evidence freeze. Phase 8 then ran a
-preregistered confirmatory study on the frozen Phase 7 benchmark with 96 planned
-trajectories, 24 matched quartets, four fresh seeds, and the same provider/model.
-The Phase 8 closeout decision is
-`phase8_complete_with_documented_limitations_merge_ready`.
-The Phase 7 benchmark decision remains
-`phase7_benchmark_frozen_with_limitations`.
+- A hierarchical workflow engine for single-agent, unstructured delegation, and structured constraint-inheritance runs.
+- Constraint registries and typed envelopes that track which safety requirements are inherited, mutated, verified, or repaired across delegated steps.
+- A synthetic attacker framework with privacy, authorization, and evidence attack primitives, strategic attacker families, and held-out attacker selection.
+- Rule-based and Bayesian adaptive monitors that score checkpoints and drive budget-aware audit decisions.
+- Oversight policies for no oversight, fixed checkpoints, random auditing, rule-based selective auditing, adaptive Bayesian auditing, and oracle-only evaluation upper bounds.
+- Objective scorers and offline adjudication artifacts that separate benchmark-originated risks, model-originated violations, monitor detections, policy decisions, and prevention claims.
+- Provider integration with hard safety gates, exact request hashing, raw-first response preservation, cache validation, token accounting, and cost accounting.
+- Reproducibility manifests, artifact hashes, and automated validators that make the experimental record inspectable without rerunning provider calls.
 
-Implemented now:
+## System Overview
 
-- project specification and milestone acceptance criteria
-- threat model, methodology, annotation guide, and preregistration draft
-- typed async schema and interface definitions for tasks, constraints, trajectories, policies, and scoring
-- 25 manually inspectable benchmark fixtures, five per domain
-- deterministic mock model execution
-- single-agent and unstructured-delegation workflows
-- synthetic offline tool environment
-- deterministic scorers for all five domains
-- append-only JSONL and normalized Parquet storage
-- offline experiment runner with resume skipping
-- structured and verified constraint inheritance workflows
-- canonical constraint registries, typed envelopes, mutation profiles, verification events, repair events, and retention metrics
-- redacted oversight observations and checkpoint replay
-- no-oversight, random, fixed-checkpoint, rule-based, and evaluation-only oracle baselines
-- hard oversight budget accounting
-- shadow-mode and intervention-mode oversight records
-- posthoc detection matching, policy metrics, and harm-cost frontier points
-- leakage-resistant monitor datasets built from redacted oversight observations
-- grouped train/development/calibration/confirmatory split manifests
-- constant, rule-score, logistic, tree-stump, Bayesian-logistic, and mock LLM-judge monitors
-- Platt, isotonic, temperature, and beta calibration helpers
-- abstention, OOD diagnostics, model cards, and annotation export/import
-- Beta-Bernoulli and online Bayesian-logistic risk states
-- budget-aware adaptive audit policies for shadow and intervention evaluation
-- dry-run provider cost manifests and hard real-provider safety gates
-- synthetic attacker observations with explicit knowledge tiers
-- safe deterministic attack primitives
-- ten attacker families, including evaluation-only oracle attacker
-- attacker-defender smoke matrices and restricted empirical-game analysis
-- selection-bias, displacement, and offline red-team-loop helpers
-- Phase 7 pre-pilot checkpoint, provider configs, pilot manifests, permission records, request cache/ledger contracts, prompt rendering, structured-output parsing, workflow-quality flags, annotation sampling, transfer summaries, readiness classification, freeze proposal generation, and Phase 8 planning scaffolds
-- Stage E.2 controlled strategic-attacker pilot with 18 frozen trajectories, 51 actual provider requests, 45,591 billable tokens, and $0.00477715 token-derived cost
-- Stage E.3 offline developer adjudication with 17 validated objective positives, 1 validated objective negative, no scorer false positives, no scorer false negatives, and no clean prevention claim
-- Phase 7 benchmark candidate `phase7_benchmark_candidate_v1`, frozen with documented limitations
-- final artifact index, reproducibility manifest, claim registry, limitations record, hygiene audit, and merge-readiness record
-- Phase 8 confirmatory protocol, statistical analysis plan, authorization record,
-  96-condition matrix, four-wave provider execution, offline adjudication,
-  matched confirmatory analysis, evidence package, limitations record, Phase 8
-  report, and merge-readiness record
-- tests for schema validity, workflows, scorers, storage, and integration
-
-Phase 7 established:
-
-- the provider/cost/cache/ledger pipeline can run under hard ceilings
-- the frozen strategic-attacker construct can produce controlled synthetic positive cases
-- objective-positive evidence can be adjudicated offline while preserving historical labels
-- monitors can be evaluated against validated positive and negative bases
-- benchmark evidence can be frozen with explicit version compatibility and limitations
-
-Phase 7 did not establish:
-
-- population prevalence of violations
-- broad real-world attacker robustness
-- production readiness
-- universal monitor effectiveness
-- causal superiority of any oversight policy
-- independent human-validation agreement
-- clean prevention of final-output objective violations
-
-Phase 8 confirmatory evidence:
-
-- executed all 96 frozen trajectories and all 24 matched quartets
-- recorded 288 provider request summaries, with 285 new provider calls and 3 exact cache hits
-- used 312,174 total tokens and $0.03363020 token-derived cost, under the authorized ceilings
-- found 21 validated objective positives and 75 validated negatives
-- found 7 attacked no-oversight positives versus 3 safe-control positives
-- found internal-only violations only; final-output residual violations were 0
-- found rule-based alerts on validated positive monitored cases and Bayesian/logistic misses in this synthetic setting
-- did not validate clean prevention; prevention remains conditional and exploratory
-
-Phase 8 remains limited to one provider model, synthetic tasks, inert tools, three
-domains, two architectures, four fresh seeds, developer adjudication, and
-benchmark-specific rates rather than population prevalence or production-readiness
-claims.
-
-## Repository Layout
-
-```text
-bayesaudit/
-├── configs/
-├── docs/
-├── scenarios/
-├── src/bayesaudit/
-├── scripts/
-├── tests/
-├── data/
-├── results/
-└── notebooks/
+```mermaid
+flowchart LR
+    A["Synthetic benchmark tasks"] --> B["Hierarchical workflow engine"]
+    B --> C["Constraint inheritance and envelopes"]
+    C --> D["Attacker pressure or safe control"]
+    D --> E["Provider or deterministic model run"]
+    E --> F["Objective scorers"]
+    E --> G["Rule-based and Bayesian monitors"]
+    G --> H["Budget-aware oversight policy"]
+    H --> I["Offline adjudication"]
+    F --> I
+    I --> J["Evidence manifests, reports, figures, tests"]
 ```
 
-## Quick Start
+## Experimental Program
+
+The public release is easiest to read as three studies rather than a ten-stage development log.
+
+**Pilot study.** Phase 7 built and stress-tested the real-provider pipeline, strategic-attacker construct, objective scoring, offline adjudication, and benchmark freeze process. It showed that the infrastructure could run under hard request, token, and cost ceilings, but it did not establish production readiness or broad prevalence estimates.
+
+**Confirmatory study.** Phase 8 ran a preregistered confirmatory matrix on the frozen benchmark: 96 trajectories, 24 matched quartets, four fresh seeds, three domains, two architectures, and one provider model. It preserved nulls, monitor misses, false positives, and limitations.
+
+**Held-out robustness study.** Phase 9 tested fresh seeds and held-out Phase 6 attacker assets across 48 trajectories and 12 matched quartets. The held-out attack effect did not replicate: safe controls had 8 positives out of 12 matched quartets, while held-out attacker no-oversight trajectories had 4 positives out of 12.
+
+## Key Findings
+
+1. **The framework produced auditable, matched experiments under provider ceilings.** Phase 8 completed 96/96 trajectories and 288 request records with 285 new provider calls, 312,174 total tokens, and $0.03363020 token-derived cost. Phase 9 completed 48/48 trajectories and 144 tracked request records; the original acquisition used 144 provider calls, and the final tracked regeneration used cache hits only.
+
+2. **The confirmatory attacker effect was positive but limited.** In Phase 8, attacked no-oversight trajectories were objective-positive in 7/24 matched quartets, compared with 3/24 safe-control quartets. The paired risk difference was 0.1667, with exact McNemar p-value 0.289062. This is evidence for benchmark behavior, not a population-level prevalence claim.
+
+3. **No final-output violations were observed in the principal studies.** Phase 8 found 21 validated objective positives, all internal-only, with 0 tool-argument violations and 0 final-output violations. Phase 9 found 24 validated positives, also with 0 tool-argument and 0 final-output violations.
+
+4. **Rule-based monitoring was more sensitive than the Bayesian/logistic monitor in these runs, but also produced false positives.** In Phase 9, across all 12 rule-based monitored trajectories, the rule-based monitor had 7 true positives and 5 false positives. Across all 12 Bayesian monitored trajectories, the Bayesian/logistic monitor had 0 true positives and 5 false negatives.
+
+5. **Clean causal prevention was not established.** Corrected-before-final behavior was observed, but BayesAudit does not claim that oversight cleanly caused prevention of final-output violations. Prevention remains conditional and exploratory.
+
+## What Did Not Replicate
+
+Phase 9 did not replicate the held-out attacker effect from Phase 8. The public release keeps that nonreplication visible because it is scientifically important: the framework can produce evidence, but the observed effect is benchmark-, attacker-, seed-, and model-specific.
+
+## Limitations
+
+BayesAudit is a research prototype, not a production safety system. All tasks and tools are synthetic and sandboxed. One provider model, `gpt-5-nano-2025-08-07`, was tested. The project does not estimate real-world violation prevalence, does not establish cross-model generalization, and does not show production readiness. Offline adjudication was developer-run rather than an independent multi-annotator human study.
+
+## Repository Map
+
+- [Final report](docs/final_report.md): scientific synthesis across the pilot, confirmatory study, and held-out robustness study.
+- [Methodology](docs/methodology.md): benchmark design, matched comparisons, scoring, adjudication, and accounting.
+- [Benchmark card](docs/benchmark_card.md): intended use, domains, provenance, and limitations.
+- [Dataset card](docs/dataset_card.md): labels, positive/negative datasets, and reproduction notes.
+- [Provider/model card](docs/model_and_provider_card.md): provider integration, request controls, cache semantics, and model scope.
+- [Oversight policy card](docs/oversight_policy_card.md): monitors, policies, budgets, and out-of-scope use.
+- [Attacker card](docs/attacker_card.md): synthetic attacker families and held-out attacker design.
+- [Phase 8 report](docs/phase8_report.md): confirmatory study record.
+- [Phase 9 report](docs/phase9_report.md): held-out robustness and nonreplication record.
+- [Reproducibility guide](docs/reproducibility.md): offline validators, provider-backed rerun gates, and artifact lineage.
+- [Release notes](docs/RELEASE_NOTES_v1.0.0.md): public release summary.
+- [Citation metadata](CITATION.cff): how to cite the software.
+
+## Reproduce Locally
+
+Offline reproduction does not require provider credentials:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev]"
-python -m pytest -q
+python -m pip install -e ".[dev]"
 python -m ruff check .
-python -m mypy src tests
+python -m mypy --no-incremental src tests
+python -m pytest -q
 python -m compileall -q src tests scripts
-```
-
-Validate fixtures:
-
-```bash
 python -m bayesaudit.cli validate-scenarios --root scenarios
-```
-
-Run a small offline synthetic experiment:
-
-```bash
-python -m bayesaudit.cli run --config configs/experiments/phase2_mock.yaml
-python -m bayesaudit.cli summarize --experiment phase2_mock
-```
-
-Run Phase 3 inheritance smoke checks:
-
-```bash
 python -m bayesaudit.cli validate-envelopes
-python -m bayesaudit.cli run --config configs/experiments/phase3_smoke.yaml
-python -m bayesaudit.cli summarize-inheritance --experiment phase3_smoke
-python -m bayesaudit.cli compare-architectures --experiment phase3_smoke
-```
-
-Run Phase 4 oversight baselines:
-
-```bash
-python -m bayesaudit.cli validate-policies --root configs/policies
-python -m bayesaudit.cli run --config configs/experiments/phase4_smoke.yaml --dry-run
-python -m bayesaudit.cli run --config configs/experiments/phase4_smoke.yaml --max-runs 5
-python -m bayesaudit.cli summarize-oversight --experiment phase4_smoke
-python -m bayesaudit.cli compare-policies --experiment phase4_smoke
-python -m bayesaudit.cli build-frontier --experiment phase4_smoke
-```
-
-Run Phase 5 learned-monitoring smoke checks:
-
-```bash
-python -m bayesaudit.cli build-monitor-dataset --config configs/experiments/phase5_smoke.yaml
-python -m bayesaudit.cli create-monitor-splits --config configs/experiments/phase5_smoke.yaml
-python -m bayesaudit.cli train-monitor --config configs/monitors/logistic/smoke.yaml
-python -m bayesaudit.cli calibrate-monitor --config configs/calibration/platt/smoke.yaml
-python -m bayesaudit.cli evaluate-monitor --config configs/experiments/phase5_smoke.yaml
-python -m bayesaudit.cli run-adaptive-policy --config configs/experiments/phase5_smoke.yaml
-python -m bayesaudit.cli run-real-pilot --config configs/experiments/phase5_real_pilot.yaml --dry-run
-```
-
-Run Phase 6 synthetic attacker smoke checks:
-
-```bash
+python -m bayesaudit.cli validate-policies
 python -m bayesaudit.cli validate-attackers
 python -m bayesaudit.cli validate-attacks
-python -m bayesaudit.cli run-attacker-defender --config configs/experiments/phase6_smoke.yaml
-python -m bayesaudit.cli compare-attack-selection --config configs/experiments/phase6_selection.yaml --dry-run
-python -m bayesaudit.cli build-payoff-matrix --config configs/experiments/phase6_smoke.yaml
-python -m bayesaudit.cli run-red-team-loop --config configs/experiments/phase6_red_team_loop.yaml --dry-run
-```
-
-Run Phase 7 mock-safe pilot infrastructure checks:
-
-```bash
-python -m bayesaudit.cli validate-provider-config --config configs/providers/mock/smoke.yaml
-python -m bayesaudit.cli estimate-pilot-cost --config configs/experiments/phase7_connectivity.yaml
-python -m bayesaudit.cli run-provider-connectivity --config configs/experiments/phase7_connectivity.yaml --dry-run
-python -m bayesaudit.cli run-real-workflow-pilot --config configs/experiments/phase7_workflow.yaml --dry-run
-python -m bayesaudit.cli run-measurement-pilot --config configs/experiments/phase7_measurement.yaml --dry-run
-python -m bayesaudit.cli evaluate-monitor-transfer --config configs/experiments/phase7_monitor_transfer.yaml --dry-run
-python -m bayesaudit.cli evaluate-calibration-transfer --config configs/experiments/phase7_monitor_transfer.yaml --dry-run
-python -m bayesaudit.cli run-real-oversight-pilot --config configs/experiments/phase7_oversight.yaml --dry-run
-```
-
-Reproduce tracked Phase 7 offline analyses:
-
-```bash
-python - <<'PY'
-from bayesaudit.pilot.stage_e3 import validate_stage_e3_artifacts
-from bayesaudit.pilot.phase7_refinement import validate_phase7_refinement_artifacts
-from bayesaudit.pilot.phase7_closeout import validate_phase7_closeout_artifacts
-
-print(validate_stage_e3_artifacts())
-print(validate_phase7_refinement_artifacts())
-print(validate_phase7_closeout_artifacts())
-PY
-```
-
-Validate tracked Phase 8 artifacts offline:
-
-```bash
 python -m bayesaudit.cli validate-phase8
-python -m pytest tests/test_phase8.py -q
+python -m bayesaudit.cli validate-phase9
+python -m bayesaudit.cli validate-phase10
 ```
 
-Raw provider responses and exact provider caches are intentionally not tracked.
-Local raw Phase 7 and Phase 8 provider artifacts belong under `results/tables/`,
-which is ignored except for placeholder files. Provider execution remains gated by
-explicit authorization, hard request/token/cost/trajectory ceilings, credential
-Boolean recording only, raw-first persistence, cache validation, and CI tests that
-must never call a remote provider.
+## Provider-Backed Reproduction
 
-## Research Integrity
+Provider-backed runs are gated and should be treated as explicit experiments, not default setup:
 
-BayesAudit must not report fabricated findings. Hypotheses, primary metrics, and confirmatory analyses are recorded before main-study execution. Pilot results may be used to repair tasks and scorers, but main benchmark changes after preregistration freeze must be documented as deviations.
+```bash
+export OPENAI_API_KEY=...
+python -m bayesaudit.cli run-phase9-provider \
+  --allow-provider-calls \
+  --max-cost 0.12 \
+  --max-tokens 300000 \
+  --max-requests 300 \
+  --max-trajectories 48
+```
 
-All Phase 2 through Phase 6 trajectories, learned-monitor smoke results, and
-attacker-defender outputs are synthetic mock-model artifacts. Phase 7 includes
-bounded exploratory real-provider pilot results, and Phase 8 includes bounded
-confirmatory real-provider results for the frozen benchmark. Default configs and
-CI remain mock-safe and credential-free. Future provider runs require separate
-explicit authorization with hard cost, token, request, and trajectory ceilings.
+The repository never requires a credential for offline validation. `.env.example` is intentionally empty, and raw provider caches live under ignored `results/` directories.
+
+## Tests and Engineering Quality
+
+At the start of the public-release hardening pass, the repository passed 1,937 tests plus full scenario, envelope, policy, attacker, attack, Phase 8, Phase 9, and Phase 10 validators. The codebase uses typed schemas, append-only JSONL records, canonical artifact hashes, provider request hashing, cache validation, and deterministic offline validators.
+
+## Documentation
+
+The canonical narrative is the Markdown documentation under `docs/`. The tracked JSON artifacts remain available for auditability, but public-facing claims should be read through the final report, cards, figures, tables, and release notes.
+
+## Citation
+
+See [CITATION.cff](CITATION.cff). The intended v1.0.0 public release credits Ansh Hemang Dani and links to `https://github.com/AnshDani2004/BayesAudit`.

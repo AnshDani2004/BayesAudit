@@ -349,7 +349,7 @@ def test_phase9_closeout_decision_and_report_are_merge_ready() -> None:
     assert closeout["phase10_started"] is False
     assert closeout["phase11_started"] is False
     assert "Phase 9 Held-Out Robustness Study" in report_text
-    assert "unsuitable for production-safety claims" in report_text
+    assert "not evidence of production readiness" in report_text
 
 
 def test_phase10a_artifacts_validate_when_present() -> None:
@@ -371,9 +371,9 @@ def test_phase10a_report_and_paper_sources_exist() -> None:
     report = FINAL_REPORT.read_text(encoding="utf-8")
     paper = PAPER_TEX.read_text(encoding="utf-8")
     assert "BayesAudit Final Report" in report
-    assert "unsuitable for production-safety claims" in report
+    assert "does not support production-safety claims" in report
     assert r"\title{BayesAudit:" in paper
-    assert "Phase 10 performs no provider calls" in paper
+    assert "Phase 9 did not replicate" in paper
 
 
 def test_phase10b_artifacts_validate_when_present() -> None:
@@ -396,7 +396,7 @@ def test_phase10b_cards_and_validation_script_exist() -> None:
     model = Path("docs/model_card.md").read_text(encoding="utf-8")
     script = Path("scripts/validate_release_candidate.sh").read_text(encoding="utf-8")
     assert "BayesAudit Benchmark Card" in benchmark
-    assert "production safety certification" in benchmark
+    assert "production-safety certification" in benchmark
     assert phase9.MODEL in model
     assert "python -m bayesaudit.cli validate-phase10" in script
 
@@ -405,7 +405,7 @@ def test_phase10c_portfolio_and_release_candidate_docs_exist() -> None:
     portfolio = Path("docs/portfolio_summary.md").read_text(encoding="utf-8")
     release = Path("docs/release_candidate_v1.0.0.md").read_text(encoding="utf-8")
     assert "BayesAudit Portfolio Summary" in portfolio
-    assert "final Phase 10 synthesis" in portfolio
+    assert "research engineering project" in portfolio
     assert "v1.0.0 Release Candidate" in release
     assert "Do not create the `v1.0.0` annotated tag" in release
     assert "merge commit" in release
