@@ -1,0 +1,21 @@
+BayesAudit test-suite audit, 2026-10-12 (macOS, Darwin 25.5.0). Fresh venvs outside the repo; pip install -e ".[dev]"; python -m pytest -q -rfEs
+
+1) Python 3.10.13 (CI version), main 2977220: pandas 2.3.3, numpy 2.2.6, pydantic 2.14.1, pytest 9.1.1
+   1945 tests collected
+   SKIPPED [1] tests/test_stage_c2c.py:113: Stage C.2b raw provider artifacts are local and git-ignored
+   SKIPPED [1] tests/test_stage_c2c.py:389: Stage C.2c builder consumes local ignored Stage C.2b provider artifacts
+   SKIPPED [1] tests/test_stage_c2c.py:420: Stage C.2b raw provider artifacts are local and git-ignored
+   1942 passed, 3 skipped in 48.08s
+
+2) Python 3.13.2, main 2977220, same command: pandas 3.0.6, numpy 2.5.4, pydantic 2.14.1
+   pytest -q: collection interrupted, 1 error (tests/test_release_metadata.py: ModuleNotFoundError: No module named 'tomli'); 0 tests run
+   pytest -q --continue-on-collection-errors:
+   31 failed, 1907 passed, 3 skipped, 1 warning, 1 error in 28.17s
+   all 31 failures: pydantic ValidationError, MonitorExample.branch_id input_value=nan (tests/test_phase5_monitoring.py)
+
+3) Python 3.13.2 with pandas<3 (2.3.3) and tomli added: 1942 passed, 3 skipped
+
+4) Historical: commit d3368c2 (before public hardening), Python 3.10.13: 1934 passed, 3 skipped (1937 collected)
+   6cdba32: 1934 passed, 3 skipped; 53833ad: 1 failed, 1933 passed, 3 skipped; ec0913c: 1938 passed, 3 skipped; cc42a34: 1942 passed, 3 skipped
+
+Also on 3.10.13 at 2977220: ruff check (All checks passed), mypy strict src tests (no issues, 141 files), scripts/security_audit.py (passed), validate-scenarios/envelopes/policies/attackers/attacks/phase8/phase9/phase10 (all valid)

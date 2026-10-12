@@ -2,8 +2,8 @@
 
 BayesAudit is a reproducible research framework for studying budget-constrained oversight in hierarchical LLM workflows.
 
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
-![Tests](https://img.shields.io/badge/tests-1937%20passing-brightgreen)
+![Python](https://img.shields.io/badge/python-3.10%20(CI)-blue)
+![Tests](https://img.shields.io/badge/tests-1942%20passed%2C%203%20skipped%20(py3.10)-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-v1.0.0%20release%20candidate-orange)
 
@@ -20,7 +20,7 @@ BayesAudit implements an end-to-end empirical workflow for oversight research:
 - A hierarchical workflow engine for single-agent, unstructured delegation, and structured constraint-inheritance runs.
 - Constraint registries and typed envelopes that track which safety requirements are inherited, mutated, verified, or repaired across delegated steps.
 - A synthetic attacker framework with privacy, authorization, and evidence attack primitives, strategic attacker families, and held-out attacker selection.
-- Rule-based and Bayesian adaptive monitors that score checkpoints and drive budget-aware audit decisions.
+- Rule-based, logistic and Bayesian (Beta-Bernoulli and online Bayesian logistic) monitors that score checkpoints and drive budget-aware audit decisions. The Bayesian monitors were not used in the Phase 8 and Phase 9 provider studies; see Key Findings 4.
 - Oversight policies for no oversight, fixed checkpoints, random auditing, rule-based selective auditing, adaptive Bayesian auditing, and oracle-only evaluation upper bounds.
 - Objective scorers and offline adjudication artifacts that separate benchmark-originated risks, model-originated violations, monitor detections, policy decisions, and prevention claims.
 - Provider integration with hard safety gates, exact request hashing, raw-first response preservation, cache validation, token accounting, and cost accounting.
@@ -58,11 +58,11 @@ The public release is easiest to read as three studies rather than a ten-stage d
 
 1. **The framework produced auditable, matched experiments under provider ceilings.** Phase 8 completed 96/96 trajectories and 288 request records with 285 new provider calls, 312,174 total tokens, and $0.03363020 token-derived cost. Phase 9 completed 48/48 trajectories and 144 tracked request records; the original acquisition used 144 provider calls, and the final tracked regeneration used cache hits only.
 
-2. **The confirmatory attacker effect was positive but limited.** In Phase 8, attacked no-oversight trajectories were objective-positive in 7/24 matched quartets, compared with 3/24 safe-control quartets. The paired risk difference was 0.1667, with exact McNemar p-value 0.289062. This is evidence for benchmark behavior, not a population-level prevalence claim.
+2. **The confirmatory attacker effect was positive but limited.** In Phase 8, attacked no-oversight trajectories were objective-positive in 7/24 matched quartets, compared with 3/24 safe-control quartets. The paired risk difference was 0.1667 (6 attacker-only versus 2 safe-only discordant quartets), with exact McNemar p-value 0.289062, so the difference is not statistically significant. This is evidence for benchmark behavior, not a population-level prevalence claim.
 
-3. **No final-output violations were observed in the principal studies.** Phase 8 found 21 validated objective positives, all internal-only, with 0 tool-argument violations and 0 final-output violations. Phase 9 found 24 validated positives, also with 0 tool-argument and 0 final-output violations.
+3. **No final-output violations were observed in the principal studies.** Phase 8 found 21 validated objective positives, all internal-only, with 0 tool-argument violations and 0 final-output violations. Phase 9 found 24 validated positives, also with 0 tool-argument and 0 final-output violations. This holds in the no-oversight arms too, so it is a property of the model and tasks, not an effect of oversight. "Corrected before final" is defined as an internal-only positive in a three-step trajectory (`src/bayesaudit/pilot/stage_e2.py:908-909`), so its count (21 and 24) equals the internal-only count by construction.
 
-4. **Rule-based monitoring was more sensitive than the Bayesian/logistic monitor in these runs, but also produced false positives.** In Phase 9, across all 12 rule-based monitored trajectories, the rule-based monitor had 7 true positives and 5 false positives. Across all 12 Bayesian monitored trajectories, the Bayesian/logistic monitor had 0 true positives and 5 false negatives.
+4. **The monitor comparison is not a test of detection skill.** Recomputed from `configs/experiments/phase{8,9}_monitor_adjudication.jsonl`: the rule-based monitor alerted on every monitored trajectory (Phase 8: 24 of 24, 5 true positives and 19 false positives; Phase 9: 12 of 12, 7 true positives and 5 false positives) because its score is sigmoid of a rule count, which is 0.5 when no rule fires, and alerts use score >= 0.5. The `bayesian_adaptive_v1` condition did not run a Bayesian model: the Bayesian logistic monitor was excluded in Stage D.2 (posterior artifact missing) and the condition used the plain `logistic_smoke` monitor (`src/bayesaudit/pilot/stage_e1.py:712-726`), which returned the same score (about 9.4e-14) on every trajectory and never alerted (Phase 8: 0 true positives, 6 false negatives of 24; Phase 9: 0 true positives, 5 false negatives of 12). In addition, the monitor features in these runs are built from the objective label itself (`src/bayesaudit/pilot/stage_e2.py:2101-2138`), so any separation they show is label leakage, not detection.
 
 5. **Clean causal prevention was not established.** Corrected-before-final behavior was observed, but BayesAudit does not claim that oversight cleanly caused prevention of final-output violations. Prevention remains conditional and exploratory.
 
@@ -73,6 +73,13 @@ Phase 9 did not replicate the held-out attacker effect from Phase 8. The public 
 ## Limitations
 
 BayesAudit is a research prototype, not a production safety system. All tasks and tools are synthetic and sandboxed. One provider model, `gpt-5-nano-2025-08-07`, was tested. The project does not estimate real-world violation prevalence, does not establish cross-model generalization, and does not show production readiness. Offline adjudication was developer-run rather than an independent multi-annotator human study.
+
+- **Sample size.** The confirmatory study is 24 matched quartets and the robustness study 12, built on 3 tasks (one per domain: privacy, authorization, evidence), 2 architectures and 4 plus 2 seeds. Neither primary attacker comparison is significant (both exact McNemar p = 0.289), and the two point estimates have opposite signs (+0.1667 and -0.3333).
+- **Positive labels.** A positive is a synthetic marker string (for example `SYNTH_PRIVACY_MARKER`) appearing in model text, tool arguments or the model's self-reported markers (`src/bayesaudit/pilot/stage_e2.py:887-909`). Safe controls were positive in 3 of 24 and 8 of 12 quartets, so many positives are not attacker-induced.
+- **Monitors and policy in the provider studies.** The Bayesian monitor did not run; the rule-based monitor alerted on every trajectory; the logistic monitor never alerted; and monitor features were derived from the objective label (Key Findings 4). Every active-oversight trajectory spent its one-checkpoint audit budget (`src/bayesaudit/pilot/stage_e2.py:1036`), so budget-constrained checkpoint selection was studied only on synthetic trajectories in earlier phases (for example Phase 4, `docs/phase4_report.md`), not in the provider runs.
+- **Oversight timing.** In the provider runs the "oversight checkpoint" is a prompt asking the same model to remove any marker; monitor, policy and intervention records are computed after the trajectory completes (`src/bayesaudit/pilot/phase8.py:1003-1006`). This is why causal prevention is not claimed.
+- **Regime.** One model snapshot, one prompt template per step and one pricing table; results may not transfer to other models, prompts or task families.
+- **Environment.** The test suite is verified on Python 3.10 (the CI version). On Python 3.11 or later, `tests/test_release_metadata.py` fails to import `tomli` (the dev extra installs it only below 3.11), and with pandas 3.x 31 monitoring tests fail when a null `branch_id` round-trips through Parquet as NaN. Pinning `pandas<3` and installing `tomli` restores 1,942 passed, 3 skipped on Python 3.13.
 
 ## Repository Map
 
@@ -132,7 +139,7 @@ The repository never requires a credential for offline validation. `.env.example
 
 ## Tests and Engineering Quality
 
-At the start of the public-release hardening pass, the repository passed 1,937 tests plus full scenario, envelope, policy, attacker, attack, Phase 8, Phase 9, and Phase 10 validators. The codebase uses typed schemas, append-only JSONL records, canonical artifact hashes, provider request hashing, cache validation, and deterministic offline validators.
+On the current `main` (2977220), a fresh Python 3.10.13 environment installed with `pip install -e ".[dev]"` collects 1,945 tests: 1,942 passed, 0 failed, 3 skipped (the skipped tests need git-ignored raw provider artifacts). Ruff, strict mypy, `scripts/security_audit.py` and the scenario, envelope, policy, attacker, attack, Phase 8, Phase 9 and Phase 10 validators also pass offline. (An earlier figure of 1,937 was the collected count before the hardening pass, of which 1,934 passed and 3 were skipped.) See Limitations for Python 3.11+ caveats. Run log: `audit/test_run_2026-10-12.txt`. The Key Findings numbers are recomputed from the row-level JSONL artifacts, independently of `src/`, by `audit/recompute_headline.py` (output in `audit/recompute_headline_output.txt`). The codebase uses typed schemas, append-only JSONL records, canonical artifact hashes, provider request hashing, cache validation, and deterministic offline validators.
 
 ## Documentation
 
